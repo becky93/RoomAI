@@ -45,6 +45,7 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         self.public_state.turn            = self.choose_player_with_lowest_card(self.private_state.hand_cards)
         self.public_state.is_terminal     = False
         self.public_state.scores          = []
+        self.public_state.action_list     = []
         self.public_state.previous_id     = None
         self.public_state.previous_action = None
         self.public_state.stage           = 0
@@ -92,6 +93,7 @@ class SevenKingEnv(roomai.common.AbstractEnv):
 
         self.public_state.previous_id     = turn
         self.public_state.previous_action = action.__deepcopy__()
+        self.public_state.action_list.append(action.get_key())
 
 
         ## termminal
