@@ -4,18 +4,30 @@ import copy
 
 
 class FiveCardStudPrivateState(roomai.common.AbstractPrivateState):
+    """
+    """
     all_hand_cards    = None
 
     def __deepcopy__(self, memodict={}):
+        """
+
+        Args:
+            memodict:
+
+        Returns:
+
+        """
         copyinstance = FiveCardStudPrivateState()
         if self.all_hand_cards is None:
             copyinstance.all_hand_cards = None
         else:
-            copyinstance.all_hand_cards = [self.all_hand_cards[i].__deepcopy__() for i in xrange(len(self.all_hand_cards))]
+            copyinstance.all_hand_cards = [self.all_hand_cards[i].__deepcopy__() for i in range(len(self.all_hand_cards))]
         return copyinstance
 
 
 class FiveCardStudPublicState(roomai.common.AbstractPublicState):
+    """
+    """
     first_hand_cards      = None
     second_hand_cards     = None
     third_hand_cards      = None
@@ -56,58 +68,58 @@ class FiveCardStudPublicState(roomai.common.AbstractPublicState):
         if self.first_hand_cards is None:
             copyinstance.first_hand_cards = None
         else:
-            copyinstance.first_hand_cards = [self.first_hand_cards[i].__deepcopy__() for i in xrange(len(self.first_hand_cards))]
+            copyinstance.first_hand_cards = [self.first_hand_cards[i].__deepcopy__() for i in range(len(self.first_hand_cards))]
 
         if self.second_hand_cards is None:
             copyinstance.second_hand_cards = None
         else:
-            copyinstance.second_hand_cards = [self.second_hand_cards[i].__deepcopy__() for i in xrange(len(self.second_hand_cards))]
+            copyinstance.second_hand_cards = [self.second_hand_cards[i].__deepcopy__() for i in range(len(self.second_hand_cards))]
 
         if self.third_hand_cards is None:
             copyinstance.third_hand_cards = None
         else:
-            copyinstance.third_hand_cards = [self.third_hand_cards[i].__deepcopy__() for i in xrange(len(self.third_hand_cards))]
+            copyinstance.third_hand_cards = [self.third_hand_cards[i].__deepcopy__() for i in range(len(self.third_hand_cards))]
 
         if self.fourth_hand_cards is None:
             copyinstance.fourth_hand_cards = None
         else:
-            copyinstance.fourth_hand_cards = [self.fourth_hand_cards[i].__deepcopy__() for i in xrange(len(self.fourth_hand_cards))]
+            copyinstance.fourth_hand_cards = [self.fourth_hand_cards[i].__deepcopy__() for i in range(len(self.fourth_hand_cards))]
 
         if self.fifth_hand_cards is None:
             copyinstance.fifth_hand_cards = None
         else:
-            copyinstance.fifth_hand_cards = [self.fifth_hand_cards[i].__deepcopy__() for i in xrange(len(self.fifth_hand_cards))]
+            copyinstance.fifth_hand_cards = [self.fifth_hand_cards[i].__deepcopy__() for i in range(len(self.fifth_hand_cards))]
 
         copy.num_quit          = self.num_quit
         if self.is_quit is None:
             copyinstance.is_quit = None
         else:
-            copyinstance.is_quit = [self.is_quit[i] for i in xrange(len(self.is_quit))]
+            copyinstance.is_quit = [self.is_quit[i] for i in range(len(self.is_quit))]
 
         copyinstance.num_raise = self.num_raise
         if self.is_raise is None:
             copyinstance.is_raise = None
         else:
-            copyinstance.is_raise  = [self.is_raise[i] for i in xrange(len(self.is_raise))]
+            copyinstance.is_raise  = [self.is_raise[i] for i in range(len(self.is_raise))]
 
         copyinstance.num_needed_to_action = self.num_needed_to_action
         if self.is_needed_to_action is None:
             copyinstance.is_needed_to_action = None
         else:
-            copyinstance.is_needed_to_action = [self.is_needed_to_action[i] for i in xrange(len(self.is_needed_to_action))]
+            copyinstance.is_needed_to_action = [self.is_needed_to_action[i] for i in range(len(self.is_needed_to_action))]
 
         # chips is array which contains the chips of all players
         if self.chips is None:
             copyinstance.chips = None
         else:
-            copyinstance.chips = [self.chips[i] for i in xrange(len(self.chips))]
+            copyinstance.chips = [self.chips[i] for i in range(len(self.chips))]
 
 
         # bets is array which contains the bets from all players
         if self.bets is None:
             copyinstance.bets = None
         else:
-            copyinstance.bets = [self.bets[i] for i in xrange(len(self.bets))]
+            copyinstance.bets = [self.bets[i] for i in range(len(self.bets))]
 
         copyinstance.upper_bet     = self.upper_bet
         copyinstance.floor_bet     = self.floor_bet
@@ -129,12 +141,14 @@ class FiveCardStudPublicState(roomai.common.AbstractPublicState):
         if self.scores is None:
             copyinstance.scores = None
         else:
-            copyinstance.scores = [self.scores[i] for i in xrange(len(self.scores))]
+            copyinstance.scores = [self.scores[i] for i in range(len(self.scores))]
 
         return copyinstance
 
 
-class FiveCardStudPersonState(roomai.common.AbsractPersonState):
+class FiveCardStudPersonState(roomai.common.AbstractPersonState):
+    """
+    """
     id                = None
     available_actions = None
 
@@ -145,7 +159,16 @@ class FiveCardStudPersonState(roomai.common.AbsractPersonState):
     fifth_hand_card   = None
 
 
-    def __deepcopy__(self, memodict={}):
+    def __deepcopy__(self, memodict={}, newinstance = None):
+        """
+
+        Args:
+            memodict:
+            newinstance:
+
+        Returns:
+
+        """
         copyinstance    = FiveCardStudPersonState()
         copyinstance.id = self.id
 

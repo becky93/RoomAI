@@ -2,17 +2,24 @@
 from roomai.fivecardstud import FiveCardStudEnv
 from roomai.fivecardstud import FiveCardStudPokerCard
 from roomai.fivecardstud import FiveCardStudAction
-from roomai.fivecardstud import FiveCardStudRandomPlayer
 import unittest
 import roomai
 import roomai.fivecardstud
 
 class FiveCardStudTester(unittest.TestCase):
+    """
+    """
     def test(self):
+        """
+
+        """
         env = FiveCardStudEnv();
         env.init()
 
     def testCase(self):
+        """
+
+        """
 
         cards   =[FiveCardStudPokerCard("3_Spade"), FiveCardStudPokerCard("4_Spade"),FiveCardStudPokerCard("5_Spade"),FiveCardStudPokerCard("6_Spade")]
         pattern = FiveCardStudEnv.fourcards2pattern(cards)
@@ -23,9 +30,12 @@ class FiveCardStudTester(unittest.TestCase):
 
 
     def testEnv(self):
+        """
+
+        """
         env = FiveCardStudEnv();
-        env.chips = [1000,1000,1000]
-        infos, pu, pes, pr = env.init()
+        chips = [1000,1000,1000]
+        infos, pu, pes, pr = env.init({"chips":chips})
 
         turn = pu.turn
         assert(pes[turn].available_actions is not None)
@@ -44,23 +54,27 @@ class FiveCardStudTester(unittest.TestCase):
         infos, pu, pe, pr = env.forward(FiveCardStudAction(showhand_act_key))
 
         assert(env.public_state.is_terminal == True)
-        print pu.scores
-        print pu.floor_bet
+        print (pu.scores)
+        print (pu.floor_bet)
         assert(max(pu.scores) == 2000/pu.floor_bet)
         assert(min(pu.scores) == -1000/pu.floor_bet)
-        print infos[0].public_state.round
-        print infos[0].person_state.fifth_hand_card.get_key()
+        print (infos[0].public_state.round)
+        print (infos[0].person_state.fifth_hand_card.key)
 
     def testRandomPlayer(self):
+        """
 
-        for i in xrange(100):
-            players = [roomai.fivecardstud.FiveCardStudRandomPlayer() for i in xrange(3)]
+        """
+
+        for i in range(100):
+            import roomai.common
+            players = [roomai.common.RandomPlayer() for i in range(3)]
             env     = roomai.fivecardstud.FiveCardStudEnv()
-            env.num_players = 3
-            env.chips       = [1000,1000,1000]
+            num_players = 3
+            chips       = [1000,1000,1000]
 
-            infos,public_state,_,_ = env.init()
-            for i in xrange(len(players)):
+            infos,public_state,_,_ = env.init({"num_players":num_players,"chips":chips})
+            for i in range(len(players)):
                 players[i].receive_info(infos[i])
 
             while public_state.is_terminal == False:
@@ -68,17 +82,18 @@ class FiveCardStudTester(unittest.TestCase):
                 action = players[turn].take_action()
 
                 infos,public_state,_,_ = env.forward(action)
-                for i in xrange(len(players)):
+                for i in range(len(players)):
                     players[i].receive_info(infos[i])
 
-        for i in xrange(100):
-            players = [roomai.fivecardstud.FiveCardStudRandomPlayer() for i in xrange(2)]
+        for i in range(100):
+            import roomai.common
+            players = [roomai.common.RandomPlayer() for i in range(2)]
             env     = roomai.fivecardstud.FiveCardStudEnv()
-            env.num_players = 2
-            env.chips       = [1000,1000]
+            num_players = 2
+            chips       = [1000,1000]
 
-            infos,public_state,_,_ = env.init()
-            for i in xrange(len(players)):
+            infos,public_state,_,_ = env.init({"num_players":num_players, "chips":chips})
+            for i in range(len(players)):
                 players[i].receive_info(infos[i])
 
             while public_state.is_terminal == False:
@@ -86,18 +101,20 @@ class FiveCardStudTester(unittest.TestCase):
                 action = players[turn].take_action()
 
                 infos,public_state,_,_ = env.forward(action)
-                for i in xrange(len(players)):
+                for i in range(len(players)):
                     players[i].receive_info(infos[i])
 
 
     def testCompete(self):
+        import roomai.common
         env     = FiveCardStudEnv()
-        players = [FiveCardStudRandomPlayer() for i in xrange(5)]
+        players = [roomai.common.RandomPlayer() for i in range(5)]
         scores  = FiveCardStudEnv.compete(env, players)
-        print scores
+        print (scores)
         assert(abs(sum(scores)) < 1e-9 )
 
 if __name__ == "__main__":
+    import roomai.common
     env = FiveCardStudEnv()
-    players = [FiveCardStudRandomPlayer() for i in xrange(5)]
+    players = [roomai.common.RandomPlayer() for i in range(5)]
     scores = FiveCardStudEnv.compete(env, players)
