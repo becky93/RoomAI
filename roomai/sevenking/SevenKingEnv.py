@@ -68,19 +68,6 @@ class SevenKingEnv(roomai.common.AbstractEnv):
             self.person_states[i].__add_cards__(tmp)
 
         ## public_state
-<<<<<<< HEAD
-        self.public_state.turn            = self.choose_player_with_lowest_card(self.private_state.hand_cards)
-        self.public_state.is_terminal     = False
-        self.public_state.scores          = []
-        self.public_state.action_list     = []
-        self.public_state.previous_id     = None
-        self.public_state.previous_action = None
-        self.public_state.stage           = 0
-
-        self.public_state.num_players     = self.num_players
-        self.public_state.num_keep_cards  = len(self.private_state.keep_cards)
-        self.public_state.num_hand_cards  = [len(cards) for cards in self.private_state.hand_cards]
-=======
         self.public_state.__turn__,_          = self.__choose_player_with_lowest_card__()
         self.public_state.__is_terminal__     = False
         self.public_state.__scores__          = []
@@ -94,7 +81,6 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         self.public_state.__num_hand_cards__  = [len(person_state.hand_cards) for person_state in self.person_states]
         self.public_state.__is_fold__         = [False for i in range(self.public_state.num_players)]
         self.public_state.__num_fold__        = 0
->>>>>>> upstream/master
 
         ## person_state
         for i in range(self.__params__["num_players"]):
@@ -107,11 +93,6 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         return infos, self.public_state, self.person_states, self.private_state
 
     def forward(self, action):
-<<<<<<< HEAD
-        turn = self.public_state.turn
-        if SevenKingEnv.is_action_valid(action, self.public_state) == False:
-            raise ValueError("The %s is an invalid action "%(action.get_key()))
-=======
         '''
         The SevenKing game environment steps with the action taken by the current player
         
@@ -125,7 +106,6 @@ class SevenKingEnv(roomai.common.AbstractEnv):
 
         if self.is_action_valid(action,pu, pes[turn]) == False:
             raise  ValueError("The (%s) is an invalid action " % (action.key))
->>>>>>> upstream/master
 
         ## the action plays its role
         if action.pattern[0] == "p_0":
@@ -151,12 +131,6 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         if action.pattern[0] != "p_0":
             pu.__license_action__ = action
 
-<<<<<<< HEAD
-        self.public_state.previous_id     = turn
-        self.public_state.previous_action = action.__deepcopy__()
-        self.public_state.action_list.append(action.get_key())
-=======
->>>>>>> upstream/master
 
 
         #print (turn, "len_of_hand_card=",len(self.private_state.hand_cards[turn]), " len_of_keep_card=", len(self.private_state.keep_cards), " action = (%s)" %action.key,\
