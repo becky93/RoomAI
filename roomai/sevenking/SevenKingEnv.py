@@ -68,7 +68,7 @@ class SevenKingEnv(roomai.common.AbstractEnv):
     def forward(self, action):
         turn = self.public_state.turn
         if SevenKingEnv.is_action_valid(action, self.public_state) == False:
-            raise  ValueError("The %s is an invalid action "%(action.get_key()))
+            raise ValueError("The %s is an invalid action "%(action.get_key()))
 
         ## the action plays its role
         if action.pattern[0] == "p_0_0_0":

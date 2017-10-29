@@ -1,4 +1,8 @@
 import random
+import pdb
+
+import sys
+sys.path.append("E:/roomAI/RoomAI")
 
 from roomai.algorithms import CRMPlayer
 from roomai.sevenking import SevenKingInfo
@@ -27,7 +31,7 @@ class SevenKingPlayer(CRMPlayer):
 
     def get_strategies(self, state, actions):
         probs = [1.0 for i in range(len(actions))]
-        for  i in range(len(actions)):
+        for i in range(len(actions)):
             state_action = "%s_%s" % (state, actions[i].key)
             if state_action not in self.strategies:
                 probs[i] = 0.0

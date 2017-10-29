@@ -191,7 +191,7 @@ class PokerCard(object):
         suit1  = 0
         if suit is None:
             kv = point.split("_")
-            point1 = point_str_to_rank[kv[0]]
+            point1 = point_str_to_rank[int(kv[0])]
             suit1  = suit_str_to_rank[kv[1]]
         else:
             point1 = point
