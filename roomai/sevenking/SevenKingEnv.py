@@ -82,6 +82,8 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         self.public_state.__is_fold__         = [False for i in range(self.public_state.num_players)]
         self.public_state.__num_fold__        = 0
 
+        self.public_state.action_list = []
+
         ## person_state
         for i in range(self.__params__["num_players"]):
             self.person_states[i].__id__   = i
@@ -128,6 +130,7 @@ class SevenKingEnv(roomai.common.AbstractEnv):
 
         pu.__previous_id__     = turn
         pu.__previous_action__ = action
+        pu.action_list.append(action)
         if action.pattern[0] != "p_0":
             pu.__license_action__ = action
 

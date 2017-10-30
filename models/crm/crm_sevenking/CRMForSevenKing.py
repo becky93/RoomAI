@@ -1,10 +1,12 @@
 import random
 import pdb
 
+# import algorithms 
+
 import sys
 sys.path.append("E:/roomAI/RoomAI")
 
-from roomai.algorithms import CRMPlayer
+from models.crm.algorithms import CRMPlayer
 from roomai.sevenking import SevenKingInfo
 from roomai.sevenking import SevenKingEnv
 from roomai.sevenking import SevenKingUtils
@@ -12,6 +14,7 @@ from roomai.sevenking import SevenKingAction
 
 
 class SevenKingPlayer(CRMPlayer):
+# class SevenKingPlayer(object):    
 
     def __init__(self):
 
@@ -20,7 +23,7 @@ class SevenKingPlayer(CRMPlayer):
         self.strategies = dict()
 
     def gen_state(self, info):
-        hand_cards = info.person_state.hand_card
+        hand_cards = info.person_state.hand_cards
         history = info.public_state.action_list
         return "%s_%s" % ("_".join(hand_cards), "".join(history))
 

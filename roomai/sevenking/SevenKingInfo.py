@@ -71,9 +71,9 @@ class SevenKingPublicState(roomai.common.AbstractPublicState):
         else:
             newinstance.__showed_cards = [card.__deepcopy__() for card in self.showed_cards]
 
-        newinstance.__num_showd_cards__ = self.num_showed_cards
-        newinstance.__num_keep_cards__  = self.num_keep_cards
-        newinstance.__num_hand_cards__  = self.num_hand_cards
+        newinstance.__num_showd_cards__ = self.__num_showed_cards__
+        newinstance.__num_keep_cards__  = self.__num_keep_cards__
+        newinstance.__num_hand_cards__  = self.__num_hand_cards__
         if self.is_fold is None:
             newinstance.__is_fold__ = None
         else:
@@ -82,7 +82,7 @@ class SevenKingPublicState(roomai.common.AbstractPublicState):
         if self.license_action is None:
             newinstance.__license_action = None
         else:
-            newinstance.self.__license_action__  = self.license_action
+            newinstance.__license_action__  = self.__license_action__
 
         return newinstance
 
