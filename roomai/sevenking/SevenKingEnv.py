@@ -130,7 +130,7 @@ class SevenKingEnv(roomai.common.AbstractEnv):
 
         pu.__previous_id__     = turn
         pu.__previous_action__ = action
-        pu.action_list.append(action)
+        pu.action_list.append(action.key)
         if action.pattern[0] != "p_0":
             pu.__license_action__ = action
 

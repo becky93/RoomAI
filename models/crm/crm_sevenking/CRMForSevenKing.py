@@ -14,7 +14,6 @@ from roomai.sevenking import SevenKingAction
 
 
 class SevenKingPlayer(CRMPlayer):
-# class SevenKingPlayer(object):    
 
     def __init__(self):
 
@@ -25,7 +24,10 @@ class SevenKingPlayer(CRMPlayer):
     def gen_state(self, info):
         hand_cards = info.person_state.hand_cards
         history = info.public_state.action_list
-        return "%s_%s" % ("_".join(hand_cards), "".join(history))
+        hand_cards_keys = []
+        for i in range(len(hand_cards)):
+            hand_cards_keys.append(hand_cards[i].key)
+        return "%s_%s" % ("_".join(hand_cards_keys), "".join(history))
 
     def update_strategies(self, state, actions, targets):
         for i in xrange(len(actions)):
@@ -50,8 +52,8 @@ class SevenKingPlayer(CRMPlayer):
     def get_regrets(self, state, actions):
         regrets = [0 for i in range(len(actions))]
 
-        for i in xrange(len(actions)):
-            state_action = "%s_%s" % (state, actions[i].key)
+        for key in actions:
+            state_action = "%s_%s" % (state, key)
             if state_action not in self.regrets:
                 regrets[i] = 0
             else:
@@ -81,7 +83,7 @@ def CRMTrain(env, player, probs, action = None, depth = 0):
 
     else:
         state = player.gen_state(infos[public_state.turn])
-        available_actions = env.available_actions(public_state, person_states)
+        available_actions = env.available_actions(public_state, person_states[public_state.turn])
         num_available_actions = len(available_actions)
 
         regrets = player.get_regrets(state, available_actions)
@@ -100,13 +102,14 @@ def CRMTrain(env, player, probs, action = None, depth = 0):
         util = [0 for i in range(num_available_actions)]
         strategy_util = 0
 
+        sorted_actions = sorted(available_actions.items(), key=lambda e:e[0])
         for i in xrange(num_available_actions):
             temp_probs = [0 for i_temp in range(num_players)]
             temp_probs[public_state.turn] = probs[public_state.turn]
             for j in xrange(num_players):
                 if j != public_state.turn:
                     temp_probs[j] = probs[j] * cur_strategies[i]
-            util[i] = -CRMTrain(env, player, temp_probs, available_actions[i], depth+1)
+            util[i] = -CRMTrain(env, player, temp_probs, available_actions[sorted_actions[i][0]], depth+1)
             strategy_util += cur_strategies[i] * util[i]
 
         new_regrets = [0 for i in range(num_available_actions)]
@@ -126,6 +129,9 @@ def CRMTrain(env, player, probs, action = None, depth = 0):
         player.update_regrets(state, available_actions, new_regrets)
         player.update_strategies(state, available_actions, new_strategies)
         utility = strategy_util
+
+    if depth != 0:
+        env.backward()
 
     return utility
 
