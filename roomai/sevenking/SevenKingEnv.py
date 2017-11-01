@@ -214,14 +214,16 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         '''
         num_players = len(players)
         infos, public_state, person_states, private_state = env.init({"num_players":num_players})
-        for i in range(num_players):
+
+        for i in range(env.__params__["num_players"]):
             players[i].receive_info(infos[i])
 
         while public_state.is_terminal == False:
             turn   = public_state.turn
             action = players[turn].take_action()
             infos, public_state, person_states, private_state = env.forward(action)
-            for i in range(num_players):
+
+            for i in range(env.__params__["num_players"]):
                 players[i].receive_info(infos[i])
 
         return public_state.scores
@@ -267,8 +269,14 @@ class SevenKingEnv(roomai.common.AbstractEnv):
 
 
                 elif pattern[0] == "p_1":
+                    license_pattern = license_action.pattern
+                    license_card = None
+                    if license_pattern[0] != "p_0":
+                        license_card = license_action.cards[-1]
+
                     for c in person_state.hand_cards:
-                        available_actions[c.key] = (SevenKingAction.lookup(c.key))
+                        if license_pattern[0] == "p_0" or SevenKingPokerCard.compare(c,license_card) >0:
+                            available_actions[c.key] = SevenKingAction.lookup(c.key)
 
                 elif pattern[0] == "p_2":
                     for p in point2cards:
