@@ -214,6 +214,7 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         '''
         num_players = len(players)
         infos, public_state, person_states, private_state = env.init({"num_players":num_players})
+
         for i in range(env.__params__["num_players"]):
             players[i].receive_info(infos[i])
 
@@ -221,6 +222,7 @@ class SevenKingEnv(roomai.common.AbstractEnv):
             turn   = public_state.turn
             action = players[turn].take_action()
             infos, public_state, person_states, private_state = env.forward(action)
+
             for i in range(env.__params__["num_players"]):
                 players[i].receive_info(infos[i])
 

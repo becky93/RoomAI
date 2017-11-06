@@ -50,7 +50,7 @@ if __name__ == "__main__":
         players[i].receive_info(infos[i])
         show(infos[i])
     print (public_state.is_fold)
-    print "\n"
+    print("\n")
 
 
     while public_state.is_terminal == False:
