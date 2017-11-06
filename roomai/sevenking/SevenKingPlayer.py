@@ -5,15 +5,10 @@ from roomai.sevenking import SevenKingAction
 from roomai.sevenking import SevenKingPokerCard
 
 class AlwaysFoldPlayer(roomai.common.AbstractPlayer):
-    """
-    """
+    '''
+    The player always choose the "fold" action
+    '''
     def take_action(self):
-        """
-
-        Returns:
-
-        """
-
         if "" not in self.available_actions:
             min_card = None
             for a in self.available_actions.values():
@@ -30,57 +25,33 @@ class AlwaysFoldPlayer(roomai.common.AbstractPlayer):
             return SevenKingAction("")
 
     def receive_info(self,info):
-        """
-
-        Args:
-            info:
-        """
         self.public_state      = info.public_state
         self.available_actions = info.person_state.available_actions
 
     def reset(self):
-        """
-
-        """
         pass
 
 class AlwaysNotFoldPlayer(roomai.common.AbstractPlayer):
-    """
-    """
+    '''
+    The player bot always not fold
+    '''
     def take_action(self):
-        """
-
-        Returns:
-
-        """
         for a in self.available_actions.values():
             if a.key != "":
                 return a
         return SevenKingAction.lookup("")
 
     def receive_info(self, info):
-        """
-
-        Args:
-            info:
-        """
         self.available_actions = info.person_state.available_actions
 
     def reset(self):
-        """
-
-        """
         pass
 
 class AlwaysMinPlayer(roomai.common.AbstractPlayer):
-    """
-    """
+    '''
+    The player bot always choose the min action
+    '''
     def take_action(self):
-        """
-
-        Returns:
-
-        """
         min_card = None
         for a in self.available_actions.values():
             if a.pattern[0] == "p_1":
@@ -94,31 +65,18 @@ class AlwaysMinPlayer(roomai.common.AbstractPlayer):
             return SevenKingAction.lookup(min_card.key)
 
     def receive_info(self,info):
-        """
-
-        Args:
-            info:
-        """
         self.public_state      = info.public_state
         self.available_actions = info.person_state.available_actions
 
     def reset(self):
-        """
-
-        """
         pass
 
 class AlwaysMaxPlayer(roomai.common.AbstractPlayer):
     """
-    always play the max available action
+    The player always take the max available action
     """
 
     def take_action(self):
-        """
-
-        Returns:
-
-        """
         max_action = SevenKingAction.lookup("")
         max_pattern = 0
         for a in self.available_actions.values():
@@ -132,32 +90,19 @@ class AlwaysMaxPlayer(roomai.common.AbstractPlayer):
         return max_action
 
     def receive_info(self, info):
-        """
-
-        Args:
-            info:
-        """
         self.public_state = info.public_state
         self.available_actions = info.person_state.available_actions
 
     def reset(self):
-        """
-
-        """
         pass
 
 class AlwaysMaxPatternPlayer(roomai.common.AbstractPlayer):
     """
-    first play the max pattern,
-    then play the min cards when  pattern is equal
+    first take the action with the max pattern,
+    then take the action with the min cards when pattern is equal
     """
 
     def take_action(self):
-        """
-
-        Returns:
-
-        """
         max_action = SevenKingAction.lookup("")
         max_pattern = 0
         for a in self.available_actions.values():
@@ -171,16 +116,8 @@ class AlwaysMaxPatternPlayer(roomai.common.AbstractPlayer):
         return max_action
 
     def receive_info(self, info):
-        """
-
-        Args:
-            info:
-        """
         self.public_state = info.public_state
         self.available_actions = info.person_state.available_actions
 
     def reset(self):
-        """
-
-        """
         pass
