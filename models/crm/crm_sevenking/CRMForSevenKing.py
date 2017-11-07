@@ -30,9 +30,9 @@ class SevenKingPlayer(CRMPlayer):
         return "%s_%s" % ("_".join(hand_cards_keys), "".join(history))
 
     def update_strategies(self, state, actions, targets):
-        for i in xrange(len(actions)):
-            state_action = "%s_%s" % (state, actions[i].key)
-            self.strategies[state_action] = targets[i]
+        for key in actions:
+            state_action = "%s_%s" % (state, key)
+            self.strategies[state_action] = targets[state_action]
 
     def get_strategies(self, state, actions):
         strategy = dict()
@@ -45,9 +45,9 @@ class SevenKingPlayer(CRMPlayer):
         return strategy
 
     def update_regrets(self, state, actions, targets):
-        for i in range(len(actions)):
-            state_action = "%s_%s"%(state, actions[i].key)
-            self.regrets[state_action] = targets[i]
+        for key in actions:
+            state_action = "%s_%s"%(state, key)
+            self.regrets[state_action] = targets[state_action]
 
     def get_regrets(self, state, actions):
         regrets = dict()
@@ -79,11 +79,13 @@ def CRMTrain(env, player, probs, action = None, depth = 0):
         infos, public_state, person_states, private_state = env.forward(action)
 
     if public_state.is_terminal == True:
-        utility = public_state.scores[public_state.previous_id] ############ some problems，记住当前的turn，一直向后传递，直到返回，再更新
+        utility = public_state.scores[public_state.previous_id]    # some problems
 
     else:
-        state = player.gen_state(infos[public_state.turn])
-        available_actions = env.available_actions(public_state, person_states[public_state.turn])
+        this_turn = public_state.turn
+        state = player.gen_state(infos[this_turn])
+        # available_actions = env.available_actions(public_state, person_states[this_turn])
+        available_actions = person_states[this_turn].available_actions
 
         regrets = player.get_regrets(state, available_actions)
 
@@ -103,10 +105,10 @@ def CRMTrain(env, player, probs, action = None, depth = 0):
 
         for key in available_actions:
             temp_probs = [0 for i_temp in range(num_players)]
-            temp_probs[public_state.turn] = probs[public_state.turn]
+            temp_probs[this_turn] = probs[this_turn]
             new_key = state + '_' + key
             for j in xrange(num_players):
-                if j != public_state.turn:
+                if j != this_turn:
                     temp_probs[j] = probs[j] * cur_strategies[new_key]
             util[new_key] = -CRMTrain(env, player, temp_probs, available_actions[key], depth+1)
             strategy_util += cur_strategies[new_key] * util[new_key]
@@ -117,14 +119,14 @@ def CRMTrain(env, player, probs, action = None, depth = 0):
         strategies = player.get_strategies(state, available_actions)
 
         # update regrets and strategies
-        for key in actions:
+        for key in available_actions:
             prob = 1
             new_key = state + '_' + key
             for j in xrange(num_players):
-                if j != public_state.turn:
+                if j != this_turn:
                     prob *= probs[j]
             new_regrets[new_key] = regrets[new_key] + prob * (util[new_key] - strategy_util)
-            new_strategies[new_key] = strategies[new_key] + probs[public_state.turn] * cur_strategies[new_key]
+            new_strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
 
         player.update_regrets(state, available_actions, new_regrets)
         player.update_strategies(state, available_actions, new_strategies)

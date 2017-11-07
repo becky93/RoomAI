@@ -14,6 +14,7 @@ class SevenKingPublicState(roomai.common.AbstractPublicState):
         self.__is_fold__          = None
         self.__num_fold__         = None
         self.__license_action__   = None
+        self.__action_list__ = []
 
     def __get_stage__(self):    return self.__stage__
     stage = property(__get_stage__, doc="There are two stages in SevenKing. In the first stage(stage = 0), the player gets the same number of the poker cards after he takes an action (throws some cards)."+
@@ -58,6 +59,10 @@ class SevenKingPublicState(roomai.common.AbstractPublicState):
         return self.__license_action__
     license_action = property(__get_license_action__, doc="Generally, the player need takes an action with the same pattern as the license action. Unless the player takes an action at the beginning of a round")
 
+    def __get_action_list__(self):
+        return self.__action_list__
+    action_list = property(__get_action_list__, doc="actions player have taken")
+
     def __deepcopy__(self, newinstance = None, memodict={}):
         if  newinstance is None:
             newinstance = SevenKingPublicState()
@@ -83,6 +88,10 @@ class SevenKingPublicState(roomai.common.AbstractPublicState):
             newinstance.__license_action = None
         else:
             newinstance.__license_action__  = self.__license_action__
+        if self.action_list == []:
+            newinstance.__action_list__ = []
+        else:
+            newinstance.__action_list__ = self.__action_list__
 
         return newinstance
 
