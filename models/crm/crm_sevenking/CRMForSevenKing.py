@@ -35,14 +35,14 @@ class SevenKingPlayer(CRMPlayer):
             self.strategies[state_action] = targets[i]
 
     def get_strategies(self, state, actions):
-        probs = [1.0 for i in range(len(actions))]
-        for i in range(len(actions)):
-            state_action = "%s_%s" % (state, actions[i].key)
+        strategy = dict()
+        for key in actions:
+            state_action = "%s_%s" % (state, key)
             if state_action not in self.strategies:
-                probs[i] = 0.0
+                strategy[state_action] = 0.0
             else:
-                probs[i] = self.strategies[state_action]
-        return probs
+                strategy[state_action] = self.strategies[state_action]
+        return strategy
 
     def update_regrets(self, state, actions, targets):
         for i in range(len(actions)):
@@ -50,14 +50,14 @@ class SevenKingPlayer(CRMPlayer):
             self.regrets[state_action] = targets[i]
 
     def get_regrets(self, state, actions):
-        regrets = [0 for i in range(len(actions))]
+        regrets = dict()
 
         for key in actions:
             state_action = "%s_%s" % (state, key)
             if state_action not in self.regrets:
-                regrets[i] = 0
+                regrets[state_action] = 0
             else:
-                regrets[i] = self.regrets[state_action]
+                regrets[state_action] = self.regrets[state_action]
         return regrets
 
 
@@ -79,52 +79,52 @@ def CRMTrain(env, player, probs, action = None, depth = 0):
         infos, public_state, person_states, private_state = env.forward(action)
 
     if public_state.is_terminal == True:
-        utility = public_state.scores[public_state.turn]
+        utility = public_state.scores[public_state.previous_id] ############ some problems，记住当前的turn，一直向后传递，直到返回，再更新
 
     else:
         state = player.gen_state(infos[public_state.turn])
         available_actions = env.available_actions(public_state, person_states[public_state.turn])
-        num_available_actions = len(available_actions)
 
         regrets = player.get_regrets(state, available_actions)
 
         # regret matching
-        cur_strategies = [0 for i in range(num_available_actions)]
+        cur_strategies = dict()
         normalizing_sum = 0
-        for i in xrange(num_available_actions):
-            normalizing_sum += max(regrets[i], 0)
-        for i in xrange(num_available_actions):
+        for key in regrets:
+            normalizing_sum += max(regrets[key], 0)
+        for key in regrets:
             if normalizing_sum > 0:
-                cur_strategies[i] = max(regrets[i], 0) / normalizing_sum
+                cur_strategies[key] = max(regrets[key], 0) / normalizing_sum
             else:
-                cur_strategies[i] = 1.0 / num_available_actions
+                cur_strategies[key] = 1.0 / len(available_actions)
 
-        util = [0 for i in range(num_available_actions)]
+        util = dict()
         strategy_util = 0
 
-        sorted_actions = sorted(available_actions.items(), key=lambda e:e[0])
-        for i in xrange(num_available_actions):
+        for key in available_actions:
             temp_probs = [0 for i_temp in range(num_players)]
             temp_probs[public_state.turn] = probs[public_state.turn]
+            new_key = state + '_' + key
             for j in xrange(num_players):
                 if j != public_state.turn:
-                    temp_probs[j] = probs[j] * cur_strategies[i]
-            util[i] = -CRMTrain(env, player, temp_probs, available_actions[sorted_actions[i][0]], depth+1)
-            strategy_util += cur_strategies[i] * util[i]
+                    temp_probs[j] = probs[j] * cur_strategies[new_key]
+            util[new_key] = -CRMTrain(env, player, temp_probs, available_actions[key], depth+1)
+            strategy_util += cur_strategies[new_key] * util[new_key]
 
-        new_regrets = [0 for i in range(num_available_actions)]
-        new_strategies = [0 for i in range(num_available_actions)]
+        new_regrets = dict()
+        new_strategies = dict()
 
         strategies = player.get_strategies(state, available_actions)
 
         # update regrets and strategies
-        for i in xrange(num_available_actions):
+        for key in actions:
             prob = 1
+            new_key = state + '_' + key
             for j in xrange(num_players):
                 if j != public_state.turn:
                     prob *= probs[j]
-            new_regrets[i] = regrets[i] + prob * (util[i] - strategy_util)
-            new_strategies[i] = strategies[i] + probs[public_state.turn] * cur_strategies[i]
+            new_regrets[new_key] = regrets[new_key] + prob * (util[new_key] - strategy_util)
+            new_strategies[new_key] = strategies[new_key] + probs[public_state.turn] * cur_strategies[new_key]
 
         player.update_regrets(state, available_actions, new_regrets)
         player.update_strategies(state, available_actions, new_strategies)

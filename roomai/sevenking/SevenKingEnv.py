@@ -184,8 +184,8 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         return infos, self.public_state, self.person_states, self.private_state
 
     def __compute_scores__(self):
-        scores                         = [-1 for i in range(self.num_players)]
-        scores[self.public_state.turn] = self.num_players -1
+        scores                         = [-1 for i in range(self.public_state.num_players)]
+        scores[self.public_state.turn] = self.public_state.num_players -1
         return scores
 
     def __choose_player_with_nofold__(self):
