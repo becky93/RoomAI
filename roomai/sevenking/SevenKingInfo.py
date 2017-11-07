@@ -134,14 +134,14 @@ class SevenKingPersonState(roomai.common.AbstractPersonState):
         self.__hand_cards_keyset__.add(c.key)
 
         for j in range(len(self.__hand_cards)-1,0,-1):
-            if SevenKingPokerCard.compare(self.__hand_cards[j - 1], self.__hand_cards[j]) > 0:
-                tmp = self.__hand_cards[j]
-                self.__hand_cards[j] = self.__hand_cards[j-1]
-                self.__hand_cards[j-1] = tmp
+            if SevenKingPokerCard.compare(self.__hand_cards__[j - 1], self.__hand_cards__[j]) > 0:
+                tmp = self.__hand_cards__[j]
+                self.__hand_cards__[j] = self.__hand_cards__[j-1]
+                self.__hand_cards__[j-1] = tmp
             else:
                 break
 
-        self.__hand_cards_key = ",".join([c.key for c in self.__hand_cards])
+        self.__hand_cards_key = ",".join([c.key for c in self.__hand_cards__])
 
     def __add_cards__(self, cards):
         len1 = len(self.__hand_cards__)
@@ -175,7 +175,7 @@ class SevenKingPersonState(roomai.common.AbstractPersonState):
             if c.key == tmp[i].key:
                 continue
             self.__hand_cards__.append(tmp[i])
-        self.__hand_cards_key__ = ",".join([c.key for c in self.__hand_cards])
+        self.__hand_cards_key__ = ",".join([c.key for c in self.__hand_cards__])
 
 
     def __del_cards__(self, cards):
@@ -188,7 +188,7 @@ class SevenKingPersonState(roomai.common.AbstractPersonState):
             if tmp[i].key not in self.__hand_cards_keyset__:
                 continue
             self.__hand_cards__.append(tmp[i])
-        self.__hand_cards_key__ = ",".join([c.key for c in self.hand_cards])
+        self.__hand_cards_key__ = ",".join([c.key for c in self.__hand_cards__])
 
     def __gen_pointrank2cards__(self):
         if self.__hand_cards_key__ in AllPointRank2Cards:
@@ -200,8 +200,14 @@ class SevenKingPersonState(roomai.common.AbstractPersonState):
                 if pointrank not in point2cards:
                     point2cards[pointrank] = []
                 point2cards[pointrank].append(c)
-            #for p in point2cards:
-            #    point2cards[p].sort(cmp=SevenKingPokerCard.compare)
+            for p in point2cards:
+                for i in range(len(point2cards[p])-1):
+                    for j in range(i+1,len(point2cards[p])):
+                        if SevenKingPokerCard.compare(point2cards[p][i],point2cards[p][j]) > 0:
+                            tmp = point2cards[p][i]
+                            point2cards[p][i] = point2cards[p][j]
+                            point2cards[p][j] = tmp
+                #point2cards[p].sort(cmp=SevenKingPokerCard.compare)
 
             AllPointRank2Cards[self.__hand_cards_key__] = point2cards
             return point2cards

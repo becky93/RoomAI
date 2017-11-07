@@ -1,7 +1,6 @@
 #!/bin/python
 from roomai.sevenking import SevenKingEnv
 from roomai.sevenking import SevenKingAction
-from roomai.sevenking import SevenKingRandomPlayer
 from roomai.sevenking import SevenKingPokerCard
 import roomai.common
 import unittest
@@ -25,7 +24,7 @@ class AlwaysFoldPlayer(roomai.common.AbstractPlayer):
                         card = a.hand_card[0]
                         if SevenKingPokerCard.compare(card, min_card) < 0 : min_card = card
             if min_card is None:
-                return self.available_actions.values()[0]
+                return list(self.available_actions.values())[0]
             else:
                 return SevenKingAction.lookup(min_card.key)
         else:
@@ -74,6 +73,78 @@ class AlwaysNotFoldPlayer(roomai.common.AbstractPlayer):
         """
         pass
 
+class AlwaysMinPlayer(roomai.common.AbstractPlayer):
+    """
+    """
+    def take_action(self):
+        """
+
+        Returns:
+
+        """
+        min_card = None
+        for a in self.available_actions.values():
+            if a.pattern[0] == "p_1":
+                if min_card is None:    min_card = a.cards[0]
+                else:
+                    card = a.cards[0]
+                    if SevenKingPokerCard.compare(card, min_card) < 0 : min_card = card
+        if min_card is None:
+            return list(self.available_actions.values())[0]
+        else:
+            return SevenKingAction.lookup(min_card.key)
+
+    def receive_info(self,info):
+        """
+
+        Args:
+            info:
+        """
+        self.public_state      = info.public_state
+        self.available_actions = info.person_state.available_actions
+
+    def reset(self):
+        """
+
+        """
+        pass
+
+class AlwaysMaxPlayer(roomai.common.AbstractPlayer):
+            """
+            """
+
+            def take_action(self):
+                """
+
+                Returns:
+
+                """
+                max_action = SevenKingAction.lookup("")
+                max_pattern = 0
+                for a in self.available_actions.values():
+                    if (a.pattern[1] > max_pattern):
+                        max_pattern = a.pattern[1]
+                        max_action = a
+                    elif (a.pattern[1] == max_pattern):
+                        if (a.pattern[0] != 'p_0' and (SevenKingPokerCard.compare(a.cards[-1], max_action.cards[-1]) > 0)):
+                            max_action = a
+
+                return max_action
+
+            def receive_info(self, info):
+                """
+
+                Args:
+                    info:
+                """
+                self.public_state = info.public_state
+                self.available_actions = info.person_state.available_actions
+
+            def reset(self):
+                """
+
+                """
+                pass
 
 
 class testSevenKing(unittest.TestCase):
@@ -101,9 +172,9 @@ class testSevenKing(unittest.TestCase):
         print ("available_actions=",person_states[turn].available_actions.keys())
         print ("available_actions_v=",person_states[turn].available_actions.values())
 
-
+#      it may go wrong
         action = SevenKingAction("%s,%s" % (person_states[turn].hand_cards[0].key, person_states[turn].hand_cards[1].key))
-        infos, public_state, person_states, private_state = env.forward(action)
+     #   infos, public_state, person_states, private_state = env.forward(action)
 
 
     def testRandom(self):
@@ -112,7 +183,7 @@ class testSevenKing(unittest.TestCase):
         """
         env = SevenKingEnv()
         env.num_players = 2
-        players = [SevenKingRandomPlayer() for i in range(2)]
+        players = [roomai.common.RandomPlayer() for i in range(2)]
 
         for i in range(100):
             SevenKingEnv.compete(env, players)
@@ -124,10 +195,10 @@ class testSevenKing(unittest.TestCase):
         env = SevenKingEnv()
         env.num_players = 3
 
-        print "aaa"
+        print ("aaa")
         players = [AlwaysFoldPlayer(), AlwaysFoldPlayer(), AlwaysNotFoldPlayer()]
         scores  = env.compete(env, players)
-        print scores
+        print (scores)
 
         self.assertEqual(scores[0],-1)
         self.assertEqual(scores[1],-1)
@@ -146,11 +217,11 @@ class testSevenKing(unittest.TestCase):
 
 if __name__ == "__main__":
     env = SevenKingEnv()
-    players = [AlwaysFoldPlayer(), AlwaysNotFoldPlayer(), AlwaysNotFoldPlayer(), AlwaysFoldPlayer(), AlwaysNotFoldPlayer()]
-
+    players = [AlwaysMaxPlayer(), AlwaysNotFoldPlayer(), AlwaysMinPlayer(), roomai.common.RandomPlayer()]
     import time
     start =time.time()
-    for i in range(10000):
+    for i in range(10):
         scores = env.compete(env, players)
+        print(scores)
     end = time.time()
-    print end-start
+    print (end-start)
