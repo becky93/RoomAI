@@ -138,9 +138,9 @@ class SevenKingPersonState(roomai.common.AbstractPersonState):
     hand_cards_keyset = property(__get_hand_cards_keyset__, doc = "The set of the poker cards' key in the hand cards. For example, hand_cards_keyset={\"A_Spade\"}")
 
 
-    def __add_card__(self, c):
-        self.__hand_cards__.append(c)
-        self.__hand_cards_keyset__.add(c.key)
+    def __add_card__(self, card):
+        self.__hand_cards__.append(card)
+        self.__hand_cards_keyset__.add(card.key)
 
         for j in range(len(self.__hand_cards)-1,0,-1):
             if SevenKingPokerCard.compare(self.__hand_cards__[j - 1], self.__hand_cards__[j]) > 0:
@@ -151,6 +151,7 @@ class SevenKingPersonState(roomai.common.AbstractPersonState):
                 break
 
         self.__hand_cards_key = ",".join([c.key for c in self.__hand_cards__])
+
 
     def __add_cards__(self, cards):
         len1 = len(self.__hand_cards__)
@@ -169,19 +170,17 @@ class SevenKingPersonState(roomai.common.AbstractPersonState):
                 else:
                     break
 
-
         #self.__hand_cards.sort(cmp=SevenKingPokerCard.compare)
         self.__hand_cards_key__ = ",".join([c.key for c in self.__hand_cards__])
 
 
-
-    def __del_card__(self, c):
-        self.__hand_cards_keyset__.remove(c.key)
+    def __del_card__(self, card):
+        self.__hand_cards_keyset__.remove(card.key)
 
         tmp = self.__hand_cards__
         self.__hand_cards__ = []
         for i in range(len(tmp)):
-            if c.key == tmp[i].key:
+            if card.key == tmp[i].key:
                 continue
             self.__hand_cards__.append(tmp[i])
         self.__hand_cards_key__ = ",".join([c.key for c in self.__hand_cards__])
@@ -198,6 +197,7 @@ class SevenKingPersonState(roomai.common.AbstractPersonState):
                 continue
             self.__hand_cards__.append(tmp[i])
         self.__hand_cards_key__ = ",".join([c.key for c in self.__hand_cards__])
+
 
     def __gen_pointrank2cards__(self):
         if self.__hand_cards_key__ in AllPointRank2Cards:
@@ -226,8 +226,9 @@ class SevenKingPersonState(roomai.common.AbstractPersonState):
             newinstance          = SevenKingPersonState()
         newinstance      = super(SevenKingPersonState, self).__deepcopy__(newinstance= newinstance)
         newinstance.__hand_cards__           = list(tuple(self.__hand_cards__))
-        newinstance.__hand_cards_set__       = set(self.__hand_cards_keyset__)
+        newinstance.__hand_cards_keyset__       = set(self.__hand_cards_keyset__)
         newinstance.__hand_cards_key__       = self.__hand_cards_key__
+
         return newinstance
 
 

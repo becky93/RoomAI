@@ -153,7 +153,7 @@ def Train(params = dict()):
     if "num_iter" in params:
         num_iter = params["num_iter"]
     else:
-        num_iter = 1000
+        num_iter = 1
 
     probs = [1.0 for i in range(num_players)]
 
