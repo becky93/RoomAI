@@ -24,11 +24,19 @@ class BridgeEnv(roomai.common.AbstractEnv):
         self.private_state = roomai.bridge.BridgePrivate()
 
     def forward(self, action):
+        pu  = self.public_state
+        pes = self.person_states
+        pr  = self.private_state
+        if self.is_action_valid(action, pu, pes[pu.turn]):
+            raise ValueError("%s is invalid action"%(action.key))
+        pes[pu.turn].__available_actions__ = dict()
 
         if self.public_state.stage == 0: ## the bidding stage
             pass
+
         elif self.public_state.stage == 1: ## the playing stage
             pass
+
         else:
             raise ValueError("The public_state.stage = %d is invalid"%(self.public_state.stage))
 
@@ -37,11 +45,42 @@ class BridgeEnv(roomai.common.AbstractEnv):
         return self.__gen_infos__()
 
     @classmethod
+    def is_action_valid(cls, action, public_state, person_state):
+        return action.key in person_state.available_actions
+
+    @classmethod
     def available_actions(self, public_state, person_state):
-        if self.public_state.stage == 0: ## the bidding stage
-            pass
-        elif self.public_state.stage == 1: ## the playing stage
-            pass
+        if public_state.stage == 0: ## the bidding stage
+            available_actions = dict()
+            if public_state.candidate_trump is None:
+                for card in roomai.bridge.AllBridgePokerCards:
+                    key = "bidding_%s"%(card.key)
+                    available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
+            else:
+                for card in roomai.bridge.AllBridgePokerCards:
+                    if card.compare(card, public_state.candidate_trump) > 0:
+                        key = "bidding_%s" % (card.key)
+                        available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
+            return available_actions
+
+        elif public_state.stage == 1: ## the playing stage
+            available_actions = dict()
+            if public_state.cards_on_table == []:
+                for card in person_states[public_state.real_turn].hand_cards:
+                    key = "playing_%s"%(card.key)
+                    available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
+            else:
+                for card in person_states[public_state.real_turn].hand_cards:
+                    if card.suit == public_state.cards_on_table[0].suit:
+                        key = "playing_%s" % (card.key)
+                        available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
+                if len(available_actions) == 0:
+                    for card in person_states[public_state.real_turn].hand_cards:
+                        key = "playing_%s" % (card.key)
+                        available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
+
+            return available_actions
+
         else:
             raise ValueError("The public_state.stage = %d is invalid"%(self.public_state.stage))
 

@@ -1,5 +1,6 @@
 #!/bin/python
 import roomai.common
+from functools import cmp_to_key
 
 point_str_to_rank  = {'A':12, 'K':11, 'Q':10, 'J':9, '10':8, '9':7, '8':6, '7':5, '6':4, '5':3, '4':2, '3':1, '2':0}
 point_rank_to_str  = {0:'2', 1:'3', 2:'4',  3:'5', 4:'6',  5:'7',  6:'8',   7:'9', 8:'10',  9:'J',   10:'Q',   11:'K',   12:'A'}
@@ -47,3 +48,4 @@ AllBridgePokerCards = dict()
 for point_str in point_str_to_rank:
     for suit_str in suit_str_to_rank:
         AllBridgePokerCards["%s_%s" % (point_str, suit_str)] = BridgePokerCard("%s_%s" % (point_str, suit_str))
+
