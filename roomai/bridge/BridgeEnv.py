@@ -1,6 +1,8 @@
 #!/bin/python
 import roomai.common
+import roomai.bridge
 import random
+
 
 class BridgeEnv(roomai.common.AbstractEnv):
     def init(self, params =dict()):
@@ -12,7 +14,13 @@ class BridgeEnv(roomai.common.AbstractEnv):
             self.__params__["start_turn"] = int(random.random() * 4)
 
         self.public_state  = roomai.bridge.BridgePublicState()
+        self.public_state.__stage__ = 0
+
         self.person_states = [roomai.bridge.BridgePersonState() for i in range(4)]
+        len = len(roomai.bridge.AllBridgePokerCards) / 4
+        for i in range(4):
+            self.person_states[i].__hand_cards__ = roomai.bridge.AllBridgePokerCards[i*len:(i+1)*len]
+
         self.private_state = roomai.bridge.BridgePrivate()
 
     def forward(self, action):
