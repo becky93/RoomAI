@@ -66,16 +66,16 @@ class BridgeEnv(roomai.common.AbstractEnv):
         elif public_state.stage == 1: ## the playing stage
             available_actions = dict()
             if public_state.cards_on_table == []:
-                for card in person_states[public_state.real_turn].hand_cards:
+                for card in person_state.hand_cards:
                     key = "playing_%s"%(card.key)
                     available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
             else:
-                for card in person_states[public_state.real_turn].hand_cards:
+                for card in person_state.hand_cards:
                     if card.suit == public_state.cards_on_table[0].suit:
                         key = "playing_%s" % (card.key)
                         available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
                 if len(available_actions) == 0:
-                    for card in person_states[public_state.real_turn].hand_cards:
+                    for card in person_state.hand_cards:
                         key = "playing_%s" % (card.key)
                         available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
 
