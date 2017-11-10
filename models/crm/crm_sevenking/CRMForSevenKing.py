@@ -61,7 +61,7 @@ class SevenKingPlayer(CRMPlayer):
         return regrets
 
 
-def CRMTrain(env, player, probs, action = None, depth = 0):
+def CRMTrain(env, cur_turn, player, probs, action=None, depth=0):
 
     infos         = None
     public_state  = None
@@ -79,7 +79,7 @@ def CRMTrain(env, player, probs, action = None, depth = 0):
         infos, public_state, person_states, private_state = env.forward(action)
 
     if public_state.is_terminal == True:
-        utility = public_state.scores[public_state.previous_id]    # some problems
+        utility = public_state.scores[cur_turn]
 
     else:
         this_turn = public_state.turn
@@ -110,7 +110,7 @@ def CRMTrain(env, player, probs, action = None, depth = 0):
             for j in xrange(num_players):
                 if j != this_turn:
                     temp_probs[j] = probs[j] * cur_strategies[new_key]
-            util[new_key] = -CRMTrain(env, player, temp_probs, available_actions[key], depth+1)
+            util[new_key] = -CRMTrain(env, cur_turn, player, temp_probs, available_actions[key], depth+1)
             strategy_util += cur_strategies[new_key] * util[new_key]
 
         new_regrets = dict()
@@ -118,18 +118,20 @@ def CRMTrain(env, player, probs, action = None, depth = 0):
 
         strategies = player.get_strategies(state, available_actions)
 
-        # update regrets and strategies
-        for key in available_actions:
-            prob = 1
-            new_key = state + '_' + key
-            for j in xrange(num_players):
-                if j != this_turn:
-                    prob *= probs[j]
-            new_regrets[new_key] = regrets[new_key] + prob * (util[new_key] - strategy_util)
-            new_strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
+        if this_turn == cur_turn:
+            # update regrets and strategies
+            for key in available_actions:
+                prob = 1
+                new_key = state + '_' + key
+                for j in xrange(num_players):
+                    if j != this_turn:
+                        prob *= probs[j]
+                new_regrets[new_key] = regrets[new_key] + prob * (util[new_key] - strategy_util)
+                new_strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
 
-        player.update_regrets(state, available_actions, new_regrets)
-        player.update_strategies(state, available_actions, new_strategies)
+            player.update_regrets(state, available_actions, new_regrets)
+            player.update_strategies(state, available_actions, new_strategies)
+
         utility = strategy_util
 
     if depth != 0:
@@ -153,12 +155,13 @@ def Train(params = dict()):
     if "num_iter" in params:
         num_iter = params["num_iter"]
     else:
-        num_iter = 1
+        num_iter = 100
 
     probs = [1.0 for i in range(num_players)]
 
     for i in xrange(num_iter):
-        CRMTrain(env, player, probs)
+        for p in xrange(num_players):
+            CRMTrain(env, p, player, probs)
 
     return player
 
