@@ -19,7 +19,9 @@ class BridgeEnv(roomai.common.AbstractEnv):
         self.person_states = [roomai.bridge.BridgePersonState() for i in range(4)]
         len = len(roomai.bridge.AllBridgePokerCards) / 4
         for i in range(4):
-            self.person_states[i].__hand_cards__ = roomai.bridge.AllBridgePokerCards[i*len:(i+1)*len]
+            self.person_states[i].__hand_cards_dict__ = dict()
+            for card in roomai.bridge.AllBridgePokerCards[i*len:(i+1)*len]:
+                self.person_states[i].__hand_cards_dict__[card.key] = card
 
         self.private_state = roomai.bridge.BridgePrivate()
 
@@ -31,11 +33,45 @@ class BridgeEnv(roomai.common.AbstractEnv):
             raise ValueError("%s is invalid action"%(action.key))
         pes[pu.turn].__available_actions__ = dict()
 
-        if self.public_state.stage == 0: ## the bidding stage
-            pass
+        if pu.stage == 0: ## the bidding stage
+            pu.cards_on_table.append(action.card)
+            if len(pu.cards_on_table) == 1:
+                pu.__candidate_dealerid__  = pu.turn
+                pu.__candidate_trump__     = action.card
+            if len(pu.cards_on_table) == 2 or len(pu.cards_on_table) == 3:
+                if roomai.bridge.BridgePokerCard.compare(action.card, pu.candidate_trump) > 0:
+                    pu.__candidate_dealerid__ = pu.turn
+                    pu.__candidate_trump__    = action.card
+            if len(pu.cards_on_table) == 4:
+                if roomai.bridge.BridgePokerCard.compare(action.card, pu.candidate_trump) > 0:
+                    pu.__candidate_dealerid__ = pu.turn
+                    pu.__candidate_trump__    = action.card
+                pu.__stage__          = 0
+                pu.__cards_on_table__ = []
+                pu.__turn__           = pu.candidate_dealerid
+                pu.__real_turn__      = pu.turn
+                pu.__dealerid__       = pu.candidate_dealerid
+                pu.__trump__          = pu.candidate_trump
 
-        elif self.public_state.stage == 1: ## the playing stage
-            pass
+        elif pu.stage == 1: ## the playing stage
+            pu.cards_on_table.append(action.card)
+            self.__remove_card_from_hand_cards__(pes[pu.real_turn], action.card)
+
+            if len(pu.cards_on_table) == 4:
+                playerid1,playerid2 = self.__compute_winner__()
+                pu.__win_count_sofar__[playerid1] += 1
+                pu.__win_count_sofar__[playerid2] += 1
+                if len(pes[pu.real_turn].hand_cards) == 0:
+                    pu.__is_terminal__ = True
+                    if pu.win_count_sofar[pu.dealerid] > pu.win_count_sofar[(pu.dealerid + 1)%4] + pu.trump.point_rank:
+                        pu.__scores__ = [-1,-1,-1,-1]
+                        pu.__scores__[pu.dealerid] = 1
+                        pu.__scores__[(pu.dealerid+2)%4] = 1
+                    else:
+                        pu.__scores__ = [1,1,1,1]
+                        pu.__scores__[pu.dealerid] = 1
+                        pu.__scores__[(pu.dealerid+2)%4] = 1
+
 
         else:
             raise ValueError("The public_state.stage = %d is invalid"%(self.public_state.stage))
@@ -43,6 +79,23 @@ class BridgeEnv(roomai.common.AbstractEnv):
 
         self.__gen_history__()
         return self.__gen_infos__()
+
+    def __remove_card_from_hand_cards__(self, person_state, card):
+        del person_state.__hand_cards_dict__[card.key]
+
+    def __compare_card_with_trump__(self, card1, card2, trump):
+        if card1.suit == trump.suit and card2.suit == trump.suit:
+            return roomai.bridge.BridgePokerCard.compare(card1,card2)
+        elif card1.suit == trump.suit and card2.suit != trump.suit:
+            return 1
+        elif card1.suit != trump.suit and card2.suit == trump.suit:
+            return -1
+        else:
+            return roomai.bridge.BridgePokerCard.compare(card1, card2)
+
+    def __compute_winner__(self, pu):
+        pass
+
 
     @classmethod
     def is_action_valid(cls, action, public_state, person_state):
@@ -82,6 +135,6 @@ class BridgeEnv(roomai.common.AbstractEnv):
             return available_actions
 
         else:
-            raise ValueError("The public_state.stage = %d is invalid"%(self.public_state.stage))
+            raise ValueError("The public_state.stage = %d is invalid. The public_state.stage = 0 means the bidding stage, The public_state.stage = 1 means the playing stage"%(self.public_state.stage))
 
 
