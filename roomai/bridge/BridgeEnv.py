@@ -69,8 +69,8 @@ class BridgeEnv(roomai.common.AbstractEnv):
                         pu.__scores__[(pu.dealerid+2)%4] = 1
                     else:
                         pu.__scores__ = [1,1,1,1]
-                        pu.__scores__[pu.dealerid] = 1
-                        pu.__scores__[(pu.dealerid+2)%4] = 1
+                        pu.__scores__[pu.dealerid] = -1
+                        pu.__scores__[(pu.dealerid+2)%4] = -1
 
 
         else:
