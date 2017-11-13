@@ -5,6 +5,11 @@ import random
 
 
 class BridgeEnv(roomai.common.AbstractEnv):
+    '''
+    The Bridge game environment
+    '''
+
+
     def init(self, params =dict()):
         super(BridgeEnv, self).__init__(dict)
 
@@ -13,6 +18,12 @@ class BridgeEnv(roomai.common.AbstractEnv):
         else:
             self.__params__["start_turn"] = int(random.random() * 4)
 
+        if "allcards" in params:
+            self.__params__["allcards"] = params["allcards"]
+        else:
+            self.__params__["allcards"] = list(roomai.bridge.AllBridgePokerCards)
+            random.shuffle(self.__params__["allcards"])
+
         self.public_state  = roomai.bridge.BridgePublicState()
         self.public_state.__stage__ = 0
 
@@ -20,12 +31,19 @@ class BridgeEnv(roomai.common.AbstractEnv):
         len = len(roomai.bridge.AllBridgePokerCards) / 4
         for i in range(4):
             self.person_states[i].__hand_cards_dict__ = dict()
-            for card in roomai.bridge.AllBridgePokerCards[i*len:(i+1)*len]:
+            for card in self.__params__["allcards"][i*len:(i+1)*len]:
                 self.person_states[i].__hand_cards_dict__[card.key] = card
 
         self.private_state = roomai.bridge.BridgePrivate()
 
     def forward(self, action):
+        '''
+        The Bridge game go forward with this action
+        
+        :param action: 
+        :return: 
+        '''
+
         pu  = self.public_state
         pes = self.person_states
         pr  = self.private_state
@@ -38,10 +56,14 @@ class BridgeEnv(roomai.common.AbstractEnv):
             if len(pu.cards_on_table) == 1:
                 pu.__candidate_dealerid__  = pu.turn
                 pu.__candidate_trump__     = action.card
+                pu.__real_turn__           = (pu.__real_turn__ + 1)%4
+                pu.__turn__                = (pu.__turn__ + 1) %4
             if len(pu.cards_on_table) == 2 or len(pu.cards_on_table) == 3:
                 if roomai.bridge.BridgePokerCard.compare(action.card, pu.candidate_trump) > 0:
                     pu.__candidate_dealerid__ = pu.turn
                     pu.__candidate_trump__    = action.card
+                pu.__real_turn__           = (pu.__real_turn__ + 1)%4
+                pu.__turn__                = (pu.__turn__ + 1) %4
             if len(pu.cards_on_table) == 4:
                 if roomai.bridge.BridgePokerCard.compare(action.card, pu.candidate_trump) > 0:
                     pu.__candidate_dealerid__ = pu.turn
@@ -52,6 +74,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
                 pu.__real_turn__      = pu.turn
                 pu.__dealerid__       = pu.candidate_dealerid
                 pu.__trump__          = pu.candidate_trump
+
 
         elif pu.stage == 1: ## the playing stage
             pu.cards_on_table.append(action.card)
@@ -71,6 +94,9 @@ class BridgeEnv(roomai.common.AbstractEnv):
                         pu.__scores__ = [1,1,1,1]
                         pu.__scores__[pu.dealerid] = -1
                         pu.__scores__[(pu.dealerid+2)%4] = -1
+            else:
+                pu.__real_turn__ = (pu.__real_turn__ + 1)%4
+                pu.__turn__      = (pu.__turn__ + 1)%4
 
 
         else:
@@ -94,7 +120,14 @@ class BridgeEnv(roomai.common.AbstractEnv):
             return roomai.bridge.BridgePokerCard.compare(card1, card2)
 
     def __compute_winner__(self, pu):
-        pass
+        max_id   = 0
+        max_card = pu.cards_on_table[0]
+        for i in range(1,4):
+            if self.__compare_card_with_trump__(max_card, pu.cards_on_table[i], pu.trump):
+                max_id   = i
+                max_card = pu.cards_on_table[i]
+
+        return max_id, (max_id + 2)%2
 
 
     @classmethod
