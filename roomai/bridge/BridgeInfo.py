@@ -26,7 +26,7 @@ class BridgePublicState(roomai.common.AbstractPublicState):
     trump = property(__get_trump__, doc="")
 
     def __get_candidate_dealerid__(self):   return self.__candidate_dealerid__
-    candidate_dealerid = property(__get_candidate_dealerid__(), doc="")
+    candidate_dealerid = property(__get_candidate_dealerid__, doc="")
 
     def __get_dealerid__(self): return self.__dealerid__
     dealerid = property(__get_dealerid__, doc = "")
@@ -48,7 +48,7 @@ class BridgePersonState(roomai.common.AbstractPersonState):
         super(BridgePersonState, self).__init__()
         self.__hand_cards_dict__ = dict
 
-    def __get_hand_cards_dict__(self):   return tuple(self.__hand_cards_dict__)
+    def __get_hand_cards_dict__(self):   return roomai.common.FrozenDict(self.__hand_cards_dict__)
     hand_cards_dict = property(__get_hand_cards_dict__, doc = "The hand cards in the corresponding player. For example, \n"
                                                     "hand_cards_dict = {\"A_Heart\":roomai.bridge.BridgePokerCard.lookup(\"A_Heart\"), \"A_Spade\":roomai.bridge.BridgePokerCard.lookup(\"A_Spade\")}")
 

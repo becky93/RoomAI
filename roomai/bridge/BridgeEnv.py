@@ -10,8 +10,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
     '''
 
 
-    def init(self, params =dict()):
-        super(BridgeEnv, self).__init__(dict)
+    def init(self, params = dict()):
 
         if "start_turn" in params:
             self.__params__["start_turn"] = params["start_turn"]
@@ -21,20 +20,23 @@ class BridgeEnv(roomai.common.AbstractEnv):
         if "allcards" in params:
             self.__params__["allcards"] = params["allcards"]
         else:
-            self.__params__["allcards"] = list(roomai.bridge.AllBridgePokerCards)
+            self.__params__["allcards"] = list(roomai.bridge.AllBridgePokerCards.values())
             random.shuffle(self.__params__["allcards"])
 
         self.public_state  = roomai.bridge.BridgePublicState()
         self.public_state.__stage__ = 0
 
         self.person_states = [roomai.bridge.BridgePersonState() for i in range(4)]
-        len = len(roomai.bridge.AllBridgePokerCards) / 4
+        num = len(roomai.bridge.AllBridgePokerCards) / 4
         for i in range(4):
             self.person_states[i].__hand_cards_dict__ = dict()
-            for card in self.__params__["allcards"][i*len:(i+1)*len]:
+            for card in self.__params__["allcards"][i*num:(i+1)*num]:
                 self.person_states[i].__hand_cards_dict__[card.key] = card
 
-        self.private_state = roomai.bridge.BridgePrivate()
+        self.private_state = roomai.bridge.BridgePrivateState()
+
+        self.__gen_history__()
+        return self.__gen_infos__(), self.public_state, self.person_states, self.private_state
 
     def forward(self, action):
         '''
@@ -104,7 +106,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
 
 
         self.__gen_history__()
-        return self.__gen_infos__()
+        return self.__gen_infos__(), self.public_state,self.person_states, self.private_state
 
     def __remove_card_from_hand_cards__(self, person_state, card):
         del person_state.__hand_cards_dict__[card.key]
