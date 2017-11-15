@@ -27,7 +27,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
         self.public_state.__stage__ = 0
 
         self.person_states = [roomai.bridge.BridgePersonState() for i in range(4)]
-        num = len(roomai.bridge.AllBridgePokerCards) / 4
+        num = int(len(roomai.bridge.AllBridgePokerCards) / 4)
         for i in range(4):
             self.person_states[i].__hand_cards_dict__ = dict()
             for card in self.__params__["allcards"][i*num:(i+1)*num]:
