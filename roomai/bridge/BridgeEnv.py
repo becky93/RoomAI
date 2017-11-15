@@ -23,8 +23,10 @@ class BridgeEnv(roomai.common.AbstractEnv):
             self.__params__["allcards"] = list(roomai.bridge.AllBridgePokerCards.values())
             random.shuffle(self.__params__["allcards"])
 
-        self.public_state  = roomai.bridge.BridgePublicState()
-        self.public_state.__stage__ = 0
+        self.public_state               = roomai.bridge.BridgePublicState()
+        self.public_state.__stage__     = 0
+        self.public_state.__turn__      = self.__params__["start_turn"]
+        self.public_state.__real_turn__ = self.__params__["start_turn"]
 
         self.person_states = [roomai.bridge.BridgePersonState() for i in range(4)]
         num = int(len(roomai.bridge.AllBridgePokerCards) / 4)
@@ -32,6 +34,9 @@ class BridgeEnv(roomai.common.AbstractEnv):
             self.person_states[i].__hand_cards_dict__ = dict()
             for card in self.__params__["allcards"][i*num:(i+1)*num]:
                 self.person_states[i].__hand_cards_dict__[card.key] = card
+        self.person_states[self.public_state.turn].__available_actions__ \
+            = self.available_actions(self.public_state, self.person_states[self.public_state.turn])
+
 
         self.private_state = roomai.bridge.BridgePrivateState()
 
@@ -141,11 +146,11 @@ class BridgeEnv(roomai.common.AbstractEnv):
         if public_state.stage == 0: ## the bidding stage
             available_actions = dict()
             if public_state.candidate_trump is None:
-                for card in roomai.bridge.AllBridgePokerCards:
+                for card in list(roomai.bridge.AllBridgePokerCards.values()):
                     key = "bidding_%s"%(card.key)
                     available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
             else:
-                for card in roomai.bridge.AllBridgePokerCards:
+                for card in list(roomai.bridge.AllBridgePokerCards.values()):
                     if card.compare(card, public_state.candidate_trump) > 0:
                         key = "bidding_%s" % (card.key)
                         available_actions[key] = roomai.bridge.BridgeAction.lookup(key)

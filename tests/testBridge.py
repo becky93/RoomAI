@@ -14,3 +14,6 @@ class BridgeTester(unittest.TestCase):
         self.assertEqual(len(infos),4)
         for i in range(4):
             self.assertEqual(len(person_states[i].hand_cards_dict.keys()), 52 / 4)
+
+        self.assertNotEqual(len(person_states[public_state.turn].available_actions),0)
+        self.assertEqual(len(person_states[public_state.turn].available_actions), 52)
