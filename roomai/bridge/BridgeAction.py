@@ -1,5 +1,6 @@
 #!/bin/python
 import roomai.common
+import roomai.bridge
 
 class BridgeAction(roomai.common.AbstractAction):
     '''
@@ -34,13 +35,17 @@ class BridgeAction(roomai.common.AbstractAction):
 
         if self.__stage__ == 0:
             if self.__option__ == "bid":
-                self.__key__ = "bidding_" + self.__option__+"_" + bridgepokercard.key
+                key= "bidding_" + self.__option__+"_" + bridgepokercard.key
             else:
-                self.__key__ = "bidding_" + self.__option__
+                key = "bidding_" + self.__option__
         elif self.__stage__ == 1:
-            self.__key__ = "playing_" + bridgepokercard.key
+            key = "playing_" + bridgepokercard.key
         else:
             raise ValueError("The stage param must be 0 or 1.")
+
+        super(BridgeAction, self).__init__(key=self.key)
+
+
 
 
     def __get_key__(self): return self.__key__
@@ -78,6 +83,7 @@ class BridgeAction(roomai.common.AbstractAction):
     def __deepcopy__(self, memodict={}, newinstance = None):
         return AllBridgeActions[self.key]
 
+    @classmethod
     def lookup(self, key):
         '''
         lookup an action with the key
@@ -86,7 +92,18 @@ class BridgeAction(roomai.common.AbstractAction):
         :return: the action with this key
         '''
         if key not in AllBridgeActions:
-            AllBridgeActions[key] = BridgeAction(key)
+            stage = 0
+            card  = ""
+            if "bidding" in key:
+                stage = 0
+                card  = roomai.bridge.BridgePokerCard.lookup(key.replace("bidding_",""))
+            elif "playing" in key:
+                stage = 1
+                card  = roomai.bridge.BridgePokerCard.lookup(key.replace("playing_",""))
+            else:
+                raise ValueError("%s is an invalid key"%(key))
+
+            AllBridgeActions[key] = BridgeAction(stage, card)
         return AllBridgeActions[key]
 
 
