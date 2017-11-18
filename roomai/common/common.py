@@ -340,19 +340,19 @@ class PokerCard(object):
             if isinstance(suit, str):
                 suit1 = suit_str_to_rank[suit]
 
-        self.__point_str__  = point_rank_to_str[point1]
-        self.__suit_str__   = suit_rank_to_str[suit1]
+        self.__point__  = point_rank_to_str[point1]
+        self.__suit__   = suit_rank_to_str[suit1]
         self.__point_rank__ = point1
         self.__suit_rank__  = suit1
-        self.__key__        = "%s_%s" % (self.__point_str__, self.__suit_str__)
+        self.__key__        = "%s_%s" % (self.__point__, self.__suit__)
 
 
     def __get_point_str__(self):
-        return self.__point_str__
+        return self.__point__
     point = property(__get_point_str__, doc="The point of the poker card")
 
     def __get_suit_str__(self):
-        return self.__suit_str__
+        return self.__suit__
     suit = property(__get_suit_str__, doc="The suit of the poker card")
 
     def __get_point_rank__(self):
