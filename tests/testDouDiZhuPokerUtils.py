@@ -46,7 +46,7 @@ class DouDiZhuPokerUtilTester(unittest.TestCase):
         """
 
         """
-        from roomai.doudizhu.DouDiZhuPokerAction import  DouDiZhuPokerAction as Action
+        from roomai.doudizhupoker.DouDiZhuPokerAction import  DouDiZhuPokerAction as Action
         a = Action.lookup("3333")
 
         print (a.pattern)

@@ -3,9 +3,9 @@ import roomai.common
 from functools import cmp_to_key
 
 point_str_to_rank  = {'A':12, 'K':11, 'Q':10, 'J':9, '10':8, '9':7, '8':6, '7':5, '6':4, '5':3, '4':2, '3':1, '2':0}
-point_rank_to_str  = {0:'2', 1:'3', 2:'4',  3:'5', 4:'6',  5:'7',  6:'8',   7:'9', 8:'10',  9:'J',   10:'Q',   11:'K',   12:'A'}
-suit_str_to_rank   = {"NotTrump":4, 'Spade':3, 'Heart':2, 'Diamond':1, 'Club':0}
-suit_rank_to_str   = {4:"NotTrump",3:'Spade', 2: 'Heart', 1: 'Diamond', 0:'Club'}
+point_rank_to_str  = {0: '2', 1: '3', 2: '4', 3: '5', 4: '6', 5: '7', 6: '8', 7: '9', 8: '10', 9: 'J', 10: 'Q', 11: 'K', 12: 'A'}
+suit_str_to_rank   = {'Spade':3, 'Heart':2, 'Diamond':1, 'Club':0}
+suit_rank_to_str   = {3: 'Spade', 2: 'Heart', 1: 'Diamond', 0: 'Club'}
 
 class BridgePokerCard(roomai.common.PokerCard):
     '''
@@ -35,10 +35,6 @@ class BridgePokerCard(roomai.common.PokerCard):
         self.__point_rank__ = real_point_int
         self.__suit_rank__  = real_suit_int
         self.__is_nt_card   = False
-        if self.__suit__ == "NotTrump":
-            self.__is_nt_card = True
-        else:
-            self.__is_nt_card = False
         self.__key__        = "%s_%s" % (self.__point__, self.__suit__)
 
 
@@ -46,27 +42,15 @@ class BridgePokerCard(roomai.common.PokerCard):
     is_nt_card = property(__get_is_nt_card__, doc = "")
 
     def __deepcopy__(self, memodict={}, newinstance=None):
-        if self.is_nt_card == False:
-            return AllNormalBridgePokerCards[self.key]
-        else:
-            return AllNTBridgePokerCards[self.key]
+        return AllBridgePokerCards[self.key]
 
     @classmethod
     def lookup(cls, key):
-        if key in AllNormalBridgePokerCards:
-            return AllNormalBridgePokerCards[key]
-        else:
-            return AllNTBridgePokerCards[key]
+        return AllBridgePokerCards[key]
 
-
-AllNTBridgePokerCards = dict()
+AllBridgePokerCards = dict()
 for point_str in point_str_to_rank:
     for suit_str in suit_str_to_rank:
-        if suit_str == "NotTrump":
-            AllNTBridgePokerCards["%s_%s" % (point_str, suit_str)] = BridgePokerCard("%s_%s" % (point_str, suit_str))
+            AllBridgePokerCards["%s_%s" % (point_str, suit_str)] = BridgePokerCard("%s_%s" % (point_str, suit_str))
 
-AllNormalBridgePokerCards = dict()
-for point_str in point_str_to_rank:
-    for suit_str in suit_str_to_rank:
-        if suit_str == "NotTrump":
-            AllNormalBridgePokerCards["%s_%s" % (point_str, suit_str)] = BridgePokerCard("%s_%s" % (point_str, suit_str))
+
