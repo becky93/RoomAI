@@ -7,40 +7,53 @@ class BridgePublicState(roomai.common.AbstractPublicState):
     '''
     def __init__(self):
         super(BridgePublicState, self).__init__()
-        self.__stage__                             = "bidding"
-        self.__bidding_candidate_point__           = -1
-        self.__bidding_candidate_suit__            = None
-        self.__playing_candidate_dealerid__        = 0
+        self.__stage__                                      = "bidding"
+        self.__bidding_candidate_contract_point__           = None
+        self.__bidding_candidate_contract_suit__            = None
+        self.__bidding_last_bidder__                        = None
+        self.__bidding_action_history__                     = []
 
-        self.__playing_trump__                    = None
-        self.__playing_dealerid__                 = 0
-        self.__playing_cards_on_table__           = []
-        self.__playing_real_turn__                = 0
-        self.__playing_win_count_sofar__          = [0 for i in range(4)]
+        self.__playing_contract_point__                     = None
+        self.__playing_contract_suit__                      = None
+        self.__playing_dealerid__                           = None
+        self.__playing_cards_on_table__                     = []
+        self.__playing_real_turn__                          = None
+        self.__playing_win_tricks_sofar__                   = [0 for i in range(4)]
 
     def __get_stage__(self):    return self.__stage__
     stage = property(__get_stage__, doc = " There are two stages: \"bidding\" and \"playing\"")
 
-    def __get_candidate_trump__(self): return self.__bidding_candidate_suit__
-    candidate_trump = property(__get_candidate_trump__, doc="")
+    ################## bidding stage #####################
+    def __get_bidding_candidate_contract_suit__(self): return self.__bidding_candidate_contract_suit__
+    bidding_candidate_contract_suit = property(__get_bidding_candidate_contract_suit__, doc="")
 
-    def __get_trump__(self):    return self.__playing_trump__
-    trump = property(__get_trump__, doc="")
+    def __get_bidding_candidate_contract_point__(self):    return self.__bidding_candidate_contract_point__
+    bidding_candidate_contract_point = property(__get_bidding_candidate_contract_point__(), doc="")
 
-    def __get_candidate_dealerid__(self):   return self.__playing_candidate_dealerid__
-    candidate_dealerid = property(__get_candidate_dealerid__, doc="")
+    def __get_bidding_last_bidder__(self):   return self.__bidding_last_bidder__
+    bidding_last_bidder = property(__get_bidding_last_bidder__, doc="")
 
-    def __get_dealerid__(self): return self.__playing_dealerid__
-    dealerid = property(__get_dealerid__, doc = "")
+    def __get_bidding_action_history__(self):   return tuple(self.__bidding_action_history__)
+    bidding_action_history = property(__get_bidding_action_history__, doc = "")
 
-    def __get_cards_on_table__(self):   return self.__playing_cards_on_table__
-    cards_on_table = property(__get_cards_on_table__, doc = "")
+    ########################## playing stage ####################
+    def __get_playing_contract_point__(self):    return self.__playing_contract_point__
+    trump = property(__get_playing_contract_point__, doc="")
 
-    def __get_real_turn__(self):    return self.__playing_real_turn__
-    real_turn = property(__get_real_turn__, doc = "")
+    def __get_playing_contract_suit__(self):    return self.__playing_contract_suit__
+    trump = property(__get_playing_contract_suit__, doc="")
 
-    def __get_win_count_sofar__(self):    return self.__playing_win_count_sofar__
-    win_count_sofar = property(__get_win_count_sofar__, doc = "")
+    def __get_playing_dealerid__(self): return self.__playing_dealerid__
+    playing_dealerid = property(__get_playing_dealerid__, doc = "")
+
+    def __get_playing_cards_on_table__(self):   return self.__playing_cards_on_table__
+    playing_cards_on_table = property(__get_playing_cards_on_table__, doc = "")
+
+    def __get_playing_real_turn__(self):    return self.__playing_real_turn__
+    playing_real_turn = property(__get_playing_real_turn__, doc = "")
+
+    def __get_playing_win_tricks_sofar__(self):    return self.__playing_win_tricks_sofar__
+    playing_win_tricks_sofar = property(__get_playing_win_tricks_sofar__, doc = "")
 
 class BridgePersonState(roomai.common.AbstractPersonState):
     '''

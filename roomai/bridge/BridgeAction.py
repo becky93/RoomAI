@@ -53,7 +53,7 @@ class BridgeAction(roomai.common.AbstractAction):
                                      ">>action = roomai.bridge.BridgeAction.lookup(\"bidding_bid_1_Heart\")\n"
                                      ">>action.key\n"
                                     "\"bidding_bid_A_Heart\"\n"
-                                    "## bidding means the bidding stage, bid means the bid option, 1 means the 1 card point, Heart means the card suit")
+                                    "## bidding means the bidding stage, bid means the bid option, A means the 1 card point, Heart means the card suit")
 
     def __get_stage__(self): return self.__stage__
     stage = property(__get_stage__, doc = "The stage of Bridge. For example, \n"

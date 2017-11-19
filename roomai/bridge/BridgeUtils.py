@@ -54,3 +54,5 @@ for point_str in point_str_to_rank:
             AllBridgePokerCards["%s_%s" % (point_str, suit_str)] = BridgePokerCard("%s_%s" % (point_str, suit_str))
 
 
+contract_suit_to_rank       = {'NotTrump':4,'Spade':3, 'Heart':2, 'Diamond':1, 'Club':0}
+contract_point_to_rank      = {'A':1, '7':7, '6':6, '5':5, '4':4, '3':3, '2':2}
