@@ -2,6 +2,7 @@
 
 import roomai.common
 import roomai.texas
+import roomai
 
 if __name__ == "__main__":
     import time
