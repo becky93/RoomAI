@@ -8,13 +8,17 @@ class BridgePublicState(roomai.common.AbstractPublicState):
     def __init__(self):
         super(BridgePublicState, self).__init__()
         self.__stage__                                      = "bidding"
+
         self.__bidding_candidate_contract_point__           = None
         self.__bidding_candidate_contract_suit__            = None
+        self.__bidding_magnification__                      = 1
         self.__bidding_last_bidder__                        = None
         self.__bidding_action_history__                     = []
 
+
         self.__playing_contract_point__                     = None
         self.__playing_contract_suit__                      = None
+        self.__playing_magnification__                      = 1
         self.__playing_dealerid__                           = None
         self.__playing_cards_on_table__                     = []
         self.__playing_real_turn__                          = None
@@ -28,7 +32,7 @@ class BridgePublicState(roomai.common.AbstractPublicState):
     bidding_candidate_contract_suit = property(__get_bidding_candidate_contract_suit__, doc="")
 
     def __get_bidding_candidate_contract_point__(self):    return self.__bidding_candidate_contract_point__
-    bidding_candidate_contract_point = property(__get_bidding_candidate_contract_point__(), doc="")
+    bidding_candidate_contract_point = property(__get_bidding_candidate_contract_point__, doc="")
 
     def __get_bidding_last_bidder__(self):   return self.__bidding_last_bidder__
     bidding_last_bidder = property(__get_bidding_last_bidder__, doc="")
@@ -38,15 +42,15 @@ class BridgePublicState(roomai.common.AbstractPublicState):
 
     ########################## playing stage ####################
     def __get_playing_contract_point__(self):    return self.__playing_contract_point__
-    trump = property(__get_playing_contract_point__, doc="")
+    playing_contract_point = property(__get_playing_contract_point__, doc="")
 
     def __get_playing_contract_suit__(self):    return self.__playing_contract_suit__
-    trump = property(__get_playing_contract_suit__, doc="")
+    playing_contract_suit = property(__get_playing_contract_suit__, doc="")
 
     def __get_playing_dealerid__(self): return self.__playing_dealerid__
     playing_dealerid = property(__get_playing_dealerid__, doc = "")
 
-    def __get_playing_cards_on_table__(self):   return self.__playing_cards_on_table__
+    def __get_playing_cards_on_table__(self):   return tuple(self.__playing_cards_on_table__)
     playing_cards_on_table = property(__get_playing_cards_on_table__, doc = "")
 
     def __get_playing_real_turn__(self):    return self.__playing_real_turn__
@@ -61,7 +65,7 @@ class BridgePersonState(roomai.common.AbstractPersonState):
     '''
     def __init__(self):
         super(BridgePersonState, self).__init__()
-        self.__hand_cards_dict__ = dict
+        self.__hand_cards_dict__ = dict()
 
     def __get_hand_cards_dict__(self):   return roomai.common.FrozenDict(self.__hand_cards_dict__)
     hand_cards_dict = property(__get_hand_cards_dict__, doc = "The hand cards in the corresponding player. For example, \n"

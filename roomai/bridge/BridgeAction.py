@@ -29,15 +29,15 @@ class BridgeAction(roomai.common.AbstractAction):
 
     def __init__(self, stage, bidding_option, bidding_point, bidding_suit, playing_pokercard):
         self.__stage__  = stage
-        self.__bidding_option__      = bidding_option
-        self.__bidding_point__       = bidding_point
-        self.__bidding_suit__        = bidding_suit
-        self.__playing_pokercard__   = playing_pokercard
+        self.__bidding_option__               = bidding_option
+        self.__bidding_contract_point__       = bidding_point
+        self.__bidding_contract_suit__        = bidding_suit
+        self.__playing_pokercard__            = playing_pokercard
 
         key = None
         if self.__stage__ == "bidding":
             if self.__bidding_option__ == "bid":
-                key= "bidding_" + self.__bidding_option__+"_" + str(self.__bidding_point__) + "_" + str(self.__bidding_suit__)
+                key= "bidding_" + self.__bidding_option__+"_" + str(self.__bidding_contract_point__) + "_" + str(self.__bidding_contract_suit__)
             else:
                 key = "bidding_" + self.__bidding_option__
         elif self.__stage__ == "playing":
@@ -65,29 +65,29 @@ class BridgeAction(roomai.common.AbstractAction):
     bidding_option = property(__get_bidding_option__, doc = "When stage = \"bidding\", the bidding_option is one of \"bid\",\"double\",\"redouble\" and \"pass\".\n"
                                                             "When stage = \"playing\", the bidding_option is always None")
 
-    def __get_bidding_point__(self):   return self.__bidding_point__
-    bidding_point = property(__get_bidding_option__, doc = "When stage = \"bidding\" and bidding_option = \"bid\", the bidding_point is one of 1,2,3,4,5,6 and 7.\n"
-                                                           "When stage = \"bidding\" and bidding_option != \"bid\",the bidding_option is always None\n"
-                                                           "When stage = \"playing\", the bidding_point is always None")
+    def __get_bidding_contract_point__(self):   return self.__bidding_contract_point__
+    bidding_contract_point = property(__get_bidding_contract_point__, doc = "When stage = \"bidding\" and bidding_option = \"bid\", the bidding_contract_point is one of [\"A\",\"2\",\"3\",\"4\",\"5\",\"6\" and \"7\"].\n"
+                                                           "When stage = \"bidding\" and bidding_option != \"bid\",the bidding_contract_point is always None\n"
+                                                           "When stage = \"playing\", the bidding_contract_point is always None")
 
-    def __get_bidding_suit__(self):   return self.__bidding_suit__
-    bidding_suit = property(__get_bidding_option__, doc = "When stage = \"bidding\" and bidding_option = \"bid\", the bidding_suit is one of \"NotTrump\",\"Spade\",\"Heart\", \"Diamond\" and \"Club\".\n"
-                                                          "When stage = \"bidding\" and bidding_option != \"bid\", the bidding_suit is always None\n"
-                                                          "when stage == \"playing\", the bidding_suit is always None")
+    def __get_bidding_contract_suit__(self):   return self.__bidding_contract_suit__
+    bidding_contract_suit = property(__get_bidding_contract_suit__, doc = "When stage = \"bidding\" and bidding_option = \"bid\", the bidding_contract_suit is one of \"NotTrump\",\"Spade\",\"Heart\", \"Diamond\" and \"Club\".\n"
+                                                          "When stage = \"bidding\" and bidding_option != \"bid\", the bidding_contract_suit is always None\n"
+                                                          "when stage == \"playing\", the bidding_contract_suit is always None")
 
-    def __get_playing_card__(self): return self.playing_card
+    def __get_playing_card__(self): return self.__playing_pokercard__
     playing_card = property(__get_playing_card__, doc="When stage == \"bidding\", the playing_card always be None\n"
                                             "When stage = \"playing\", the playing_card is the card in this Bridge action. For example, \n"
                                             ">>action = roomai.bridge.BridgeAction.lookup(\"playing_A_Heart\")\n"
-                                            ">>action.card.key \n"
+                                            ">>action.playing_card.key \n"
                                             "\"A_Heart\"\n"
-                                            ">>action.card.point \n"
+                                            ">>action.playing_card.point \n"
                                             "\"A\"\n"
-                                            ">>action.card.suit  \n"
+                                            ">>action.playing_card.suit  \n"
                                             "\"Heart\"\n"
-                                            ">>action.card.point_rank \n"
+                                            ">>action.playing_card.point_rank \n"
                                             "12\n"
-                                            ">>action.card.suit_rank \n"
+                                            ">>action.playing_card.suit_rank \n"
                                             "1")
 
 
@@ -113,11 +113,9 @@ class BridgeAction(roomai.common.AbstractAction):
                 stage  = "bidding"
                 lines  = key.split("_")
                 bidding_option = lines[1]
-                if bidding_point == "bid":
+                if bidding_option == "bid":
                     bidding_point  = lines[2]
                     bidding_suit   = lines[3]
-                else:
-                    card  = None
             elif "playing" in key:
                 stage          = "playing"
                 playing_card   = roomai.bridge.BridgeBidPokerCard.lookup(key.replace("playing_", ""))

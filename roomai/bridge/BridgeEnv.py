@@ -24,7 +24,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
             random.shuffle(self.__params__["allcards"])
 
         self.public_state                       = roomai.bridge.BridgePublicState()
-        self.public_state.__stage__             = 0
+        self.public_state.__stage__             = "bidding"
         self.public_state.__turn__              = self.__params__["start_turn"]
 
         self.person_states = [roomai.bridge.BridgePersonState() for i in range(4)]
@@ -53,11 +53,11 @@ class BridgeEnv(roomai.common.AbstractEnv):
         pu  = self.public_state
         pes = self.person_states
         pr  = self.private_state
-        if self.is_action_valid(action, pu, pes[pu.turn]):
+        if self.is_action_valid(action, pu, pes[pu.turn]) == False:
             raise ValueError("%s is invalid action"%(action.key))
         pes[pu.turn].__available_actions__ = dict()
 
-        if pu.stage == 0: ## the bidding stage
+        if pu.stage == "bidding": ## the bidding stage
             pu.__bidding_action_history__.append(action)
             if len(pu.bidding_action_history) == 4:
                 flag = True
@@ -69,26 +69,23 @@ class BridgeEnv(roomai.common.AbstractEnv):
                     self.__gen_history__()
                     return self.__gen_infos__(), self.public_state, self.person_states, self.private_state
 
-            if len(pu.bidding_action_history) > 3:
-                flag = True
-                for i in range(1,4):
-                    flag = flag and (pu.bidding_action_history[-i].bidding_option == "pass")
-                if flag == True:
-                    self.__bidding_to_playing__()
-
-            if action.bidding_option == "bid":
-                pu.__bidding_candidate_contract_point__ = action.bidding_point
-                pu.__bidding_candidate_contract_suit__  = action.bidding_suit
-                pu.__bidding_last_bidder__ = pu.turn
-
-            pu.__previous_id__     = pu.turn
-            pu.__previous_action__ = action
-            pu.__turn__            = (pu.turn + 1) % 4
+            if action.bidding_option == "pass":
+                if len(pu.bidding_action_history) > 3 \
+                    and pu.bidding_action_history[-2].bidding_option == "pass"\
+                    and pu.bidding_action_history[-3].bidding_option == "pass":
+                        self.__bidding_to_playing__(action)
+            elif action.bidding_option == "bid":
+                self.__bidding_process_bid__(action)
+            elif action.bidding_option == "double":
+                self.__bidding_process_double__(action)
+            elif action.bidding_option == "redouble":
+                self.__bidding_process_redouble__(action)
+            else:
+                raise  ValueError("In the bidding stage, the action's bidding_option must be one of \"pass\",\"bid\",\"double\" and \"redouble\". But a \"%s\" action is found"%(action.key))
 
 
-
-        elif pu.stage == 1: ## the playing stage
-            pu.cards_on_table.append(action.card)
+        elif pu.stage == "playing": ## the playing stage
+            pu.__cards_on_table__.append(action.card)
             self.__remove_card_from_hand_cards__(pes[pu.real_turn], action.card)
 
             if len(pu.cards_on_table) == 4:
@@ -138,11 +135,64 @@ class BridgeEnv(roomai.common.AbstractEnv):
                 max_id   = i
                 max_card = pu.cards_on_table[i]
 
-        return max_id, (max_id + 2)%2
+        return max_id, (max_id + 2)%4
 
-    def __bidding_to_playing__(self):
-        pass
+    def __bidding_process_double__(self, action):
+        pu = self.public_state
+        pu.__bidding_magnification__ = 2
 
+        pu.__previous_id__ = pu.turn
+        pu.__previous_action__ = action
+        pu.__turn__ = (pu.turn + 1) % 4
+
+        self.person_states[pu.turn].__available_actions__ = self.available_actions(pu,self.person_states[pu.turn])
+
+    def __bidding_process_redouble__(self, action):
+        pu = self.public_state
+        pu.__bidding_magnification__ = 4
+
+        pu.__previous_id__ = pu.turn
+        pu.__previous_action__ = action
+        pu.__turn__ = (pu.turn + 1) % 4
+
+        self.person_states[pu.turn].__available_actions__ = self.available_actions(pu,self.person_states[pu.turn])
+
+    def __bidding_process_bid__(self, action):
+        pu = self.public_state
+        pu.__bidding_candidate_contract_point__ = action.bidding_contract_point
+        pu.__bidding_candidate_contract_suit__ = action.bidding_contract_suit
+        pu.__bidding_last_bidder__ = pu.turn
+        pu.__bidding_magnification__ = 1
+
+        pu.__previous_id__ = pu.turn
+        pu.__previous_action__ = action
+        pu.__turn__ = (pu.turn + 1) % 4
+
+        self.person_states[pu.turn].__available_actions__ = self.available_actions(pu,self.person_states[pu.turn])
+
+    def __bidding_to_playing__(self, action):
+        pu = self.public_state
+        pu.__stage__                  = "playing"
+        pu.__playing_contract_point__ = pu.bidding_candidate_contract_point
+        pu.__playing_contract_suit__  = pu.bidding_candidate_contract_suit
+
+        start_turn  = self.__params__["start_turn"]
+        last_bidder = pu.bidding_last_bidder
+        for i in range(len(pu.bidding_action_history)):
+            if (i+start_turn)%4 == last_bidder or (i + start_turn + 2) % 4 == last_bidder:
+                if pu.bidding_action_history[i].bidding_option == "bid" \
+                        and pu.bidding_action_history[i].bidding_contract_suit == pu.playing_contract_suit:
+                    pu.__playing_dealerid__ = i
+                    break
+
+        pu.__previous_id__ = pu.turn
+        pu.__previous_action__ = action
+        pu.__turn__ = pu.playing_dealerid
+        pu.__playing_real_turn__ = pu.playing_dealerid
+        self.person_states[pu.turn].__available_actions__ = self.available_actions(pu,self.person_states[pu.turn])
+
+
+    @classmethod
     def __available_contract__(self, pu, point, suit):
         if point not in roomai.bridge.contract_point_to_rank:
             raise  ValueError("The contract point must be one of (%s)"%(",".join(list(roomai.bridge.contract_point_to_rank.keys()))))
@@ -151,10 +201,12 @@ class BridgeEnv(roomai.common.AbstractEnv):
         suit_rank  = roomai.bridge.contract_suit_to_rank[suit]
         point_rank = roomai.bridge.contract_point_to_rank[point]
 
-        if point_rank > roomai.bridge.contract_point_to_rank[pu.bidding_candidate_contract_point]:
+        if pu.bidding_candidate_contract_point is None:
+            return True
+        elif point_rank > roomai.bridge.contract_point_to_rank[pu.bidding_candidate_contract_point]:
             return True
         elif point_rank == roomai.bridge.contract_point_to_rank[pu.bidding_candidate_contract_point]:
-            if suit_rank > roomai.bridge.suit_to_suit_rank[pu.bidding_candidate_contract_suit]:
+            if suit_rank > roomai.bridge.contract_suit_to_rank[pu.bidding_candidate_contract_suit]:
                 return True
             else:
                 return False
@@ -166,12 +218,12 @@ class BridgeEnv(roomai.common.AbstractEnv):
         return action.key in person_state.available_actions
 
     @classmethod
-    def available_actions(self, public_state, person_state):
+    def available_actions(cls, public_state, person_state):
         if public_state.stage == "bidding": ## the bidding stage
             available_actions = dict()
             for point in roomai.bridge.contract_point_to_rank:
                 for suit in roomai.bridge.contract_suit_to_rank:
-                    if BridgeEnv.__available_contract__(point, suit) == True:
+                    if BridgeEnv.__available_contract__(public_state, point, suit) == True:
                         key = "bidding_bid_%s_%s"%(point, suit)
                         available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
             available_actions["bidding_pass"] = roomai.bridge.BridgeAction.lookup("bidding_pass")
@@ -197,7 +249,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
             return available_actions
 
 
-        elif public_state.stage == 1: ## the playing stage
+        elif public_state.stage == "playing": ## the playing stage
             available_actions = dict()
             if public_state.cards_on_table == []:
                 for card in person_state.hand_cards:
@@ -216,6 +268,6 @@ class BridgeEnv(roomai.common.AbstractEnv):
             return available_actions
 
         else:
-            raise ValueError("The public_state.stage = %d is invalid. The public_state.stage = 0 means the bidding stage, The public_state.stage = 1 means the playing stage"%(self.public_state.stage))
+            raise ValueError("The public_state.stage = %s is invalid. The public_state.stage must be one of [\"bidding\",\"playing\"]"%(public_state.stage))
 
 
