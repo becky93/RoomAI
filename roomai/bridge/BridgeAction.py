@@ -118,7 +118,7 @@ class BridgeAction(roomai.common.AbstractAction):
                     bidding_suit   = lines[3]
             elif "playing" in key:
                 stage          = "playing"
-                playing_card   = roomai.bridge.BridgeBidPokerCard.lookup(key.replace("playing_", ""))
+                playing_card   = roomai.bridge.BridgePokerCard.lookup(key.replace("playing_", ""))
             else:
                 raise ValueError("%s is an invalid key"%(key))
 

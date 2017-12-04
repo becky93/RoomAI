@@ -74,6 +74,8 @@ class BridgeEnv(roomai.common.AbstractEnv):
                     and pu.bidding_action_history[-2].bidding_option == "pass"\
                     and pu.bidding_action_history[-3].bidding_option == "pass":
                         self.__bidding_to_playing__(action)
+                else:
+                    self.__bidding_process_pass__(action)
             elif action.bidding_option == "bid":
                 self.__bidding_process_bid__(action)
             elif action.bidding_option == "double":
@@ -136,6 +138,15 @@ class BridgeEnv(roomai.common.AbstractEnv):
                 max_card = pu.cards_on_table[i]
 
         return max_id, (max_id + 2)%4
+
+    def __bidding_process_pass__(self, action):
+        pu = self.public_state
+
+        pu.__previous_id__ = pu.turn
+        pu.__previous_action__ = action
+        pu.__turn__ = (pu.turn + 1) % 4
+
+        self.person_states[pu.turn].__available_actions__ = self.available_actions(pu,self.person_states[pu.turn])
 
     def __bidding_process_double__(self, action):
         pu = self.public_state
@@ -235,7 +246,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
                     available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
 
                 if pre_action.bidding_option == "double":
-                    key = "redouble"
+                    key = "bidding_redouble"
                     available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
 
             if len(public_state.__bidding_action_history__) >= 3:
@@ -243,7 +254,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
                 pre_action2 = public_state.__bidding_action_history__[-2]
                 pre_action3 = public_state.__bidding_action_history__[-3]
                 if pre_action3.bidding_option == "bid" and pre_action2.bidding_option == "pass" and pre_action1.bidding_option == "pass":
-                    key = "double"
+                    key = "bidding_double"
                     available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
 
             return available_actions
@@ -251,19 +262,22 @@ class BridgeEnv(roomai.common.AbstractEnv):
 
         elif public_state.stage == "playing": ## the playing stage
             available_actions = dict()
-            if public_state.cards_on_table == []:
-                for card in person_state.hand_cards:
+            if public_state.playing_cards_on_table == tuple([]) or public_state.playing_cards_on_table is None:
+                for card in list(person_state.hand_cards_dict.values()):
                     key = "playing_%s"%(card.key)
                     available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
             else:
-                for card in person_state.hand_cards:
-                    if card.suit == public_state.cards_on_table[0].suit:
+                for card in person_state.hand_cards_dict.values():
+                    if len(public_state.playing_cards_on_table) == 0:
+                        x = 0
+                    if card.suit == public_state.playing_cards_on_table[0].suit:
                         key = "playing_%s" % (card.key)
                         available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
-                if len(available_actions) == 0:
-                    for card in person_state.hand_cards:
-                        key = "playing_%s" % (card.key)
-                        available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
+
+            if len(available_actions) == 0:
+                for card in person_state.hand_cards_dict.values():
+                    key = "playing_%s" % (card.key)
+                    available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
 
             return available_actions
 

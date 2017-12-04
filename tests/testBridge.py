@@ -51,3 +51,5 @@ class BridgeTester(unittest.TestCase):
         infos, public_state, person_states, private_state = env.forward(action)
         self.assertEqual(public_state.stage, "playing")
         self.assertEqual(public_state.turn,0)
+
+        #### playing_stage
