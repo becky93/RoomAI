@@ -15,7 +15,7 @@ class BridgePublicState(roomai.common.AbstractPublicState):
         self.__bidding_last_bidder__                        = None
         self.__bidding_action_history__                     = []
 
-
+        self.__playing_vulnerable__                         = [False for i in range(4)]
         self.__playing_contract_point__                     = None
         self.__playing_contract_suit__                      = None
         self.__playing_magnification__                      = 1
@@ -58,6 +58,9 @@ class BridgePublicState(roomai.common.AbstractPublicState):
 
     def __get_playing_win_tricks_sofar__(self):    return self.__playing_win_tricks_sofar__
     playing_win_tricks_sofar = property(__get_playing_win_tricks_sofar__, doc = "")
+
+    def __get_playing_magnification__(self):    return self.__playing_magnification__
+    palying_magnification = property(__get_playing_magnification__, doc = "")
 
 class BridgePersonState(roomai.common.AbstractPersonState):
     '''
