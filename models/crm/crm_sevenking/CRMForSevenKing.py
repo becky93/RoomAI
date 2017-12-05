@@ -75,14 +75,15 @@ class SevenKingPlayer(CRMPlayer):
                 return key, cur_strategies[key]
 
 
-    def sample_action(self, regrets, cur_strategies):
+    def sample_action(self, state, actions, cur_strategies):
 
         val = random.random()
         total = 0
-        for key in regrets:
-            total += cur_strategies[key]
+        for key in actions:
+            new_key = state + '_' + key
+            total += cur_strategies[new_key]
             if total > 0 and val < total:
-                return key, cur_strategies[key]
+                return key, cur_strategies[new_key]
 
 
 def CRMTrain(env, cur_turn, player, probs, action=None, depth=0):
@@ -130,7 +131,7 @@ def CRMTrain(env, cur_turn, player, probs, action=None, depth=0):
         for key in available_actions:
             temp_probs = [0 for i_temp in range(num_players)]
             temp_probs[this_turn] = probs[this_turn]
-            new_key = state + '_' + key
+            new_key = "%s_%s" % (state, key)
             for j in xrange(num_players):
                 if j != this_turn:
                     temp_probs[j] = probs[j] * cur_strategies[new_key]
@@ -145,7 +146,7 @@ def CRMTrain(env, cur_turn, player, probs, action=None, depth=0):
             # update regrets and strategies
             for key in available_actions:
                 prob = 1
-                new_key = state + '_' + key
+                new_key = "%s_%s" % (state, key)
                 for j in xrange(num_players):
                     if j != this_turn:
                         prob *= probs[j]
@@ -162,7 +163,7 @@ def CRMTrain(env, cur_turn, player, probs, action=None, depth=0):
 
     return utility
 
-def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, depth=0):
+def OutcomeSamplingCRM(env, cur_turn, player, num_players, sampleProb, action=None, depth=0):
     infos = None
     public_state = None
     person_states = None
@@ -170,7 +171,7 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
 
     utility = 0
 
-    num_players = len(probs)
+    # num_players = len(probs)
 
     # initialization
     if depth == 0:
@@ -203,12 +204,12 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
         if random.random() < player.exploration:
             action_key, action_prob = player.random_action(available_actions)
         else:
-            action_key, action_prob = player.sample_action(regrets, cur_strategies)
+            action_key, action_prob = player.sample_action(state, available_actions, cur_strategies)
 
-        new_key = state + '_' + action_key
+        new_key = "%s_%s" % (state, action_key)
 
         this_prob = player.exploration * (1.0 / len(available_actions)) + (1.0 - player.exploration) * action_prob
-        util = -OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb*this_prob, available_actions[new_key], depth+1)
+        util, isTerminal = OutcomeSamplingCRM(env, cur_turn, player, num_players, sampleProb*this_prob, available_actions[action_key], depth+1)
 
         strategy_util = action_prob * util / sampleProb
 
@@ -218,18 +219,19 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
         if this_turn == cur_turn:
             strategies = player.get_strategies(state, available_actions)
             # update regrets and strategies
-            new_regrets[new_key] = regrets[new_key] + (util - strategy_util) * cur_strategies[key]
-            new_strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
+            if isTerminal:
+                player.regrets[new_key] = strategy_util * (1 - cur_strategies[new_key])
+            else:
+                player.regrets[new_key] = -strategy_util * cur_strategies[new_key]
 
-            player.update_regrets(state, available_actions, new_regrets)
-            player.update_strategies(state, available_actions, new_strategies)
+            player.strategies[new_key] = strategies[new_key] + sampleProb * this_prob * cur_strategies[new_key]
 
-        utility = strategy_util
+        utility = util
 
     if depth != 0:
         env.backward()
 
-    return utility
+    return utility, public_state.is_terminal
 
 
 def Train(params = dict()):
@@ -253,7 +255,8 @@ def Train(params = dict()):
 
     for i in xrange(num_iter):
         for p in xrange(num_players):
-            CRMTrain(env, p, player, probs)
+            # CRMTrain(env, p, player, probs)
+            OutcomeSamplingCRM(env, p, player, num_players, 1)
 
     return player
 
