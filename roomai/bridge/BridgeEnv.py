@@ -91,19 +91,12 @@ class BridgeEnv(roomai.common.AbstractEnv):
             self.__remove_card_from_hand_cards__(pes[pu.real_turn], action.card)
 
             if len(pu.cards_on_table) == 4:
-                playerid1,playerid2 = self.__compute_winner__()
+                playerid1,playerid2 = self.__whois_winner_per_pier__()
                 pu.__playing_win_tricks_sofar__[playerid1] += 1
                 pu.__playing_win_tricks_sofar__[playerid2] += 1
-                if len(pes[pu.real_turn].hand_cards) == 0:
+                if len(pes[pu.real_turn].hand_cards_dict) == 0:
                     pu.__is_terminal__ = True
-                    if pu.win_count_sofar[pu.dealerid] > pu.win_count_sofar[(pu.dealerid + 1)%4] + pu.trump.point_rank:
-                        pu.__scores__ = [-1,-1,-1,-1]
-                        pu.__scores__[pu.dealerid] = 1
-                        pu.__scores__[(pu.dealerid+2)%4] = 1
-                    else:
-                        pu.__scores__ = [1,1,1,1]
-                        pu.__scores__[pu.dealerid] = -1
-                        pu.__scores__[(pu.dealerid+2)%4] = -1
+                    self.__compute_score__()
             else:
                 pu.__playing_real_turn__ = (pu.__playing_real_turn__ + 1) % 4
                 pu.__turn__      = (pu.__turn__ + 1)%4
@@ -129,7 +122,9 @@ class BridgeEnv(roomai.common.AbstractEnv):
         else:
             return roomai.bridge.BridgeBidPokerCard.compare(card1, card2)
 
-    def __compute_winner__(self, pu):
+    def __compute_score__(self):
+        pass
+    def __whois_winner_per_pier__(self, pu):
         max_id   = 0
         max_card = pu.cards_on_table[0]
         for i in range(1,4):
