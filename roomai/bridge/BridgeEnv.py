@@ -94,22 +94,27 @@ class BridgeEnv(roomai.common.AbstractEnv):
 
 
         elif pu.stage == "playing": ## the playing stage
-            pu.__cards_on_table__.append(action.card)
-            self.__remove_card_from_hand_cards__(pes[pu.real_turn], action.card)
+            pu.__playing_cards_on_table__.append(action.playing_card)
+            self.__remove_card_from_hand_cards__(pes[pu.playing_real_turn], action.playing_card)
 
-            if len(pu.cards_on_table) == 4:
-                playerid1,playerid2 = self.__whois_winner_per_pier__()
+            if len(pu.playing_cards_on_table) == 4:
+                playerid1,playerid2 = self.__whois_winner_per_pier__(pu)
                 pu.__playing_win_tricks_sofar__[playerid1] += 1
                 pu.__playing_win_tricks_sofar__[playerid2] += 1
-                if len(pes[pu.real_turn].hand_cards_dict) == 0:
+                pu.__playing_cards_on_table__ = []
+                if len(pes[pu.playing_real_turn].hand_cards_dict) == 0:
                     pu.__is_terminal__ = True
                     self.__compute_score__()
+                else:
+                    pes[pu.turn].__available_actions__ = BridgeEnv.available_actions(public_state= pu, person_state=pes[pu.playing_real_turn])
             else:
                 pu.__playing_real_turn__ = (pu.__playing_real_turn__ + 1) % 4
                 if pu.playing_real_turn == pu.playing_dealerid:
                     pu.__turn__ = (pu.playing_real_turn + 2) % 4
                 else:
                     pu.__turn__ = pu.playing_real_turn
+                pes[pu.turn].__available_actions__ = BridgeEnv.available_actions(public_state=pu,person_state=pes[pu.playing_real_turn])
+
 
 
         else:
@@ -122,15 +127,15 @@ class BridgeEnv(roomai.common.AbstractEnv):
     def __remove_card_from_hand_cards__(self, person_state, card):
         del person_state.__hand_cards_dict__[card.key]
 
-    def __compare_card_with_trump__(self, card1, card2, trump):
-        if card1.suit == trump.suit and card2.suit == trump.suit:
-            return roomai.bridge.BridgeBidPokerCard.compare(card1, card2)
-        elif card1.suit == trump.suit and card2.suit != trump.suit:
+    def __compare_card_with_contract_suit__(self, card1, card2, contract_suit):
+        if card1.suit == contract_suit and card2.suit == contract_suit:
+            return roomai.bridge.BridgePokerCard.compare(card1, card2)
+        elif card1.suit == contract_suit and card2.suit != contract_suit:
             return 1
-        elif card1.suit != trump.suit and card2.suit == trump.suit:
+        elif card1.suit != contract_suit and card2.suit == contract_suit:
             return -1
         else:
-            return roomai.bridge.BridgeBidPokerCard.compare(card1, card2)
+            return roomai.bridge.BridgePokerCard.compare(card1, card2)
 
     def __compute_score__(self):
         pu = self.public_state
@@ -212,15 +217,15 @@ class BridgeEnv(roomai.common.AbstractEnv):
             pu.__scores__[(pu.playing_dealerid+1)%4] += penalty_score
             pu.__scores__[(pu.playing_dealerid+3)%4] += penalty_score
 
-        
+
 
     def __whois_winner_per_pier__(self, pu):
         max_id   = 0
-        max_card = pu.cards_on_table[0]
+        max_card = pu.playing_cards_on_table[0]
         for i in range(1,4):
-            if self.__compare_card_with_trump__(max_card, pu.cards_on_table[i], pu.trump):
+            if self.__compare_card_with_contract_suit__(max_card, pu.playing_cards_on_table[i], pu.playing_contract_suit):
                 max_id   = i
-                max_card = pu.cards_on_table[i]
+                max_card = pu.playing_cards_on_table[i]
 
         return max_id, (max_id + 2)%4
 

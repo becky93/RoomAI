@@ -53,3 +53,11 @@ class BridgeTester(unittest.TestCase):
         self.assertEqual(public_state.turn,0)
 
         #### playing_stage
+        count = 0
+        while env.public_state.is_terminal == False:
+            action  = list(env.person_states[env.public_state.turn].available_actions.values())[0]
+            count  += 1
+            env.forward(action)
+        self.assertEqual(count,13 * 4)
+        self.assertTrue(env.public_state.scores[0] == 0)
+        self.assertTrue(env.public_state.scores[1] > 0)
