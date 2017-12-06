@@ -1,4 +1,5 @@
 #!/bin/python
+#coding:utf-8
 import roomai.common
 import roomai.bridge
 import random
@@ -133,14 +134,19 @@ class BridgeEnv(roomai.common.AbstractEnv):
             return roomai.bridge.BridgeBidPokerCard.compare(card1, card2)
 
     def __compute_score__(self):
+        '''
+        https://zh.wikipedia.org/wiki/%E6%A9%8B%E7%89%8C%E8%A8%88%E5%88%86
+        
+        :return: 
+        '''
         pu = self.public_state
         pu.__scores__ = [0, 0, 0, 0]
         playing_point_rank = roomai.bridge.contract_point_to_rank[pu.playing_contract_point]
+        excessive_tricks = pu.playing_win_tricks_sofar[pu.playing_dealerid] - pu.playing_win_tricks_sofar[
+            (pu.playing_dealerid + 1) % 4] - 6 - playing_point_rank
 
-        if pu.playing_win_tricks_sofar[pu.playing_dealerid] - pu.playing_win_tricks_sofar[(pu.playing_dealerid+1)%4] >= 6 + playing_point_rank:
-
+        if excessive_tricks >= 0:
             ####
-            excessive_tricks = pu.playing_win_tricks_sofar[pu.playing_dealerid] - pu.playing_win_tricks_sofar[(pu.playing_dealerid+1)%4] - 6 - playing_point_rank
             tricks_score     = 0
             if pu.playing_contract_suit == "NotTrump":
                 tricks_score = (excessive_tricks * 30 + 10) * pu.playing_magnification
@@ -154,61 +160,90 @@ class BridgeEnv(roomai.common.AbstractEnv):
             pu.__scores__[(pu.playing_dealerid + 2)%4] = tricks_score
 
             ####
-            case_type = 1
-            if tricks_score < 100:
-                case_type = 1
-            else:
-                case_type = 2
-            if playing_point_rank == 6:
-                case_type = 3
-            if playing_point_rank == 7:
-                case_type = 4
-            additive_score = 0
+            stage_score = 0
             if pu.playing_is_vulnerable[pu.playing_dealerid] == True:
-                if case_type == 1:
-                    additive_score = 50
-                elif case_type == 2:
-                    additive_score = 500
-                elif case_type == 3:
-                    additive_score = 750
-                elif case_type == 4:
-                    additive_score = 1500
+                if tricks_score < 100:
+                    stage_score = 50
+                else:
+                    stage_score = 500
+
+                if playing_point_rank == 6:
+                    stage_score += 750
+                if playing_point_rank == 7:
+                    stage_score += 1500
             else:
-                if case_type == 1:
-                    additive_score = 50
-                elif case_type == 2:
-                    additive_score = 300
-                elif case_type == 3:
-                    additive_score = 500
-                elif case_type == 4:
-                    additive_score = 1000
-            pu.__scores__[pu.playing_dealerid] += additive_score
-            pu.__scores__[(pu.playing_dealerid + 2) % 4] += additive_score
+                if tricks_score < 100:
+                    stage_score = 50
+                else:
+                    stage_score = 300
+
+                if playing_point_rank == 6:
+                    stage_score += 500
+                if playing_point_rank == 7:
+                    stage_score += 1000
+            pu.__scores__[pu.playing_dealerid] += stage_score
+            pu.__scores__[(pu.playing_dealerid + 2) % 4] += stage_score
 
             #####
-            additive_score1 = 0
-            if pu.playing_magnification > 1:
-                if pu.playing_is_vulnerable[pu.playing_dealerid] == True:
-                    additive_score1 = excessive_tricks * pu.playing_magnification
+            extensive_trick_score = 0
+            if pu.playing_magnification == 1:
+                if pu.playing_contract_suit == "NotTrump" \
+                        or pu.playing_contract_suit == "Spade" \
+                        or pu.playing_contract_suit == "Heart":
+                    extensive_trick_score = excessive_tricks * 30
                 else:
-                    additive_score1 = excessive_tricks * (pu.playing_magnification-1)
-                if pu.playing_magnification == 1:
-                    additive_score1 += 50
-                elif pu.playing_magnification == 2:
-                    additive_score1 += 100
-                pu.__scores__[pu.playing_dealerid] += additive_score1
-                pu.__scores__[(pu.playing_dealerid + 2) % 4] += additive_score1
+                    extensive_trick_score = excessive_tricks * 20
+            elif pu.playing_magnification == 2:
+                if pu.playing_is_vulnerable[pu.playing_dealerid] == True:
+                    extensive_trick_score = excessive_tricks * 200
+                else:
+                    extensive_trick_score = excessive_tricks * 100
+            elif pu.playing_magnification == 4:
+                if pu.playing_is_vulnerable[pu.playing_dealerid] == True:
+                    extensive_trick_score = excessive_tricks * 400
+                else:
+                    extensive_trick_score = excessive_tricks * 200
+            pu.__scores__[pu.playing_dealerid] += extensive_trick_score
+            pu.__scores__[(pu.playing_dealerid + 2) % 4] += extensive_trick_score
 
 
         else:
-            penalty_trick = -(pu.playing_win_tricks_sofar[pu.playing_dealerid] - pu.playing_win_tricks_sofar[(pu.playing_dealerid+1)%4] - 6 - playing_point_rank
-        )
+            penalty_trick = -excessive_tricks
             penalty_score = 0
             if pu.playing_is_vulnerable[(pu.playing_dealerid + 1)%4] == True:
-                penalty_score = penalty_trick * 100 * pu.playing_magnification
+                if pu.playing_magnification == 1:
+                    penalty_score = 100
+                elif pu.playing_magnification == 2:
+                    if penalty_trick == 1:
+                        penalty_score = 200
+                    elif penalty_trick  in [2,3]:
+                        penalty_score = 200 + (penalty_trick-1) * 300
+                    elif penalty_trick >= 4:
+                        penalty_score = 200 + 300 * 2 + (penalty_trick-3) * 300
+                elif pu.playing_magnification == 4:
+                    if penalty_trick == 1:
+                        penalty_score = 400
+                    elif penalty_trick  in [2,3]:
+                        penalty_score = 400 + (penalty_trick-1) * 600
+                    elif penalty_trick >= 4:
+                        penalty_score = 400 + 600 * 2 + (penalty_trick-3) * 600
             else:
-                penalty_score = penalty_trick * 50 * pu.playing_magnification
-
+                if pu.playing_magnification == 1:
+                    penalty_score = 50
+                elif pu.playing_magnification == 2:
+                    if penalty_trick == 1:
+                        penalty_score = 100
+                    elif penalty_trick  in [2,3]:
+                        penalty_score = 100 + (penalty_trick-1) * 200
+                    elif penalty_trick >= 4:
+                        penalty_score = 100 + 200 * 2 + (penalty_trick-3) * 300
+                elif pu.playing_magnification == 4:
+                    if penalty_trick == 1:
+                        penalty_score = 200
+                    elif penalty_trick  in [2,3]:
+                        penalty_score = 200 + (penalty_trick-1) * 400
+                    elif penalty_trick >= 4:
+                        penalty_score = 200 + 400 * 2 + (penalty_trick-3) * 600
             pu.__scores__[(pu.playing_dealerid+1)%4] += penalty_score
             pu.__scores__[(pu.playing_dealerid+3)%4] += penalty_score
 
