@@ -102,6 +102,11 @@ class BridgeEnv(roomai.common.AbstractEnv):
                 playerid1,playerid2 = self.__whois_winner_per_pier__()
                 pu.__playing_win_tricks_sofar__[playerid1] += 1
                 pu.__playing_win_tricks_sofar__[playerid2] += 1
+                pu.__playing_real_turn__ = playerid1
+                pu.__turn__              = pu.playing_real_turn
+                if pu.playing_real_turn == (pu.playing_dealerid+2)%4:
+                    pu.__turn__ = pu.playing_dealerid
+
                 if len(pes[pu.real_turn].hand_cards_dict) == 0:
                     pu.__is_terminal__ = True
                     self.__compute_score__()
