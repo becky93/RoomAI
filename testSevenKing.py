@@ -3,6 +3,7 @@ from roomai.sevenking import SevenKingEnv
 from roomai.sevenking import SevenKingAction
 from roomai.sevenking import SevenKingPokerCard
 import roomai.common
+from models.crm.crm_sevenking import CRMForSevenKing
 import unittest
 
 class AlwaysFoldPlayer(roomai.common.AbstractPlayer):
@@ -217,7 +218,7 @@ class testSevenKing(unittest.TestCase):
 
 if __name__ == "__main__":
     env = SevenKingEnv()
-    players = [AlwaysMaxPlayer(), AlwaysNotFoldPlayer(), AlwaysMinPlayer(), roomai.common.RandomPlayer()]
+    players = [AlwaysMaxPlayer(), AlwaysNotFoldPlayer(), AlwaysMinPlayer(), roomai.common.RandomPlayer(), CRMForSevenKing.Train()]
     import time
     start =time.time()
     for i in range(10):

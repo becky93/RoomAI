@@ -28,6 +28,10 @@ class SevenKingPlayer(CRMPlayer):
         hand_cards_keys = []
         for i in range(len(hand_cards)):
             hand_cards_keys.append(hand_cards[i].key)
+
+        # while '' in history:
+        #     history.remove('')
+
         return "%s_%s" % ("_".join(hand_cards_keys), "".join(history))
 
     def update_strategies(self, state, actions, targets):
@@ -62,17 +66,9 @@ class SevenKingPlayer(CRMPlayer):
         return regrets
 
     def random_action(self, actions):
-        cur_strategies = dict()
 
-        for key in actions:
-            cur_strategies[key] = 1.0 / len(actions)
-
-        val = random.random()
-        total = 0
-        for key in actions:
-            total += cur_strategies[key]
-            if total > 0 and val < total:
-                return key, cur_strategies[key]
+        idx = int(random.random() * len(actions))
+        return list(actions.keys())[idx], 1.0 / len(actions)
 
 
     def sample_action(self, state, actions, cur_strategies):
@@ -84,6 +80,37 @@ class SevenKingPlayer(CRMPlayer):
             total += cur_strategies[new_key]
             if total > 0 and val < total:
                 return key, cur_strategies[new_key]
+
+    def receive_info(self, info):
+        self.states = self.gen_state(info)
+        self.available_actions = info.person_state.available_actions
+
+    def take_action(self):
+        cur_strategies = self.get_strategies(self.states, self.available_actions)
+
+        print self.states
+        print cur_strategies
+
+        new_state = ''
+
+        val = random.random()
+        total = 0
+        for key in cur_strategies:
+            total += cur_strategies[key]
+            if total > 0 and val < total:
+                new_state = key
+
+        if new_state != '' and new_state[-1] != '_':
+            action = new_state.split("_")[-1]
+            return SevenKingAction.lookup(action)
+        else:
+            idx = int(random.random() * len(self.available_actions))
+            return list(self.available_actions.values())[idx]
+
+
+
+    def reset(self):
+        pass
 
 
 def CRMTrain(env, cur_turn, player, probs, action=None, depth=0):
@@ -185,6 +212,7 @@ def OutcomeSamplingCRM(env, cur_turn, player, num_players, sampleProb, action=No
     else:
         this_turn = public_state.turn
         state = player.gen_state(infos[this_turn])
+
         available_actions = person_states[this_turn].available_actions
 
         regrets = player.get_regrets(state, available_actions)
@@ -249,7 +277,7 @@ def Train(params = dict()):
     if "num_iter" in params:
         num_iter = params["num_iter"]
     else:
-        num_iter = 100
+        num_iter = 10000
 
     probs = [1.0 for i in range(num_players)]
 
