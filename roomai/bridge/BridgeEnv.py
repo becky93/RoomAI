@@ -32,7 +32,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
         self.public_state                        = roomai.bridge.BridgePublicState()
         self.public_state.__stage__              = "bidding"
         self.public_state.__turn__               = self.__params__["start_turn"]
-        self.public_state.__playing_vulnerable__ = list(self.__params__["vulnerable"])
+        self.public_state.__playing_is_vulnerable__ = list(self.__params__["vulnerable"])
 
         self.person_states = [roomai.bridge.BridgePersonState() for i in range(4)]
         num = int(len(roomai.bridge.AllBridgePokerCards) / 4)
@@ -134,10 +134,13 @@ class BridgeEnv(roomai.common.AbstractEnv):
 
     def __compute_score__(self):
         pu = self.public_state
-        point_rank = roomai.bridge.contract_point_to_rank[pu.playing_contract_point]
-        if pu.playing_win_tricks_sofar[pu.playing_dealerid] - pu.playing_win_tricks_sofar[(pu.playing_dealerid+1)%4] > 6 + point_rank:
-            pu.__scores__ = [0,0,0,0]
-            excessive_tricks = pu.playing_win_tricks_sofar[pu.playing_dealerid] - pu.playing_win_tricks_sofar[(pu.playing_dealerid+1)%4] - 6 - point_rank
+        pu.__scores__ = [0, 0, 0, 0]
+        playing_point_rank = roomai.bridge.contract_point_to_rank[pu.playing_contract_point]
+
+        if pu.playing_win_tricks_sofar[pu.playing_dealerid] - pu.playing_win_tricks_sofar[(pu.playing_dealerid+1)%4] >= 6 + playing_point_rank:
+
+            ####
+            excessive_tricks = pu.playing_win_tricks_sofar[pu.playing_dealerid] - pu.playing_win_tricks_sofar[(pu.playing_dealerid+1)%4] - 6 - playing_point_rank
             tricks_score     = 0
             if pu.playing_contract_suit == "NotTrump":
                 tricks_score = (excessive_tricks * 30 + 10) * pu.playing_magnification
@@ -147,11 +150,69 @@ class BridgeEnv(roomai.common.AbstractEnv):
                 tricks_score = excessive_tricks * 20
             else:
                 raise ValueError("%s is not valid playing_contract_suit (NotTrump, Spade, Heart, Diamond, Club)"%(pu.playing_contract_suit))
+            pu.__scores__[pu.playing_dealerid] = tricks_score
+            pu.__scores__[(pu.playing_dealerid + 2)%4] = tricks_score
+
+            ####
+            case_type = 1
+            if tricks_score < 100:
+                case_type = 1
+            else:
+                case_type = 2
+            if playing_point_rank == 6:
+                case_type = 3
+            if playing_point_rank == 7:
+                case_type = 4
+            additive_score = 0
+            if pu.playing_is_vulnerable[pu.playing_dealerid] == True:
+                if case_type == 1:
+                    additive_score = 50
+                elif case_type == 2:
+                    additive_score = 500
+                elif case_type == 3:
+                    additive_score = 750
+                elif case_type == 4:
+                    additive_score = 1500
+            else:
+                if case_type == 1:
+                    additive_score = 50
+                elif case_type == 2:
+                    additive_score = 300
+                elif case_type == 3:
+                    additive_score = 500
+                elif case_type == 4:
+                    additive_score = 1000
+            pu.__scores__[pu.playing_dealerid] += additive_score
+            pu.__scores__[(pu.playing_dealerid + 2) % 4] += additive_score
+
+            #####
+            additive_score1 = 0
+            if pu.playing_magnification > 1:
+                if pu.playing_is_vulnerable[pu.playing_dealerid] == True:
+                    additive_score1 = excessive_tricks * pu.playing_magnification
+                else:
+                    additive_score1 = excessive_tricks * (pu.playing_magnification-1)
+                if pu.playing_magnification == 1:
+                    additive_score1 += 50
+                elif pu.playing_magnification == 2:
+                    additive_score1 += 100
+                pu.__scores__[pu.playing_dealerid] += additive_score1
+                pu.__scores__[(pu.playing_dealerid + 2) % 4] += additive_score1
+
 
         else:
-            pu.__scores__ = [0,0,0,0]
+            penalty_trick = -(pu.playing_win_tricks_sofar[pu.playing_dealerid] - pu.playing_win_tricks_sofar[(pu.playing_dealerid+1)%4] - 6 - playing_point_rank
+        )
+            penalty_score = 0
+            if pu.playing_is_vulnerable[(pu.playing_dealerid + 1)%4] == True:
+                penalty_score = penalty_trick * 100 * pu.playing_magnification
+            else:
+                penalty_score = penalty_trick * 50 * pu.playing_magnification
 
+            pu.__scores__[(pu.playing_dealerid+1)%4] += penalty_score
+            pu.__scores__[(pu.playing_dealerid+3)%4] += penalty_score
 
+        
 
     def __whois_winner_per_pier__(self, pu):
         max_id   = 0
