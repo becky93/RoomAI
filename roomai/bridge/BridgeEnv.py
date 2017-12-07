@@ -116,8 +116,6 @@ class BridgeEnv(roomai.common.AbstractEnv):
                     pu.__turn__ = pu.playing_real_turn
                 pes[pu.turn].__available_actions__ = BridgeEnv.available_actions(public_state=pu,person_state=pes[pu.playing_real_turn])
 
-
-
         else:
             raise ValueError("The public_state.stage = %d is invalid"%(self.public_state.stage))
 
@@ -147,8 +145,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
         pu = self.public_state
         pu.__scores__ = [0, 0, 0, 0]
         playing_point_rank = roomai.bridge.contract_point_to_rank[pu.playing_contract_point]
-        excessive_tricks = pu.playing_win_tricks_sofar[pu.playing_dealerid] - pu.playing_win_tricks_sofar[
-            (pu.playing_dealerid + 1) % 4] - 6 - playing_point_rank
+        excessive_tricks = pu.playing_win_tricks_sofar[pu.playing_dealerid]  - 6 - playing_point_rank
 
         if excessive_tricks >= 0:
             ####
@@ -217,7 +214,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
             penalty_score = 0
             if pu.playing_is_vulnerable[(pu.playing_dealerid + 1)%4] == True:
                 if pu.playing_magnification == 1:
-                    penalty_score = 100
+                    penalty_score = 100 * penalty_trick
                 elif pu.playing_magnification == 2:
                     if penalty_trick == 1:
                         penalty_score = 200
@@ -234,7 +231,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
                         penalty_score = 400 + 600 * 2 + (penalty_trick-3) * 600
             else:
                 if pu.playing_magnification == 1:
-                    penalty_score = 50
+                    penalty_score = 50 * penalty_trick
                 elif pu.playing_magnification == 2:
                     if penalty_trick == 1:
                         penalty_score = 100
@@ -311,6 +308,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
         pu.__stage__                  = "playing"
         pu.__playing_contract_point__ = pu.bidding_candidate_contract_point
         pu.__playing_contract_suit__  = pu.bidding_candidate_contract_suit
+        pu.__playing_magnification__  = pu.bidding_magnification
 
         start_turn  = self.__params__["start_turn"]
         last_bidder = pu.bidding_last_bidder

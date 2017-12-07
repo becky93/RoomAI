@@ -34,6 +34,9 @@ class BridgePublicState(roomai.common.AbstractPublicState):
     def __get_bidding_candidate_contract_point__(self):    return self.__bidding_candidate_contract_point__
     bidding_candidate_contract_point = property(__get_bidding_candidate_contract_point__, doc="")
 
+    def __get_bidding_magnification__(self):    return self.__bidding_magnification__
+    bidding_magnification = property(__get_bidding_magnification__, doc = "")
+
     def __get_bidding_last_bidder__(self):   return self.__bidding_last_bidder__
     bidding_last_bidder = property(__get_bidding_last_bidder__, doc="")
 
