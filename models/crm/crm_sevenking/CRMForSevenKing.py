@@ -107,8 +107,6 @@ class SevenKingPlayer(CRMPlayer):
             idx = int(random.random() * len(self.available_actions))
             return list(self.available_actions.values())[idx]
 
-
-
     def reset(self):
         pass
 
@@ -162,26 +160,26 @@ def CRMTrain(env, cur_turn, player, probs, action=None, depth=0):
             for j in xrange(num_players):
                 if j != this_turn:
                     temp_probs[j] = probs[j] * cur_strategies[new_key]
-            util[new_key] = -CRMTrain(env, cur_turn, player, temp_probs, available_actions[key], depth+1)
+            util[new_key] = -CRMTrain(env, this_turn, player, temp_probs, available_actions[key], depth+1)
             strategy_util += cur_strategies[new_key] * util[new_key]
 
         new_regrets = dict()
         new_strategies = dict()
 
-        if this_turn == cur_turn:
-            strategies = player.get_strategies(state, available_actions)
-            # update regrets and strategies
-            for key in available_actions:
-                prob = 1
-                new_key = "%s_%s" % (state, key)
-                for j in xrange(num_players):
-                    if j != this_turn:
-                        prob *= probs[j]
-                new_regrets[new_key] = regrets[new_key] + prob * (util[new_key] - strategy_util)
-                new_strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
 
-            player.update_regrets(state, available_actions, new_regrets)
-            player.update_strategies(state, available_actions, new_strategies)
+        strategies = player.get_strategies(state, available_actions)
+        # update regrets and strategies
+        for key in available_actions:
+            prob = 1
+            new_key = "%s_%s" % (state, key)
+            for j in xrange(num_players):
+                if j != this_turn:
+                    prob *= probs[j]
+            new_regrets[new_key] = regrets[new_key] + prob * (util[new_key] - strategy_util)
+            new_strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
+
+        player.update_regrets(state, available_actions, new_regrets)
+        player.update_strategies(state, available_actions, new_strategies)
 
         utility = strategy_util
 
@@ -237,22 +235,18 @@ def OutcomeSamplingCRM(env, cur_turn, player, num_players, sampleProb, action=No
         new_key = "%s_%s" % (state, action_key)
 
         this_prob = player.exploration * (1.0 / len(available_actions)) + (1.0 - player.exploration) * action_prob
-        util, isTerminal = OutcomeSamplingCRM(env, cur_turn, player, num_players, sampleProb*this_prob, available_actions[action_key], depth+1)
+        util, isTerminal = OutcomeSamplingCRM(env, this_turn, player, num_players, sampleProb*this_prob, available_actions[action_key], depth+1)
 
         strategy_util = action_prob * util / sampleProb
 
-        new_regrets = dict()
-        new_strategies = dict()
+        strategies = player.get_strategies(state, available_actions)
+        # update regrets and strategies
+        if isTerminal:
+            player.regrets[new_key] = strategy_util * (1 - cur_strategies[new_key])
+        else:
+            player.regrets[new_key] = -strategy_util * cur_strategies[new_key]
 
-        if this_turn == cur_turn:
-            strategies = player.get_strategies(state, available_actions)
-            # update regrets and strategies
-            if isTerminal:
-                player.regrets[new_key] = strategy_util * (1 - cur_strategies[new_key])
-            else:
-                player.regrets[new_key] = -strategy_util * cur_strategies[new_key]
-
-            player.strategies[new_key] = strategies[new_key] + sampleProb * this_prob * cur_strategies[new_key]
+        player.strategies[new_key] = strategies[new_key] + sampleProb * this_prob * cur_strategies[new_key]
 
         utility = util
 
@@ -272,7 +266,7 @@ def Train(params = dict()):
     if "num_players" in params:
         num_players = params["num_players"]
     else:
-        num_players = 2
+        num_players = 5
 
     if "num_iter" in params:
         num_iter = params["num_iter"]
