@@ -188,7 +188,7 @@ def CRMTrain(env, cur_turn, player, probs, action=None, depth=0):
 
     return utility
 
-def OutcomeSamplingCRM(env, cur_turn, player, num_players, sampleProb, action=None, depth=0):
+def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, depth=0):
     infos = None
     public_state = None
     person_states = None
@@ -196,7 +196,7 @@ def OutcomeSamplingCRM(env, cur_turn, player, num_players, sampleProb, action=No
 
     utility = 0
 
-    # num_players = len(probs)
+    num_players = len(probs)
 
     # initialization
     if depth == 0:
@@ -235,9 +235,15 @@ def OutcomeSamplingCRM(env, cur_turn, player, num_players, sampleProb, action=No
         new_key = "%s_%s" % (state, action_key)
 
         this_prob = player.exploration * (1.0 / len(available_actions)) + (1.0 - player.exploration) * action_prob
-        util, isTerminal = OutcomeSamplingCRM(env, this_turn, player, num_players, sampleProb*this_prob, available_actions[action_key], depth+1)
+        probs[this_turn] *= action_prob
+        util, isTerminal = OutcomeSamplingCRM(env, this_turn, player, probs, sampleProb*this_prob, available_actions[action_key], depth+1)
 
-        strategy_util = action_prob * util / sampleProb
+        temp_prob = 1.0
+        for j in xrange(num_players):
+            if j != this_turn:
+                temp_prob *= probs[j]
+
+        strategy_util = action_prob * temp_prob * util / sampleProb
 
         strategies = player.get_strategies(state, available_actions)
         # update regrets and strategies
@@ -246,7 +252,7 @@ def OutcomeSamplingCRM(env, cur_turn, player, num_players, sampleProb, action=No
         else:
             player.regrets[new_key] = -strategy_util * cur_strategies[new_key]
 
-        player.strategies[new_key] = strategies[new_key] + sampleProb * this_prob * cur_strategies[new_key]
+        player.strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
 
         utility = util
 
@@ -278,7 +284,7 @@ def Train(params = dict()):
     for i in xrange(num_iter):
         for p in xrange(num_players):
             # CRMTrain(env, p, player, probs)
-            OutcomeSamplingCRM(env, p, player, num_players, 1)
+            OutcomeSamplingCRM(env, p, player, probs, 1)
 
     return player
 
