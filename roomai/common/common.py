@@ -103,8 +103,8 @@ class Info(object):
     def __deepcopy__(self, memodict={}, newinstance = None):
         if newinstance is None:
             newinstance = Info()
-        newinstance.__public_state__ = self.__public_state.__deepcopy__()
-        newinstance.__public_state__ = self.__person_state.__deepcopy__()
+        newinstance.__public_state__  = self.__public_state.__deepcopy__()
+        newinstance.__personc_state__ = self.__person_state.__deepcopy__()
         return newinstance
 
 class AbstractAction(object):
@@ -190,22 +190,26 @@ class AbstractEnv(object):
 
     def __init__(self):
         self.__params__ = dict()
-        self.__infos__ = None
         self.__public_state_history__  = []
-        self.__person_states_history__  = []
+        self.__person_states_history__ = []
         self.__private_state_history__ = []
+
+        self.public_state  = AbstractPublicState()
+        self.person_states = [AbstractPersonState()]
+        self.private_state = AbstractPrivateState()
+
+
 
     def __gen_infos__(self):
 
         num_players = len(self.person_states)
-        if self.__infos__ is None:
-            self.__infos__  = [Info() for i in range(num_players)]
+        __infos__   = [Info() for i in range(num_players)]
 
         for i in range(num_players):
-            self.__infos__[i].__person_state__ = self.person_states[i]#.__deepcopy__()
-            self.__infos__[i].__public_state__ = self.public_state#.__deepcopy__()
+            __infos__[i].__person_state__ = self.person_states[i]#.__deepcopy__()
+            __infos__[i].__public_state__ = self.public_state#.__deepcopy__()
 
-        return tuple(self.__infos__)
+        return tuple(__infos__)
 
 
     def __gen_history__(self):
@@ -261,6 +265,24 @@ class AbstractEnv(object):
 
         infos  = self.__gen_infos__()
         return infos, self.public_state, self.person_states, self.private_state
+
+    def __deepcopy__(self, memodict={}, newinstance = None):
+        if newinstance is None:
+            newinstance = AbstractEnv()
+        newinstance.__params__ = dict(self.__params__)
+        newinstance.private_state = self.private_state.__deepcopy__()
+        newinstance.public_state  = self.public_state.__deepcopy__()
+        newinstance.person_states = [pe.__deepcopy__() for pe in self.person_states]
+
+        newinstance.__private_state_history__ = [pr.__deepcopy__() for pr in self.__private_state_history__]
+        newinstance.__public_state_history__  = [pu.__deepcopy__() for pu in self.__public_state_history__]
+        newinstance.__person_states_history__ = []
+        if len(self.person_states) > 0:
+            for i in range(len(self.person_states)):
+                newinstance.__person_states_history__.append([pe.__deepcopy__() for pe in self.__person_states_history__[i]])
+
+        return newinstance
+
 
     ### provide some util functions
     @classmethod
@@ -340,19 +362,19 @@ class PokerCard(object):
             if isinstance(suit, str):
                 suit1 = suit_str_to_rank[suit]
 
-        self.__point_str__  = point_rank_to_str[point1]
-        self.__suit_str__   = suit_rank_to_str[suit1]
+        self.__point__  = point_rank_to_str[point1]
+        self.__suit__   = suit_rank_to_str[suit1]
         self.__point_rank__ = point1
         self.__suit_rank__  = suit1
-        self.__key__        = "%s_%s" % (self.__point_str__, self.__suit_str__)
+        self.__key__        = "%s_%s" % (self.__point__, self.__suit__)
 
 
     def __get_point_str__(self):
-        return self.__point_str__
+        return self.__point__
     point = property(__get_point_str__, doc="The point of the poker card")
 
     def __get_suit_str__(self):
-        return self.__suit_str__
+        return self.__suit__
     suit = property(__get_suit_str__, doc="The suit of the poker card")
 
     def __get_point_rank__(self):

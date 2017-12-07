@@ -15,29 +15,30 @@ logger.addHandler(handler);
 
 
 def set_level(level):
-    """
-
-    Args:
-        level:
-    """
+    '''
+    set the level of log
+    
+    :param level: 
+    :return: 
+    '''
     logger.setLevel(level)
     handler.setLevel(level)
 
 def get_logger():
-    """
-
-    Returns:
-
-    """
+    '''
+    get the logger
+    
+    :return: 
+    '''
     return logger
 
 
 def init_logger(opts):
-    """
-
-    Args:
-        opts:
-    """
+    '''
+    
+    :param opts: 
+    :return: 
+    '''
     global logger;
     global handler;
     global project_name;
