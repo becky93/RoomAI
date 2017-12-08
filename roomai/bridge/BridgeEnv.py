@@ -18,6 +18,9 @@ class BridgeEnv(roomai.common.AbstractEnv):
         else:
             self.__params__["start_turn"] = int(random.random() * 4)
 
+        if self.__params__["start_turn"] not in [roomai.bridge.Direction.north,roomai.bridge.Direction.east, roomai.bridge.Direction.south,roomai.bridge.Direction.west]:
+            raise ValueError("start_turn is %s, not one of [roomai.bridge.Direction.north,roomai.bridge.Direction.east, roomai.bridge.Direction.south,roomai.bridge.Direction.west]"%(str(self.__params__["start_turn"])))
+
         if "allcards" in params:
             self.__params__["allcards"] = list(params["allcards"])
         else:
