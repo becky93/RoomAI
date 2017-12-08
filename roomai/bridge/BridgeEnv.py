@@ -3,6 +3,7 @@
 import roomai.common
 import roomai.bridge
 import random
+import roomai.bridge
 
 
 class BridgeEnv(roomai.common.AbstractEnv):
@@ -31,6 +32,10 @@ class BridgeEnv(roomai.common.AbstractEnv):
             self.__params__["vulnerable"] = list(params["vulnerable"])
         else:
             self.__params__["vulnerable"] = [False for i in range(4)]
+        if self.__params__["vulnerable"][roomai.bridge.Direction.south] != self.__params__["vulnerable"][roomai.bridge.Direction.north]:
+            raise ValueError("The north and south players have different vulnerable states. (north vulnerable: %s, south vulnerable: %s)"%(str(self.__params__["vulnerable"][roomai.bridge.Direction.north]),str(self.__params__["vulnerable"][roomai.bridge.Direction.south])))
+        if self.__params__["vulnerable"][roomai.bridge.Direction.west]  != self.__params__["vulnerable"][roomai.bridge.Direction.east]:
+            raise ValueError("The east and west players have different vulnerable states. (north vulnerable: %s, south vulnerable: %s)"%(str(self.__params__["vulnerable"][roomai.bridge.Direction.north]),str(self.__params__["vulnerable"][roomai.bridge.Direction.south])))
 
 
         self.public_state                        = roomai.bridge.BridgePublicState()

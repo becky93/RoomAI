@@ -78,12 +78,12 @@ class BridgePersonState(roomai.common.AbstractPersonState):
         self.__hand_cards_dict__ = dict()
 
     def __get_hand_cards_dict__(self):   return roomai.common.FrozenDict(self.__hand_cards_dict__)
-    hand_cards_dict = property(__get_hand_cards_dict__, doc = "The hand cards in the corresponding player. For example, \n"
-                                                    "hand_cards_dict = {\"A_Heart\":roomai.bridge.BridgePokerCard.lookup(\"A_Heart\"), \"A_Spade\":roomai.bridge.BridgePokerCard.lookup(\"A_Spade\")}")
+    hand_cards_dict = property(__get_hand_cards_dict__, doc = "The hand cards in the corresponding player. \n"
+                                                              "For example, hand_cards_dict = {\"A_Heart\":roomai.bridge.BridgePokerCard.lookup(\"A_Heart\"), \"A_Spade\":roomai.bridge.BridgePokerCard.lookup(\"A_Spade\")}")
 
     def __deepcopy__(self, memodict={}, newinstance = None):
         if newinstance is None:
-            newinstance = BridgePersonState
+            newinstance = BridgePersonState()
         newinstance.__hand_cards_dict__ = dict(self.__hand_cards_dict__)
         return newinstance
 
