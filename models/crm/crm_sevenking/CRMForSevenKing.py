@@ -188,6 +188,7 @@ def CRMTrain(env, cur_turn, player, probs, action=None, depth=0):
 
     return utility
 
+
 def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, depth=0):
     infos = None
     public_state = None
@@ -243,9 +244,11 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
             if j != this_turn:
                 temp_prob *= probs[j]
 
+        pdb.set_trace()
         strategy_util = action_prob * temp_prob * util / sampleProb
 
         strategies = player.get_strategies(state, available_actions)
+
         # update regrets and strategies
         if isTerminal:
             player.regrets[new_key] = strategy_util * (1 - cur_strategies[new_key])
@@ -254,7 +257,7 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
 
         player.strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
 
-        utility = util
+        utility = strategy_util
 
     if depth != 0:
         env.backward()
