@@ -155,11 +155,11 @@ def CRMTrain(env, cur_turn, player, probs, action=None, depth=0):
 
         for key in available_actions:
             temp_probs = [0 for i_temp in range(num_players)]
-            temp_probs[this_turn] = probs[this_turn]
             new_key = "%s_%s" % (state, key)
+            temp_probs[this_turn] = probs[this_turn] * cur_strategies[new_key]
             for j in xrange(num_players):
                 if j != this_turn:
-                    temp_probs[j] = probs[j] * cur_strategies[new_key]
+                    temp_probs[j] = probs[j]
             util[new_key] = -CRMTrain(env, this_turn, player, temp_probs, available_actions[key], depth+1)
             strategy_util += cur_strategies[new_key] * util[new_key]
 
@@ -251,11 +251,11 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
 
         # update regrets and strategies
         if isTerminal:
-            player.regrets[new_key] = strategy_util * (1 - cur_strategies[new_key])
+            player.regrets[new_key] = regrets[new_key] + temp_prob * strategy_util * (1 - cur_strategies[new_key])
         else:
-            player.regrets[new_key] = -strategy_util * cur_strategies[new_key]
+            player.regrets[new_key] = regrets[new_key] - temp_prob * strategy_util * cur_strategies[new_key]
 
-        player.strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
+        player.strategies[new_key] = strategies[new_key] + probs[this_turn] / action_prob * cur_strategies[new_key]
 
         utility = strategy_util
 
