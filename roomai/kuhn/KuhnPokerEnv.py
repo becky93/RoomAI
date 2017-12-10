@@ -38,9 +38,9 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
             logger.warning("KuhnPoker is a game of two players and the number of players always be 2. Ingores the \"num_players\" option")
 
 
-        self.available_action = dict()
-        self.available_action[roomai.kuhn.KuhnPokerUtils.KuhnPokerAction("check").key] = roomai.kuhn.KuhnPokerAction.lookup("check")
-        self.available_action[roomai.kuhn.KuhnPokerUtils.KuhnPokerAction("bet").key]   = roomai.kuhn.KuhnPokerAction.lookup("bet")
+        self.all_available_action = dict()
+        self.all_available_action[roomai.kuhn.KuhnPokerUtils.KuhnPokerAction("check").key] = roomai.kuhn.KuhnPokerAction.lookup("check")
+        self.all_available_action[roomai.kuhn.KuhnPokerUtils.KuhnPokerAction("bet").key]   = roomai.kuhn.KuhnPokerAction.lookup("bet")
 
         self.private_state = roomai.kuhn.KuhnPokerUtils.KuhnPokerPrivateState()
         self.public_state  = roomai.kuhn.KuhnPokerUtils.KuhnPokerPublicState()
@@ -56,7 +56,7 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
         self.public_state.__turn__          = self.__params__["start_turn"]
         self.public_state.__first__         = self.public_state.turn
         self.public_state.__epoch__         = 0
-        self.public_state.__action_list__   = []
+        self.public_state.__action_history__   = []
         self.public_state.__is_terminal__   = False
         self.public_state.__scores__        = None
         self.person_states[0].__id__          = 0
@@ -64,7 +64,7 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
         self.person_states[1].__id__          = 1
         self.person_states[1].__number__      = card1
 
-        self.person_states[self.public_state.turn].__available_actions__ = self.available_action
+        self.person_states[self.public_state.turn].__available_actions__ = self.all_available_action
 
         self.__gen_history__()
         infos = self.__gen_infos__()
@@ -82,14 +82,15 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
         """
 
         self.person_states[self.public_state.turn].__available_actions__ = dict()
+        self.public_state.__action_history__.append((self.public_state.turn,action.key))
         self.public_state.__epoch__                                     += 1
         self.public_state.__turn__                                       = (self.public_state.turn+1)%2
-        self.public_state.__action_list__.append(action.key)
+
 
         if self.public_state.epoch == 1:
             self.public_state.__is_terminal__ = False
             self.public_state.__scores__      = []
-            self.person_states[self.public_state.turn].__available_actions__ = self.available_action
+            self.person_states[self.public_state.turn].__available_actions__ = self.all_available_action
 
             self.__gen_history__()
             infos = self.__gen_infos__()
@@ -105,17 +106,17 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
                 infos = self.__gen_infos__()
                 return infos,self.public_state, self.person_states, self.private_state
             else:
-                self.public_state.is_terminal = False
-                self.public_state.scores      = []
-                self.person_states[self.public_state.turn].available_actions = self.available_action
+                self.public_state.__is_terminal__ = False
+                self.public_state.__scores__      = []
+                self.person_states[self.public_state.turn].available_actions = self.all_available_action
 
                 self.__gen_history__()
                 infos                         = self.__gen_infos__()
                 return infos,self.public_state, self.person_states, self.private_state
 
         elif self.public_state.epoch == 3:
-            self.public_state.is_terminal = True
-            self.public_state.scores      = self.__evalute_three_round__()
+            self.public_state.__is_terminal__ = True
+            self.public_state.__scores__     = self.__evalute_three_round__()
 
             self.__gen_history__()
             infos                         = self.__gen_infos__()
@@ -161,7 +162,7 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
         win    = self.__higher_number_player__()
         first  = self.public_state.first
         scores = [0, 0];
-        actions = self.public_state.action_list
+        actions = [id_action[1] for id_action in self.public_state.action_history]
 
         if actions[0] == "check" and \
            actions[1] == "bet":
@@ -191,7 +192,7 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
         win     = self.__higher_number_player__()
         scores  = [0, 0]
 
-        if self.public_state.action_list[2] == "check":
+        if self.public_state.action_history[2][1].key == "check":
             scores[1 - first] = 1;
             scores[first]     = -1
         else:

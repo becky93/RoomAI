@@ -39,7 +39,7 @@ class KuhnPokerPublicState(roomai.common.AbstractPublicState):
         super(KuhnPokerPublicState,self).__init__()
         self.__first__                      = 0
         self.__epoch__                      = 0
-        self.__action_list__                = []
+        self.__action_history__                = []
 
     def __get_first__(self):    return self.__first__
     first = property(__get_first__, doc="players[first] is expected to take an action")
@@ -47,8 +47,6 @@ class KuhnPokerPublicState(roomai.common.AbstractPublicState):
     def __get_epoch(self):  return self.__epoch__
     epoch = property(__get_epoch)
 
-    def __get_action_list__(self):  return tuple(self.__action_list__)
-    action_list = property(__get_action_list__, doc="the action history taken by the players")
 
     def __deepcopy__(self, memodict={}, newinstance = None):
         if newinstance is None:
@@ -56,8 +54,6 @@ class KuhnPokerPublicState(roomai.common.AbstractPublicState):
         newinstance = super(KuhnPokerPublicState, self).__deepcopy__(newinstance=newinstance)
         newinstance.__first__ = self.first
         newinstance.__epoch__ = self.epoch
-        for a in self.action_list:
-            newinstance.__action_list__.append(a)
         return newinstance
 
 class KuhnPokerPrivateState(roomai.common.AbstractPrivateState):

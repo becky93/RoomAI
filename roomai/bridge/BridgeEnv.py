@@ -74,11 +74,11 @@ class BridgeEnv(roomai.common.AbstractEnv):
         pes[pu.turn].__available_actions__ = dict()
 
         if pu.stage == "bidding": ## the bidding stage
-            pu.__bidding_action_history__.append(action)
-            if len(pu.bidding_action_history) == 4:
+            pu.__action_history__.append((pu.turn,action))
+            if len(pu.action_history) == 4:
                 flag = True
                 for i in range(4):
-                    flag = flag and (pu.bidding_action_history[i].bidding_option == "pass")
+                    flag = flag and (pu.action_history[i][1].bidding_option == "pass")
                 if flag == True:
                     pu.__is_terminal__ = True
                     pu.__scores__      = [0,0,0,0]
@@ -86,9 +86,9 @@ class BridgeEnv(roomai.common.AbstractEnv):
                     return self.__gen_infos__(), self.public_state, self.person_states, self.private_state
 
             if action.bidding_option == "pass":
-                if len(pu.bidding_action_history) > 3 \
-                    and pu.bidding_action_history[-2].bidding_option == "pass"\
-                    and pu.bidding_action_history[-3].bidding_option == "pass":
+                if len(pu.action_history) > 3 \
+                    and pu.action_history[-2][1].bidding_option == "pass"\
+                    and pu.action_history[-3][1].bidding_option == "pass":
                         self.__bidding_to_playing__(action)
                 else:
                     self.__bidding_process_pass__(action)
@@ -320,10 +320,10 @@ class BridgeEnv(roomai.common.AbstractEnv):
 
         start_turn  = self.__params__["start_turn"]
         last_bidder = pu.bidding_last_bidder
-        for i in range(len(pu.bidding_action_history)):
+        for i in range(len(pu.action_history)):
             if (i+start_turn)%4 == last_bidder or (i + start_turn + 2) % 4 == last_bidder:
-                if pu.bidding_action_history[i].bidding_option == "bid" \
-                        and pu.bidding_action_history[i].bidding_contract_suit == pu.playing_contract_suit:
+                if pu.action_history[i][1].bidding_option == "bid" \
+                        and pu.action_history[i][1].bidding_contract_suit == pu.playing_contract_suit:
                     pu.__playing_dealerid__ = i
                     break
 
@@ -370,8 +370,8 @@ class BridgeEnv(roomai.common.AbstractEnv):
                         available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
             available_actions["bidding_pass"] = roomai.bridge.BridgeAction.lookup("bidding_pass")
 
-            if len(public_state.__bidding_action_history__) >= 1:
-                pre_action  = public_state.__bidding_action_history__[-1]
+            if len(public_state.__action_history__) >= 1:
+                pre_action  = public_state.__action_history__[-1][1]
                 if pre_action.bidding_option == "bid":
                     key = "bidding_double"
                     available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
@@ -380,10 +380,10 @@ class BridgeEnv(roomai.common.AbstractEnv):
                     key = "bidding_redouble"
                     available_actions[key] = roomai.bridge.BridgeAction.lookup(key)
 
-            if len(public_state.__bidding_action_history__) >= 3:
-                pre_action1 = public_state.__bidding_action_history__[-1]
-                pre_action2 = public_state.__bidding_action_history__[-2]
-                pre_action3 = public_state.__bidding_action_history__[-3]
+            if len(public_state.__action_history__) >= 3:
+                pre_action1 = public_state.__action_history__[-1][1]
+                pre_action2 = public_state.__action_history__[-2][1]
+                pre_action3 = public_state.__action_history__[-3][1]
                 if pre_action3.bidding_option == "bid" and pre_action2.bidding_option == "pass" and pre_action1.bidding_option == "pass":
                     key = "bidding_double"
                     available_actions[key] = roomai.bridge.BridgeAction.lookup(key)

@@ -41,9 +41,6 @@ class BridgePublicState(roomai.common.AbstractPublicState):
     bidding_last_bidder = property(__get_bidding_last_bidder__, doc="In the bidding stage, the last playerid who lastly takes the \"bid\" action. The bidding_last_bidder is one of [roomai.bridge.Direction.north,roomai.bridge.Direction.east, roomai.bridge.Direction.south,roomai.bridge.Direction.west]. \n"
                                                                     "For example, the bidding_last_bidder = roomai.bridge.Direction.west")
 
-    def __get_bidding_action_history__(self):   return tuple(self.__bidding_action_history__)
-    bidding_action_history = property(__get_bidding_action_history__, doc = "The actions taken by different players. For example, bidding_action_history = [roomai.bridge.BridgeAction.lookup(\"bidding_bid_A_heart\"), roomai.bridge.BridgeAction.lookup(\"bidding_pass\"),roomai.bridge.BridgeAction.lookup(\"bidding_pass\")]")
-
     ########################## playing stage ####################
     def __get_playing_contract_point__(self):    return self.__playing_contract_point__
     playing_contract_point = property(__get_playing_contract_point__, doc="")
