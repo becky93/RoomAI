@@ -41,12 +41,7 @@ class BridgePokerCard(roomai.common.PokerCard):
         self.__suit__       = suit_rank_to_str[real_suit_int]
         self.__point_rank__ = real_point_int
         self.__suit_rank__  = real_suit_int
-        self.__is_nt_card   = False
         self.__key__        = "%s_%s" % (self.__point__, self.__suit__)
-
-
-    def __get_is_nt_card__(self):   return self.__is_nt_card
-    is_nt_card = property(__get_is_nt_card__, doc = "")
 
     def __deepcopy__(self, memodict={}, newinstance=None):
         return AllBridgePokerCards[self.key]

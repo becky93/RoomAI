@@ -32,6 +32,8 @@ class BridgeEnv(roomai.common.AbstractEnv):
             self.__params__["vulnerable"] = list(params["vulnerable"])
         else:
             self.__params__["vulnerable"] = [False for i in range(4)]
+        if len(self.__params__["vulnerable"]) != 4:
+            raise ValueError("len(self.__params__[\"vulnerable\"]) != 4")
         if self.__params__["vulnerable"][roomai.bridge.Direction.south] != self.__params__["vulnerable"][roomai.bridge.Direction.north]:
             raise ValueError("The north and south players have different vulnerable states. (north vulnerable: %s, south vulnerable: %s)"%(str(self.__params__["vulnerable"][roomai.bridge.Direction.north]),str(self.__params__["vulnerable"][roomai.bridge.Direction.south])))
         if self.__params__["vulnerable"][roomai.bridge.Direction.west]  != self.__params__["vulnerable"][roomai.bridge.Direction.east]:
@@ -104,25 +106,25 @@ class BridgeEnv(roomai.common.AbstractEnv):
 
         elif pu.stage == "playing": ## the playing stage
             pu.__playing_cards_on_table__.append(action.playing_card)
-            self.__remove_card_from_hand_cards__(pes[pu.playing_real_turn], action.playing_card)
+            self.__remove_card_from_hand_cards__(pes[pu.playing_card_turn], action.playing_card)
 
             if len(pu.playing_cards_on_table) == 4:
                 playerid1,playerid2 = self.__whois_winner_per_pier__(pu)
                 pu.__playing_win_tricks_sofar__[playerid1] += 1
                 pu.__playing_win_tricks_sofar__[playerid2] += 1
                 pu.__playing_cards_on_table__ = []
-                if len(pes[pu.playing_real_turn].hand_cards_dict) == 0:
+                if len(pes[pu.playing_card_turn].hand_cards_dict) == 0:
                     pu.__is_terminal__ = True
                     self.__compute_score__()
                 else:
-                    pes[pu.turn].__available_actions__ = BridgeEnv.available_actions(public_state= pu, person_state=pes[pu.playing_real_turn])
+                    pes[pu.turn].__available_actions__ = BridgeEnv.available_actions(public_state= pu, person_state=pes[pu.playing_card_turn])
             else:
-                pu.__playing_real_turn__ = (pu.__playing_real_turn__ + 1) % 4
-                if pu.playing_real_turn == pu.playing_dealerid:
-                    pu.__turn__ = (pu.playing_real_turn + 2) % 4
+                pu.__playing_card_turn__ = (pu.__playing_card_turn__ + 1) % 4
+                if pu.playing_card_turn == pu.playing_dealerid:
+                    pu.__turn__ = (pu.playing_card_turn + 2) % 4
                 else:
-                    pu.__turn__ = pu.playing_real_turn
-                pes[pu.turn].__available_actions__ = BridgeEnv.available_actions(public_state=pu,person_state=pes[pu.playing_real_turn])
+                    pu.__turn__ = pu.playing_card_turn
+                pes[pu.turn].__available_actions__ = BridgeEnv.available_actions(public_state=pu, person_state=pes[pu.playing_card_turn])
 
         else:
             raise ValueError("The public_state.stage = %d is invalid"%(self.public_state.stage))
@@ -330,7 +332,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
         pu.__previous_id__ = pu.turn
         pu.__previous_action__ = action
         pu.__turn__ = pu.playing_dealerid
-        pu.__playing_real_turn__ = pu.playing_dealerid
+        pu.__playing_card_turn__ = pu.playing_dealerid
         self.person_states[pu.turn].__available_actions__ = self.available_actions(pu,self.person_states[pu.turn])
 
 

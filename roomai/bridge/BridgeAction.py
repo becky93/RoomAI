@@ -4,27 +4,44 @@ import roomai.bridge
 
 class BridgeAction(roomai.common.AbstractAction):
     '''
-    The action of Bridge. There are two stages:1) bidding and 2) playing. \n
-    In the bidding stages, players \n
-    In the playing stages, players \n
+    The action of Bridge. There are two stages:1) bidding and 2) playing. 
     The example of the Bridge action's usages:\n
-    >>action = roomai.bridge.BridgeAction.lookup("bidding_A_Heart")\n
-    ## We strongly recommend you to use the lookup fuction to get an action \n
+    \n\n
+    ################ In the bidding stage, the action key looks like "bidding"_option_(point)_(suit). ################ \n
+    ## The option is one of "bid","double","redouble" and "pass".\n
+    ## When the option is "bid", the point and suit are the candidate point (one of "A","2","3","4","5","6" and "7")and suit (one of "NotTrump","Spade","Heart","Diamond" and "Club").
+    ## When the option is "double" or "redouble" or "pass". No point and suit. The action key looks like bidding_option
+    \n  
+    >>action = roomai.bridge.BridgeAction.lookup("bidding_bid_A_Heart") ## We strongly recommend you to use the lookup fuction to get an action.\n
     >>action.key \n
     "bidding_bid_A_Heart"\n
     >>action.stage \n
-    0
-    # 0 means bidding, 1 means playing
-    >>action.card.key \n
-    "A_Heart"\n
-    >>action.card.point \n
+    "bidding"
+    >>action.bidding_option\n
+    "bid"\n
+    >>action.bidding_contract_point \n
     "A"\n
-    >>action.card.suit  \n
+    >>action.bidding_contract_suit\n
     "Heart"\n
-    >>action.card.point_rank \n
+    \n
+    >>action = roomai.bridge.BridgeAction.lookup("bidding_pass")\n
+    >>action.bidding_option\n
+    "pass"\n
+    \n\n
+    ################ In the playing stage, the action key looks like "playing"_point_suit.################  \n
+    >> action = roomai.bridge.BridgeAction.lookup("playing_A_heart") ## We strongly recommend you to use the lookup fuction to get an action.\n
+    >> action.key \n
+    "playing_A_heart"\n
+    >>action.stage \n
+    "playing"
+    >>action.playing_card.point\n
+    "A"\n
+    >>action.playing_card.point_rank\n
     12\n
-    >>action.card.suit_rank \n
-    1
+    >>action.playing_card.suit\n
+    "Heart"\n
+    >>action.playing_card.suit_rank\n
+    2\n
     '''
 
     def __init__(self, stage, bidding_option, bidding_point, bidding_suit, playing_pokercard):
