@@ -124,8 +124,6 @@ class SevenKingEnv(roomai.common.AbstractEnv):
             elif pu.stage == 1:
                 pu.__num_hand_cards__[turn] = len(pes[turn].hand_cards)
 
-            pes[turn].__available_actions__ = dict()
-
         if action.pattern[0] != "p_0":
             pu.__license_action__ = action
 

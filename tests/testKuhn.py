@@ -9,7 +9,7 @@ class KuhnTester(unittest.TestCase):
 
         """
         for i in range(1000):
-            players = [roomai.kuhn.KuhnPokerAlwaysBetPlayer() for i in range(2)]
+            players = [roomai.kuhn.Example_KuhnPokerAlwaysBetPlayer() for i in range(2)] + [roomai.kuhn.KuhnPokerChancePlayer()]
             env     = roomai.kuhn.KuhnPokerEnv()
             infos,public_state,_,_ = env.init()
 
