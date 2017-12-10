@@ -13,15 +13,14 @@ class BridgePublicState(roomai.common.AbstractPublicState):
         self.__bidding_candidate_contract_suit__            = None
         self.__bidding_magnification__                      = 1
         self.__bidding_last_bidder__                        = None
-        self.__bidding_action_history__                     = []
 
         self.__playing_is_vulnerable__                      = [False for i in range(4)]
         self.__playing_contract_point__                     = None
         self.__playing_contract_suit__                      = None
         self.__playing_magnification__                      = 1
-        self.__playing_dealerid__                           = None
+        self.__playing_dealerid__                           = -1
         self.__playing_cards_on_table__                     = []
-        self.__playing_real_turn__                          = None
+        self.__playing_real_turn__                          = -1
         self.__playing_win_tricks_sofar__                   = [0 for i in range(4)]
 
     def __get_stage__(self):    return self.__stage__
@@ -29,10 +28,11 @@ class BridgePublicState(roomai.common.AbstractPublicState):
 
     ################## bidding stage #####################
     def __get_bidding_candidate_contract_suit__(self): return self.__bidding_candidate_contract_suit__
-    bidding_candidate_contract_suit = property(__get_bidding_candidate_contract_suit__, doc="")
+    bidding_candidate_contract_suit = property(__get_bidding_candidate_contract_suit__, doc="The candidate contract suit at the bidding stage. The candidate contract suit is one of \"NotTrump\",\"Spade\",\"Heart\", \"Diamond\",\"Club\" and \"None\"]. \n"
+                                                                                            "At the beginning of the bidding stage, the candidate_contract_suit is 'None'")
 
     def __get_bidding_candidate_contract_point__(self):    return self.__bidding_candidate_contract_point__
-    bidding_candidate_contract_point = property(__get_bidding_candidate_contract_point__, doc="")
+    bidding_candidate_contract_point = property(__get_bidding_candidate_contract_point__, doc="The candidate contract point at the bidding stage. The candidate contract point is one of '7', '6', '5', '4', '3', '2',  'A' and ")
 
     def __get_bidding_magnification__(self):    return self.__bidding_magnification__
     bidding_magnification = property(__get_bidding_magnification__, doc = "In the bidding stage, normally, the magnification = 1. The \"double\" action makes magnification = 2, and the \"redouble\" makes magnification = 4")
