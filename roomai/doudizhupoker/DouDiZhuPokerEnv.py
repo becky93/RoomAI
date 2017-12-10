@@ -133,6 +133,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                     self.public_state.is_response,
                     landlord_id)
             )
+        self.public_state.__action_history__.append((self.public_state.turn,action))
         self.person_states[self.public_state.turn].__available_actions__ = dict()
 
         turn = self.public_state.turn
@@ -153,8 +154,6 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                 self.__update_phase_bid2play__()
 
 
-                self.public_state.__previous_id__ = turn
-                self.public_state.__previous_action__ = action
                 self.public_state.__epoch__ += 1
                 self.person_states[self.public_state.turn].__available_actions__ =\
                     DouDiZhuPokerEnv.available_actions(self.public_state, self.person_states[self.public_state.turn])
@@ -175,8 +174,6 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
     
                 num = self.person_states[turn].hand_cards.num_card
                 if num == 0:
-                    self.public_state.__previous_id__ = turn
-                    self.public_state.__previous_action__ = action
                     self.public_state.__epoch__ += 1
                     if turn == self.public_state.landlord_id:
                         self.public_state.__is_terminal__                           = True
@@ -203,8 +200,6 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
             self.public_state.__is_response__ = True
 
 
-        self.public_state.__previous_id__         = turn
-        self.public_state.__previous_action__     = action
         self.public_state.__epoch__              += 1
         self.person_states[self.public_state.turn].__available_actions__\
             = DouDiZhuPokerEnv.available_actions(self.public_state, self.person_states[self.public_state.turn])

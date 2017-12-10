@@ -110,6 +110,7 @@ class DouDiZhuPublicState(roomai.common.AbstractPublicState):
     The public state of DouDiZhuPoker
     '''
     def __init__(self):
+        super(DouDiZhuPublicState,self).__init__()
         self.__landlord_candidate_id__ = -1
         self.__landlord_id__ = -1
         self.__license_playerid__ = -1
