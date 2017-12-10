@@ -2,6 +2,13 @@
 import roomai.common
 from functools import cmp_to_key
 
+
+class Direction:
+    north = 0
+    east  = 1
+    south = 2
+    west  = 3
+
 point_str_to_rank  = {'A':12, 'K':11, 'Q':10, 'J':9, '10':8, '9':7, '8':6, '7':5, '6':4, '5':3, '4':2, '3':1, '2':0}
 point_rank_to_str  = {0: '2', 1: '3', 2: '4', 3: '5', 4: '6', 5: '7', 6: '8', 7: '9', 8: '10', 9: 'J', 10: 'Q', 11: 'K', 12: 'A'}
 suit_str_to_rank   = {'Spade':3, 'Heart':2, 'Diamond':1, 'Club':0}
@@ -34,12 +41,7 @@ class BridgePokerCard(roomai.common.PokerCard):
         self.__suit__       = suit_rank_to_str[real_suit_int]
         self.__point_rank__ = real_point_int
         self.__suit_rank__  = real_suit_int
-        self.__is_nt_card   = False
         self.__key__        = "%s_%s" % (self.__point__, self.__suit__)
-
-
-    def __get_is_nt_card__(self):   return self.__is_nt_card
-    is_nt_card = property(__get_is_nt_card__, doc = "")
 
     def __deepcopy__(self, memodict={}, newinstance=None):
         return AllBridgePokerCards[self.key]

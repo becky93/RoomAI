@@ -9,7 +9,7 @@ class KuhnTester(unittest.TestCase):
 
         """
         for i in range(1000):
-            players = [roomai.kuhn.KuhnPokerAlwaysBetPlayer() for i in range(2)]
+            players = [roomai.kuhn.Example_KuhnPokerAlwaysBetPlayer() for i in range(2)] + [roomai.kuhn.KuhnPokerChancePlayer()]
             env     = roomai.kuhn.KuhnPokerEnv()
             infos,public_state,_,_ = env.init()
 
@@ -29,15 +29,15 @@ class KuhnTester(unittest.TestCase):
         env = roomai.kuhn.KuhnPokerEnv()
         env.init({"record_history":True})
         infos, public_state, person_states, private_state = env.forward(roomai.kuhn.KuhnPokerAction("bet"))
-        print (public_state.action_list,person_states[public_state.turn].id)
-        assert(len(public_state.action_list) == 1)
+        print (public_state.action_history,person_states[public_state.turn].id)
+        assert(len(public_state.action_history) == 1)
 
         infos, public_state, person_states, private_state = env.forward(roomai.kuhn.KuhnPokerAction("bet"))
-        print (public_state.action_list,person_states[public_state.turn].id)
-        assert(len(public_state.action_list) == 2)
+        print (public_state.action_history,person_states[public_state.turn].id)
+        assert(len(public_state.action_history) == 2)
 
         infos, public_state, person_states, private_state = env.backward()
-        print (public_state.action_list,person_states[public_state.turn].id)
-        assert(len(public_state.action_list) == 1)
+        print (public_state.action_history,person_states[public_state.turn].id)
+        assert(len(public_state.action_history) == 1)
 
 

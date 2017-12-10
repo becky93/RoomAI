@@ -61,7 +61,6 @@ class BridgeTester(unittest.TestCase):
         self.assertEqual(count,13 * 4)
         self.assertTrue(env.public_state.scores[0] == 0)
         self.assertTrue(env.public_state.scores[1] > 0)
-        print env.public_state.scores
         self.assertEqual(env.public_state.scores[1],350)
 
 
@@ -101,7 +100,6 @@ class BridgeTester(unittest.TestCase):
         self.assertEqual(count,13 * 4)
         self.assertTrue(env.public_state.scores[0] == 0)
         self.assertTrue(env.public_state.scores[1] > 0)
-        print env.public_state.scores
         self.assertEqual(env.public_state.scores[1],100 + 200 * 2 + (7-3) * 300)
 
 
