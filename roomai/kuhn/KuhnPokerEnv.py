@@ -146,16 +146,21 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
         :return: scores for the players
         '''
 
+        if len(players) != 2:
+            raise  ValueError("The number of the players in Kuhn is two")
+
+        new_players = players + [roomai.kuhn.KuhnPokerChancePlayer()]
+
         infos, public_state, person_state, private_state = env.init()
-        for i in range(len(players)):
-            players[i].receive_info(infos[i])
+        for i in range(len(new_players)):
+            new_players[i].receive_info(infos[i])
 
         while public_state.is_terminal == False:
             turn = infos[-1].public_state.turn
-            action = players[turn].take_action()
+            action = new_players[turn].take_action()
             infos,public_state, person_state, private_state = env.forward(action)
-            for i in range(len(players)):
-                players[i].receive_info(infos[i])
+            for i in range(len(new_players)):
+                new_players[i].receive_info(infos[i])
 
         return public_state.scores
 

@@ -25,6 +25,8 @@ class KuhnTester(unittest.TestCase):
                 for i in range(len(players)):
                     players[i].receive_info(infos[i])
 
+            print (env.public_state.scores)
+
     def testKuhnEnvBackward(self):
         env = roomai.kuhn.KuhnPokerEnv()
         env.init({"record_history":True})
@@ -40,4 +42,8 @@ class KuhnTester(unittest.TestCase):
         print (public_state.action_history,person_states[public_state.turn].id)
         assert(len(public_state.action_history) == 1)
 
+    def testCompete(self):
+        players = [roomai.kuhn.Example_KuhnPokerAlwaysBetPlayer() for i in range(2)]
+        env = roomai.kuhn.KuhnPokerEnv()
 
+        env.compete(env,players)

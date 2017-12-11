@@ -8,7 +8,8 @@ class KuhnPokerChancePlayer(roomai.common.AbstractPlayer):
     def receive_info(self, info):
         self.available_actions_list = list(info.person_state.available_actions.values())
     def take_action(self):
-        return random.choice(self.available_actions_list)
+        action =  random.choice(self.available_actions_list)
+        return action
     def reset(self):
         pass
 

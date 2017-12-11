@@ -42,9 +42,12 @@ class KuhnPokerChanceAction(roomai.common.AbstractAction):
     def __deepcopy__(self, memodict={}, newinstance=None):
         return KuhnPokerChanceAction.lookup(self.key)
 
-AllKuhnChanceActions = {"0,1":KuhnPokerChanceAction("0,1"), \
-                    "0,2": KuhnPokerChanceAction("0,2"), \
-                    "1,2": KuhnPokerChanceAction("1,2")}
+AllKuhnChanceActions = {"0,1": KuhnPokerChanceAction("0,1"), \
+                        "1,0": KuhnPokerChanceAction("1,0"),\
+                        "0,2": KuhnPokerChanceAction("0,2"), \
+                        "2,0": KuhnPokerChanceAction("2,0"), \
+                        "1,2": KuhnPokerChanceAction("1,2"), \
+                        "2,1": KuhnPokerChanceAction("2,1"),}
 
 class KuhnPokerAction(roomai.common.AbstractAction):
     '''
