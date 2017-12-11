@@ -53,6 +53,11 @@
 <dd><p>Bases: <a class="reference internal" href="roomai.common.html#roomai.common.common.AbstractEnv" title="roomai.common.common.AbstractEnv"><code class="xref py py-class docutils literal"><span class="pre">roomai.common.common.AbstractEnv</span></code></a></p>
 <p>The KuhnPoker game environment</p>
 <dl class="classmethod">
+<dt id="roomai.kuhn.KuhnPokerEnv.KuhnPokerEnv.available_actions">
+<em class="property">classmethod </em><code class="descname">available_actions</code><span class="sig-paren">(</span><em>public_state</em>, <em>person_state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerEnv.html#KuhnPokerEnv.available_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerEnv.KuhnPokerEnv.available_actions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
 <dt id="roomai.kuhn.KuhnPokerEnv.KuhnPokerEnv.compete">
 <em class="property">classmethod </em><code class="descname">compete</code><span class="sig-paren">(</span><em>env</em>, <em>players</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerEnv.html#KuhnPokerEnv.compete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerEnv.KuhnPokerEnv.compete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use the game environment to hold a compete for the players</p>
@@ -124,22 +129,22 @@
 </dd></dl>
 
 <dl class="class">
-<dt id="roomai.kuhn.KuhnPokerPlayer.KuhnPokerRandomPlayer">
-<em class="property">class </em><code class="descclassname">roomai.kuhn.KuhnPokerPlayer.</code><code class="descname">KuhnPokerRandomPlayer</code><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerPlayer.html#KuhnPokerRandomPlayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerPlayer.KuhnPokerRandomPlayer" title="Permalink to this definition">¶</a></dt>
+<dt id="roomai.kuhn.KuhnPokerPlayer.KuhnPokerChancePlayer">
+<em class="property">class </em><code class="descclassname">roomai.kuhn.KuhnPokerPlayer.</code><code class="descname">KuhnPokerChancePlayer</code><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerPlayer.html#KuhnPokerChancePlayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerPlayer.KuhnPokerChancePlayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="roomai.common.html#roomai.common.common.AbstractPlayer" title="roomai.common.common.AbstractPlayer"><code class="xref py py-class docutils literal"><span class="pre">roomai.common.common.AbstractPlayer</span></code></a></p>
 <dl class="method">
-<dt id="roomai.kuhn.KuhnPokerPlayer.KuhnPokerRandomPlayer.receive_info">
-<code class="descname">receive_info</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerPlayer.html#KuhnPokerRandomPlayer.receive_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerPlayer.KuhnPokerRandomPlayer.receive_info" title="Permalink to this definition">¶</a></dt>
+<dt id="roomai.kuhn.KuhnPokerPlayer.KuhnPokerChancePlayer.receive_info">
+<code class="descname">receive_info</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerPlayer.html#KuhnPokerChancePlayer.receive_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerPlayer.KuhnPokerChancePlayer.receive_info" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="roomai.kuhn.KuhnPokerPlayer.KuhnPokerRandomPlayer.reset">
-<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerPlayer.html#KuhnPokerRandomPlayer.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerPlayer.KuhnPokerRandomPlayer.reset" title="Permalink to this definition">¶</a></dt>
+<dt id="roomai.kuhn.KuhnPokerPlayer.KuhnPokerChancePlayer.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerPlayer.html#KuhnPokerChancePlayer.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerPlayer.KuhnPokerChancePlayer.reset" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="roomai.kuhn.KuhnPokerPlayer.KuhnPokerRandomPlayer.take_action">
-<code class="descname">take_action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerPlayer.html#KuhnPokerRandomPlayer.take_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerPlayer.KuhnPokerRandomPlayer.take_action" title="Permalink to this definition">¶</a></dt>
+<dt id="roomai.kuhn.KuhnPokerPlayer.KuhnPokerChancePlayer.take_action">
+<code class="descname">take_action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerPlayer.html#KuhnPokerChancePlayer.take_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerPlayer.KuhnPokerChancePlayer.take_action" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -151,7 +156,7 @@
 <dt id="roomai.kuhn.KuhnPokerUtils.KuhnPokerAction">
 <em class="property">class </em><code class="descclassname">roomai.kuhn.KuhnPokerUtils.</code><code class="descname">KuhnPokerAction</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerUtils.html#KuhnPokerAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerUtils.KuhnPokerAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="roomai.common.html#roomai.common.common.AbstractAction" title="roomai.common.common.AbstractAction"><code class="xref py py-class docutils literal"><span class="pre">roomai.common.common.AbstractAction</span></code></a></p>
-<p>The KuhnPoker action. There are only two actions: bet and check. Examples of usages:</p>
+<p>The KuhnPoker action used by the normal players. There are only two actions: bet and check. Examples of usages:</p>
 <p>&gt;&gt; import roomai.kuhn</p>
 <p>&gt;&gt; action = roomai.kuhn.KuhnPokerAction.lookup(“bet”)</p>
 <p>&gt;&gt; action.key</p>
@@ -169,6 +174,44 @@
 <dt id="roomai.kuhn.KuhnPokerUtils.KuhnPokerAction.lookup">
 <em class="property">classmethod </em><code class="descname">lookup</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerUtils.html#KuhnPokerAction.lookup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerUtils.KuhnPokerAction.lookup" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="roomai.kuhn.KuhnPokerUtils.KuhnPokerChanceAction">
+<em class="property">class </em><code class="descclassname">roomai.kuhn.KuhnPokerUtils.</code><code class="descname">KuhnPokerChanceAction</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerUtils.html#KuhnPokerChanceAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerUtils.KuhnPokerChanceAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="roomai.common.html#roomai.common.common.AbstractAction" title="roomai.common.common.AbstractAction"><code class="xref py py-class docutils literal"><span class="pre">roomai.common.common.AbstractAction</span></code></a></p>
+<p>The KuhnPoker action used by the chance player. Example of usages:</p>
+<p>&gt;&gt; import roomai.kuhn</p>
+<p>&gt;&gt; action = roomai.kuhn.KuhnPokerChanceAction(“0,1”)</p>
+<p>&gt;&gt; action.key</p>
+<p>“0,1”
+&gt;&gt; action.number_for_player0</p>
+<p>0</p>
+<p>&gt;&gt; action.number_for_player1</p>
+<p>1</p>
+<dl class="attribute">
+<dt id="roomai.kuhn.KuhnPokerUtils.KuhnPokerChanceAction.key">
+<code class="descname">key</code><a class="headerlink" href="#roomai.kuhn.KuhnPokerUtils.KuhnPokerChanceAction.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>The key of the KuhnPokerChance action, for example, “0,1”</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="roomai.kuhn.KuhnPokerUtils.KuhnPokerChanceAction.lookup">
+<em class="property">classmethod </em><code class="descname">lookup</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerUtils.html#KuhnPokerChanceAction.lookup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerUtils.KuhnPokerChanceAction.lookup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="roomai.kuhn.KuhnPokerUtils.KuhnPokerChanceAction.number_for_player0">
+<code class="descname">number_for_player0</code><a class="headerlink" href="#roomai.kuhn.KuhnPokerUtils.KuhnPokerChanceAction.number_for_player0" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of the players[0]</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="roomai.kuhn.KuhnPokerUtils.KuhnPokerChanceAction.number_for_player1">
+<code class="descname">number_for_player1</code><a class="headerlink" href="#roomai.kuhn.KuhnPokerUtils.KuhnPokerChanceAction.number_for_player1" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of the players[1]</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -197,12 +240,6 @@
 <em class="property">class </em><code class="descclassname">roomai.kuhn.KuhnPokerUtils.</code><code class="descname">KuhnPokerPublicState</code><a class="reference internal" href="_modules/roomai/kuhn/KuhnPokerUtils.html#KuhnPokerPublicState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.kuhn.KuhnPokerUtils.KuhnPokerPublicState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="roomai.common.html#roomai.common.common.AbstractPublicState" title="roomai.common.common.AbstractPublicState"><code class="xref py py-class docutils literal"><span class="pre">roomai.common.common.AbstractPublicState</span></code></a></p>
 <p>The public state class of the KuhnPoker game</p>
-<dl class="attribute">
-<dt id="roomai.kuhn.KuhnPokerUtils.KuhnPokerPublicState.action_list">
-<code class="descname">action_list</code><a class="headerlink" href="#roomai.kuhn.KuhnPokerUtils.KuhnPokerPublicState.action_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>the action history taken by the players</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="roomai.kuhn.KuhnPokerUtils.KuhnPokerPublicState.epoch">
 <code class="descname">epoch</code><a class="headerlink" href="#roomai.kuhn.KuhnPokerUtils.KuhnPokerPublicState.epoch" title="Permalink to this definition">¶</a></dt>
@@ -244,7 +281,6 @@
 <li class="toctree-l2 current"><a class="reference internal" href="roomai.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="roomai.bridge.html">roomai.bridge package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="roomai.common.html">roomai.common package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="roomai.doudizhu.html">roomai.doudizhu package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="roomai.fivecardstud.html">roomai.fivecardstud package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">roomai.kuhn package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>

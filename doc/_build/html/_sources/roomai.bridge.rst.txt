@@ -28,6 +28,14 @@ roomai\.bridge\.BridgeInfo module
     :undoc-members:
     :show-inheritance:
 
+roomai\.bridge\.BridgeUtils module
+----------------------------------
+
+.. automodule:: roomai.bridge.BridgeUtils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

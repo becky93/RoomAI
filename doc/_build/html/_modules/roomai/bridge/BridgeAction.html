@@ -41,9 +41,150 @@
   <h1>Source code for roomai.bridge.BridgeAction</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/bin/python</span>
 <span class="kn">import</span> <span class="nn">roomai.common</span>
+<span class="kn">import</span> <span class="nn">roomai.bridge</span>
 
 <div class="viewcode-block" id="BridgeAction"><a class="viewcode-back" href="../../../roomai.bridge.html#roomai.bridge.BridgeAction.BridgeAction">[docs]</a><span class="k">class</span> <span class="nc">BridgeAction</span><span class="p">(</span><span class="n">roomai</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">AbstractAction</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The action of Bridge. There are two stages:1) bidding and 2) playing. </span>
+<span class="sd">    The example of the Bridge action&#39;s usages:\n</span>
+<span class="sd">    \n\n</span>
+<span class="sd">    ################ In the bidding stage, the action key looks like &quot;bidding&quot;_option_(point)_(suit). ################ \n</span>
+<span class="sd">    ## The option is one of &quot;bid&quot;,&quot;double&quot;,&quot;redouble&quot; and &quot;pass&quot;.\n</span>
+<span class="sd">    ## When the option is &quot;bid&quot;, the point and suit are the candidate point (one of &quot;A&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot; and &quot;7&quot;)and suit (one of &quot;NotTrump&quot;,&quot;Spade&quot;,&quot;Heart&quot;,&quot;Diamond&quot; and &quot;Club&quot;).</span>
+<span class="sd">    ## When the option is &quot;double&quot; or &quot;redouble&quot; or &quot;pass&quot;. No point and suit. The action key looks like bidding_option</span>
+<span class="sd">    \n  </span>
+<span class="sd">    &gt;&gt;action = roomai.bridge.BridgeAction.lookup(&quot;bidding_bid_A_Heart&quot;) ## We strongly recommend you to use the lookup fuction to get an action.\n</span>
+<span class="sd">    &gt;&gt;action.key \n</span>
+<span class="sd">    &quot;bidding_bid_A_Heart&quot;\n</span>
+<span class="sd">    &gt;&gt;action.stage \n</span>
+<span class="sd">    &quot;bidding&quot;</span>
+<span class="sd">    &gt;&gt;action.bidding_option\n</span>
+<span class="sd">    &quot;bid&quot;\n</span>
+<span class="sd">    &gt;&gt;action.bidding_contract_point \n</span>
+<span class="sd">    &quot;A&quot;\n</span>
+<span class="sd">    &gt;&gt;action.bidding_contract_suit\n</span>
+<span class="sd">    &quot;Heart&quot;\n</span>
+<span class="sd">    \n</span>
+<span class="sd">    &gt;&gt;action = roomai.bridge.BridgeAction.lookup(&quot;bidding_pass&quot;)\n</span>
+<span class="sd">    &gt;&gt;action.bidding_option\n</span>
+<span class="sd">    &quot;pass&quot;\n</span>
+<span class="sd">    \n\n</span>
+<span class="sd">    ################ In the playing stage, the action key looks like &quot;playing&quot;_point_suit.################  \n</span>
+<span class="sd">    &gt;&gt; action = roomai.bridge.BridgeAction.lookup(&quot;playing_A_heart&quot;) ## We strongly recommend you to use the lookup fuction to get an action.\n</span>
+<span class="sd">    &gt;&gt; action.key \n</span>
+<span class="sd">    &quot;playing_A_heart&quot;\n</span>
+<span class="sd">    &gt;&gt;action.stage \n</span>
+<span class="sd">    &quot;playing&quot;</span>
+<span class="sd">    &gt;&gt;action.playing_card.point\n</span>
+<span class="sd">    &quot;A&quot;\n</span>
+<span class="sd">    &gt;&gt;action.playing_card.point_rank\n</span>
+<span class="sd">    12\n</span>
+<span class="sd">    &gt;&gt;action.playing_card.suit\n</span>
+<span class="sd">    &quot;Heart&quot;\n</span>
+<span class="sd">    &gt;&gt;action.playing_card.suit_rank\n</span>
+<span class="sd">    2\n</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">,</span> <span class="n">bidding_option</span><span class="p">,</span> <span class="n">bidding_point</span><span class="p">,</span> <span class="n">bidding_suit</span><span class="p">,</span> <span class="n">playing_pokercard</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__stage__</span>  <span class="o">=</span> <span class="n">stage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_option__</span>               <span class="o">=</span> <span class="n">bidding_option</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_contract_point__</span>       <span class="o">=</span> <span class="n">bidding_point</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_contract_suit__</span>        <span class="o">=</span> <span class="n">bidding_suit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__playing_pokercard__</span>            <span class="o">=</span> <span class="n">playing_pokercard</span>
+
+        <span class="n">key</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__stage__</span> <span class="o">==</span> <span class="s2">&quot;bidding&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_option__</span> <span class="o">==</span> <span class="s2">&quot;bid&quot;</span><span class="p">:</span>
+                <span class="n">key</span><span class="o">=</span> <span class="s2">&quot;bidding_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_option__</span><span class="o">+</span><span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__bidding_contract_point__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__bidding_contract_suit__</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;bidding_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_option__</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">__stage__</span> <span class="o">==</span> <span class="s2">&quot;playing&quot;</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;playing_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__playing_pokercard__</span><span class="o">.</span><span class="n">key</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The stage param must be </span><span class="se">\&quot;</span><span class="s2">bidding</span><span class="se">\&quot;</span><span class="s2"> or </span><span class="se">\&quot;</span><span class="s2">playing</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">BridgeAction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__get_key__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__key__</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_key__</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;The key of the Bridge action. For example, </span><span class="se">\n</span><span class="s2">&quot;</span>
+                                     <span class="s2">&quot;&gt;&gt;action = roomai.bridge.BridgeAction.lookup(</span><span class="se">\&quot;</span><span class="s2">bidding_bid_1_Heart</span><span class="se">\&quot;</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                     <span class="s2">&quot;&gt;&gt;action.key</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                    <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">bidding_bid_A_Heart</span><span class="se">\&quot;\n</span><span class="s2">&quot;</span>
+                                    <span class="s2">&quot;## bidding means the bidding stage, bid means the bid option, A means the 1 card point, Heart means the card suit&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_stage__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__stage__</span>
+    <span class="n">stage</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_stage__</span><span class="p">,</span> <span class="n">doc</span> <span class="o">=</span> <span class="s2">&quot;The stage of Bridge. For example, </span><span class="se">\n</span><span class="s2">&quot;</span>
+                                          <span class="s2">&quot;&gt;&gt;action = room.bridge_BridgeAction.lookup(</span><span class="se">\&quot;</span><span class="s2">playing_A_Heart</span><span class="se">\&quot;</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                          <span class="s2">&quot;&gt;&gt;action.stage</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                          <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">playing</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_bidding_option__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_option__</span>
+    <span class="n">bidding_option</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_bidding_option__</span><span class="p">,</span> <span class="n">doc</span> <span class="o">=</span> <span class="s2">&quot;When stage = </span><span class="se">\&quot;</span><span class="s2">bidding</span><span class="se">\&quot;</span><span class="s2">, the bidding_option is one of </span><span class="se">\&quot;</span><span class="s2">bid</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">double</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">redouble</span><span class="se">\&quot;</span><span class="s2"> and </span><span class="se">\&quot;</span><span class="s2">pass</span><span class="se">\&quot;</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                                            <span class="s2">&quot;When stage = </span><span class="se">\&quot;</span><span class="s2">playing</span><span class="se">\&quot;</span><span class="s2">, the bidding_option is always None&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_bidding_contract_point__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_contract_point__</span>
+    <span class="n">bidding_contract_point</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_bidding_contract_point__</span><span class="p">,</span> <span class="n">doc</span> <span class="o">=</span> <span class="s2">&quot;When stage = </span><span class="se">\&quot;</span><span class="s2">bidding</span><span class="se">\&quot;</span><span class="s2"> and bidding_option = </span><span class="se">\&quot;</span><span class="s2">bid</span><span class="se">\&quot;</span><span class="s2">, the bidding_contract_point is one of [</span><span class="se">\&quot;</span><span class="s2">A</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">2</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">3</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">4</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">5</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">6</span><span class="se">\&quot;</span><span class="s2"> and </span><span class="se">\&quot;</span><span class="s2">7</span><span class="se">\&quot;</span><span class="s2">].</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                                           <span class="s2">&quot;When stage = </span><span class="se">\&quot;</span><span class="s2">bidding</span><span class="se">\&quot;</span><span class="s2"> and bidding_option != </span><span class="se">\&quot;</span><span class="s2">bid</span><span class="se">\&quot;</span><span class="s2">,the bidding_contract_point is always None</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                                           <span class="s2">&quot;When stage = </span><span class="se">\&quot;</span><span class="s2">playing</span><span class="se">\&quot;</span><span class="s2">, the bidding_contract_point is always None&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_bidding_contract_suit__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_contract_suit__</span>
+    <span class="n">bidding_contract_suit</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_bidding_contract_suit__</span><span class="p">,</span> <span class="n">doc</span> <span class="o">=</span> <span class="s2">&quot;When stage = </span><span class="se">\&quot;</span><span class="s2">bidding</span><span class="se">\&quot;</span><span class="s2"> and bidding_option = </span><span class="se">\&quot;</span><span class="s2">bid</span><span class="se">\&quot;</span><span class="s2">, the bidding_contract_suit is one of </span><span class="se">\&quot;</span><span class="s2">NotTrump</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">Spade</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">Heart</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">Diamond</span><span class="se">\&quot;</span><span class="s2"> and </span><span class="se">\&quot;</span><span class="s2">Club</span><span class="se">\&quot;</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                                          <span class="s2">&quot;When stage = </span><span class="se">\&quot;</span><span class="s2">bidding</span><span class="se">\&quot;</span><span class="s2"> and bidding_option != </span><span class="se">\&quot;</span><span class="s2">bid</span><span class="se">\&quot;</span><span class="s2">, the bidding_contract_suit is always None</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                                          <span class="s2">&quot;when stage == </span><span class="se">\&quot;</span><span class="s2">playing</span><span class="se">\&quot;</span><span class="s2">, the bidding_contract_suit is always None&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_playing_card__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__playing_pokercard__</span>
+    <span class="n">playing_card</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_playing_card__</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;When stage == </span><span class="se">\&quot;</span><span class="s2">bidding</span><span class="se">\&quot;</span><span class="s2">, the playing_card always be None</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                            <span class="s2">&quot;When stage = </span><span class="se">\&quot;</span><span class="s2">playing</span><span class="se">\&quot;</span><span class="s2">, the playing_card is the card in this Bridge action. For example, </span><span class="se">\n</span><span class="s2">&quot;</span>
+                                            <span class="s2">&quot;&gt;&gt;action = roomai.bridge.BridgeAction.lookup(</span><span class="se">\&quot;</span><span class="s2">playing_A_Heart</span><span class="se">\&quot;</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                            <span class="s2">&quot;&gt;&gt;action.playing_card.key </span><span class="se">\n</span><span class="s2">&quot;</span>
+                                            <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">A_Heart</span><span class="se">\&quot;\n</span><span class="s2">&quot;</span>
+                                            <span class="s2">&quot;&gt;&gt;action.playing_card.point </span><span class="se">\n</span><span class="s2">&quot;</span>
+                                            <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">A</span><span class="se">\&quot;\n</span><span class="s2">&quot;</span>
+                                            <span class="s2">&quot;&gt;&gt;action.playing_card.suit  </span><span class="se">\n</span><span class="s2">&quot;</span>
+                                            <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">Heart</span><span class="se">\&quot;\n</span><span class="s2">&quot;</span>
+                                            <span class="s2">&quot;&gt;&gt;action.playing_card.point_rank </span><span class="se">\n</span><span class="s2">&quot;</span>
+                                            <span class="s2">&quot;12</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                            <span class="s2">&quot;&gt;&gt;action.playing_card.suit_rank </span><span class="se">\n</span><span class="s2">&quot;</span>
+                                            <span class="s2">&quot;1&quot;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memodict</span><span class="o">=</span><span class="p">{},</span> <span class="n">newinstance</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">AllBridgeActions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">]</span>
+
+<div class="viewcode-block" id="BridgeAction.lookup"><a class="viewcode-back" href="../../../roomai.bridge.html#roomai.bridge.BridgeAction.BridgeAction.lookup">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        lookup an action with the key</span>
+<span class="sd">        </span>
+<span class="sd">        :param key: the key of the targeted action</span>
+<span class="sd">        :return: the action with this key</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AllBridgeActions</span><span class="p">:</span>
+            <span class="n">stage</span> <span class="o">=</span> <span class="s2">&quot;bidding&quot;</span>
+            <span class="n">bidding_option</span> <span class="o">=</span>  <span class="kc">None</span>
+            <span class="n">bidding_point</span>  <span class="o">=</span>  <span class="kc">None</span>
+            <span class="n">bidding_suit</span>   <span class="o">=</span>  <span class="kc">None</span>
+            <span class="n">playing_card</span>   <span class="o">=</span>  <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="s2">&quot;bidding&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">stage</span>  <span class="o">=</span> <span class="s2">&quot;bidding&quot;</span>
+                <span class="n">lines</span>  <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+                <span class="n">bidding_option</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">bidding_option</span> <span class="o">==</span> <span class="s2">&quot;bid&quot;</span><span class="p">:</span>
+                    <span class="n">bidding_point</span>  <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="n">bidding_suit</span>   <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="s2">&quot;playing&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">stage</span>          <span class="o">=</span> <span class="s2">&quot;playing&quot;</span>
+                <span class="n">playing_card</span>   <span class="o">=</span> <span class="n">roomai</span><span class="o">.</span><span class="n">bridge</span><span class="o">.</span><span class="n">BridgePokerCard</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;playing_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is an invalid key&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+
+            <span class="n">AllBridgeActions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">BridgeAction</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">bidding_option</span><span class="p">,</span> <span class="n">bidding_point</span><span class="p">,</span> <span class="n">bidding_suit</span><span class="p">,</span> <span class="n">playing_card</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">AllBridgeActions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div></div>
+
+
+<span class="n">AllBridgeActions</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 </pre></div>
 
           </div>

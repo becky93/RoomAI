@@ -8,7 +8,6 @@ Subpackages
 
     roomai.bridge
     roomai.common
-    roomai.doudizhu
     roomai.fivecardstud
     roomai.kuhn
     roomai.sevenking

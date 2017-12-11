@@ -275,6 +275,120 @@
 </dd></dl>
 
 </div>
+<div class="section" id="module-roomai.sevenking.SevenKingPlayer">
+<span id="roomai-sevenking-sevenkingplayer-module"></span><h2>roomai.sevenking.SevenKingPlayer module<a class="headerlink" href="#module-roomai.sevenking.SevenKingPlayer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysFoldPlayer">
+<em class="property">class </em><code class="descclassname">roomai.sevenking.SevenKingPlayer.</code><code class="descname">AlwaysFoldPlayer</code><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysFoldPlayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysFoldPlayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="roomai.common.html#roomai.common.common.AbstractPlayer" title="roomai.common.common.AbstractPlayer"><code class="xref py py-class docutils literal"><span class="pre">roomai.common.common.AbstractPlayer</span></code></a></p>
+<p>The player always choose the “fold” action</p>
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysFoldPlayer.receive_info">
+<code class="descname">receive_info</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysFoldPlayer.receive_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysFoldPlayer.receive_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysFoldPlayer.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysFoldPlayer.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysFoldPlayer.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysFoldPlayer.take_action">
+<code class="descname">take_action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysFoldPlayer.take_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysFoldPlayer.take_action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysMaxPatternPlayer">
+<em class="property">class </em><code class="descclassname">roomai.sevenking.SevenKingPlayer.</code><code class="descname">AlwaysMaxPatternPlayer</code><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysMaxPatternPlayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysMaxPatternPlayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="roomai.common.html#roomai.common.common.AbstractPlayer" title="roomai.common.common.AbstractPlayer"><code class="xref py py-class docutils literal"><span class="pre">roomai.common.common.AbstractPlayer</span></code></a></p>
+<p>first take the action with the max pattern,
+then take the action with the min cards when pattern is equal</p>
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysMaxPatternPlayer.receive_info">
+<code class="descname">receive_info</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysMaxPatternPlayer.receive_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysMaxPatternPlayer.receive_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysMaxPatternPlayer.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysMaxPatternPlayer.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysMaxPatternPlayer.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysMaxPatternPlayer.take_action">
+<code class="descname">take_action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysMaxPatternPlayer.take_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysMaxPatternPlayer.take_action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysMaxPlayer">
+<em class="property">class </em><code class="descclassname">roomai.sevenking.SevenKingPlayer.</code><code class="descname">AlwaysMaxPlayer</code><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysMaxPlayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysMaxPlayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="roomai.common.html#roomai.common.common.AbstractPlayer" title="roomai.common.common.AbstractPlayer"><code class="xref py py-class docutils literal"><span class="pre">roomai.common.common.AbstractPlayer</span></code></a></p>
+<p>The player always take the max available action</p>
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysMaxPlayer.receive_info">
+<code class="descname">receive_info</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysMaxPlayer.receive_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysMaxPlayer.receive_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysMaxPlayer.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysMaxPlayer.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysMaxPlayer.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysMaxPlayer.take_action">
+<code class="descname">take_action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysMaxPlayer.take_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysMaxPlayer.take_action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysMinPlayer">
+<em class="property">class </em><code class="descclassname">roomai.sevenking.SevenKingPlayer.</code><code class="descname">AlwaysMinPlayer</code><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysMinPlayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysMinPlayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="roomai.common.html#roomai.common.common.AbstractPlayer" title="roomai.common.common.AbstractPlayer"><code class="xref py py-class docutils literal"><span class="pre">roomai.common.common.AbstractPlayer</span></code></a></p>
+<p>The player bot always choose the min action</p>
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysMinPlayer.receive_info">
+<code class="descname">receive_info</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysMinPlayer.receive_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysMinPlayer.receive_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysMinPlayer.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysMinPlayer.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysMinPlayer.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysMinPlayer.take_action">
+<code class="descname">take_action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysMinPlayer.take_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysMinPlayer.take_action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysNotFoldPlayer">
+<em class="property">class </em><code class="descclassname">roomai.sevenking.SevenKingPlayer.</code><code class="descname">AlwaysNotFoldPlayer</code><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysNotFoldPlayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysNotFoldPlayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="roomai.common.html#roomai.common.common.AbstractPlayer" title="roomai.common.common.AbstractPlayer"><code class="xref py py-class docutils literal"><span class="pre">roomai.common.common.AbstractPlayer</span></code></a></p>
+<p>The player bot always not fold</p>
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysNotFoldPlayer.receive_info">
+<code class="descname">receive_info</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysNotFoldPlayer.receive_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysNotFoldPlayer.receive_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysNotFoldPlayer.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysNotFoldPlayer.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysNotFoldPlayer.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="roomai.sevenking.SevenKingPlayer.AlwaysNotFoldPlayer.take_action">
+<code class="descname">take_action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/sevenking/SevenKingPlayer.html#AlwaysNotFoldPlayer.take_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.sevenking.SevenKingPlayer.AlwaysNotFoldPlayer.take_action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-roomai.sevenking.SevenKingUtils">
 <span id="roomai-sevenking-sevenkingutils-module"></span><h2>roomai.sevenking.SevenKingUtils module<a class="headerlink" href="#module-roomai.sevenking.SevenKingUtils" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -370,7 +484,6 @@
 <li class="toctree-l2 current"><a class="reference internal" href="roomai.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="roomai.bridge.html">roomai.bridge package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="roomai.common.html">roomai.common package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="roomai.doudizhu.html">roomai.doudizhu package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="roomai.fivecardstud.html">roomai.fivecardstud package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="roomai.kuhn.html">roomai.kuhn package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">roomai.sevenking package</a><ul>
@@ -378,6 +491,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-roomai.sevenking.SevenKingAction">roomai.sevenking.SevenKingAction module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-roomai.sevenking.SevenKingEnv">roomai.sevenking.SevenKingEnv module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-roomai.sevenking.SevenKingInfo">roomai.sevenking.SevenKingInfo module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-roomai.sevenking.SevenKingPlayer">roomai.sevenking.SevenKingPlayer module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-roomai.sevenking.SevenKingUtils">roomai.sevenking.SevenKingUtils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-roomai.sevenking.play">roomai.sevenking.play module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-roomai.sevenking">Module contents</a></li>
