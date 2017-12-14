@@ -235,7 +235,7 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
 
         new_key = "%s_%s" % (state, action_key)
 
-        this_prob = player.exploration * (1.0 / len(available_actions)) + (1.0 - player.exploration) * action_prob
+        # this_prob = player.exploration * (1.0 / len(available_actions)) + (1.0 - player.exploration) * action_prob
 
         temp_probs = [0 for i_temp in range(num_players)]
         temp_probs[this_turn] = probs[this_turn] * action_prob
@@ -243,7 +243,7 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
             if j != this_turn:
                 temp_probs[j] = probs[j]
 
-        util, isTerminal = OutcomeSamplingCRM(env, this_turn, player, temp_probs, sampleProb*this_prob, available_actions[action_key], depth+1)
+        util, isTerminal = OutcomeSamplingCRM(env, this_turn, player, temp_probs, sampleProb*action_prob, available_actions[action_key], depth+1)
 
         temp_prob = 1.0
         for j in xrange(num_players):
@@ -260,7 +260,7 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
         else:
             player.regrets[new_key] = regrets[new_key] - temp_prob * strategy_util * cur_strategies[new_key]
 
-        player.strategies[new_key] = strategies[new_key] + probs[this_turn]  * cur_strategies[new_key]
+        player.strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
 
         utility = strategy_util
 
