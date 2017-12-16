@@ -205,8 +205,12 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
     else:
         infos, public_state, person_states, private_state = env.forward(action)
 
+    terminal_state = False
+
     if public_state.is_terminal == True:
         utility = public_state.scores[cur_turn]
+        terminal_state = True
+        # pdb.set_trace()
 
     else:
         this_turn = public_state.turn
@@ -262,12 +266,12 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
 
         player.strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
 
-        utility = strategy_util
+        utility = util
 
     if depth != 0:
         env.backward()
 
-    return utility, public_state.is_terminal
+    return utility, terminal_state
 
 
 def Train(params = dict()):
