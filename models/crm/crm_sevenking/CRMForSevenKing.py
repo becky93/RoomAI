@@ -101,7 +101,11 @@ class SevenKingPlayer(CRMPlayer):
                 new_state = key
 
         if new_state != '' and new_state[-1] != '_':
-            action = new_state.split("_")[-1]
+            action1 = new_state.split("_")[-2]
+            action2 = new_state.split("_")[-1]
+            if len(action1) > 1:
+                action1 = action1[-1]
+            action = action1 + '_' + action2
             return SevenKingAction.lookup(action)
         else:
             idx = int(random.random() * len(self.available_actions))
