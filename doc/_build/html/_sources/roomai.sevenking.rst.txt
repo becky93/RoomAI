@@ -28,6 +28,14 @@ roomai\.sevenking\.SevenKingInfo module
     :undoc-members:
     :show-inheritance:
 
+roomai\.sevenking\.SevenKingPlayer module
+-----------------------------------------
+
+.. automodule:: roomai.sevenking.SevenKingPlayer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 roomai\.sevenking\.SevenKingUtils module
 ----------------------------------------
 

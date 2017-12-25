@@ -51,6 +51,7 @@
 <li class="toctree-l2"><a class="reference internal" href="roomai.bridge.html#module-roomai.bridge.BridgeAction">roomai.bridge.BridgeAction module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roomai.bridge.html#module-roomai.bridge.BridgeEnv">roomai.bridge.BridgeEnv module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roomai.bridge.html#module-roomai.bridge.BridgeInfo">roomai.bridge.BridgeInfo module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roomai.bridge.html#module-roomai.bridge.BridgeUtils">roomai.bridge.BridgeUtils module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roomai.bridge.html#module-roomai.bridge">Module contents</a></li>
 </ul>
 </li>
@@ -58,17 +59,6 @@
 <li class="toctree-l2"><a class="reference internal" href="roomai.common.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roomai.common.html#module-roomai.common.common">roomai.common.common module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roomai.common.html#module-roomai.common">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="roomai.doudizhu.html">roomai.doudizhu package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="roomai.doudizhu.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="roomai.doudizhu.html#module-roomai.doudizhu.DouDiZhuPokerAction">roomai.doudizhu.DouDiZhuPokerAction module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="roomai.doudizhu.html#module-roomai.doudizhu.DouDiZhuPokerEnv">roomai.doudizhu.DouDiZhuPokerEnv module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="roomai.doudizhu.html#module-roomai.doudizhu.DouDiZhuPokerInfo">roomai.doudizhu.DouDiZhuPokerInfo module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="roomai.doudizhu.html#module-roomai.doudizhu.DouDiZhuPokerUtils">roomai.doudizhu.DouDiZhuPokerUtils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="roomai.doudizhu.html#module-roomai.doudizhu.actions">roomai.doudizhu.actions module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="roomai.doudizhu.html#module-roomai.doudizhu.patterns">roomai.doudizhu.patterns module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="roomai.doudizhu.html#module-roomai.doudizhu">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="roomai.fivecardstud.html">roomai.fivecardstud package</a><ul>
@@ -93,6 +83,7 @@
 <li class="toctree-l2"><a class="reference internal" href="roomai.sevenking.html#module-roomai.sevenking.SevenKingAction">roomai.sevenking.SevenKingAction module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roomai.sevenking.html#module-roomai.sevenking.SevenKingEnv">roomai.sevenking.SevenKingEnv module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roomai.sevenking.html#module-roomai.sevenking.SevenKingInfo">roomai.sevenking.SevenKingInfo module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roomai.sevenking.html#module-roomai.sevenking.SevenKingPlayer">roomai.sevenking.SevenKingPlayer module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roomai.sevenking.html#module-roomai.sevenking.SevenKingUtils">roomai.sevenking.SevenKingUtils module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roomai.sevenking.html#module-roomai.sevenking.play">roomai.sevenking.play module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roomai.sevenking.html#module-roomai.sevenking">Module contents</a></li>
@@ -119,25 +110,52 @@
 <dl class="function">
 <dt id="roomai.RoomAILogger.get_logger">
 <code class="descclassname">roomai.RoomAILogger.</code><code class="descname">get_logger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/RoomAILogger.html#get_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.RoomAILogger.get_logger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns:</p>
+<dd><p>get the logger</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="roomai.RoomAILogger.init_logger">
 <code class="descclassname">roomai.RoomAILogger.</code><code class="descname">init_logger</code><span class="sig-paren">(</span><em>opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/RoomAILogger.html#init_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.RoomAILogger.init_logger" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd>opts:</dd>
-</dl>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>opts</strong> – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="data">
+<dt id="roomai.RoomAILogger.project_name">
+<code class="descclassname">roomai.RoomAILogger.</code><code class="descname">project_name</code><em class="property"> = 'roomai'</em><a class="headerlink" href="#roomai.RoomAILogger.project_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>%(asctime)s|process:%(process)d|filename:%(filename)s|lineNum:%(lineno)d|level:%(levelno)s|log_msg:%(message)s</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="roomai.RoomAILogger.set_level">
 <code class="descclassname">roomai.RoomAILogger.</code><code class="descname">set_level</code><span class="sig-paren">(</span><em>level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/RoomAILogger.html#set_level"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.RoomAILogger.set_level" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd>level:</dd>
-</dl>
+<dd><p>set the level of log</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>level</strong> – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -168,7 +186,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="roomai.bridge.html">roomai.bridge package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="roomai.common.html">roomai.common package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="roomai.doudizhu.html">roomai.doudizhu package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="roomai.fivecardstud.html">roomai.fivecardstud package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="roomai.kuhn.html">roomai.kuhn package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="roomai.sevenking.html">roomai.sevenking package</a></li>

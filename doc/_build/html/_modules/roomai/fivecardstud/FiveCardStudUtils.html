@@ -70,25 +70,25 @@
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">suit</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="n">point1</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">suit1</span>  <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">real_point_int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">real_suit_int</span>  <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">suit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">kv</span> <span class="o">=</span> <span class="n">point</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
-            <span class="n">point1</span> <span class="o">=</span> <span class="n">point_str_to_rank</span><span class="p">[</span><span class="n">kv</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-            <span class="n">suit1</span>  <span class="o">=</span> <span class="n">suit_str_to_rank</span><span class="p">[</span><span class="n">kv</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">real_point_int</span> <span class="o">=</span> <span class="n">point_str_to_rank</span><span class="p">[</span><span class="n">kv</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">real_suit_int</span>  <span class="o">=</span> <span class="n">suit_str_to_rank</span><span class="p">[</span><span class="n">kv</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">point1</span> <span class="o">=</span> <span class="n">point</span>
+            <span class="n">real_point_int</span> <span class="o">=</span> <span class="n">point</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">point1</span> <span class="o">=</span> <span class="n">point_str_to_rank</span><span class="p">[</span><span class="n">point</span><span class="p">]</span>
-            <span class="n">suit1</span>  <span class="o">=</span> <span class="n">suit</span>
+                <span class="n">real_point_int</span> <span class="o">=</span> <span class="n">point_str_to_rank</span><span class="p">[</span><span class="n">point</span><span class="p">]</span>
+            <span class="n">real_suit_int</span>  <span class="o">=</span> <span class="n">suit</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">suit</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">suit1</span> <span class="o">=</span> <span class="n">suit_str_to_rank</span><span class="p">[</span><span class="n">suit</span><span class="p">]</span>
+                <span class="n">real_suit_int</span> <span class="o">=</span> <span class="n">suit_str_to_rank</span><span class="p">[</span><span class="n">suit</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">__point_str__</span>  <span class="o">=</span> <span class="n">point_rank_to_str</span><span class="p">[</span><span class="n">point1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__suit_str__</span>   <span class="o">=</span> <span class="n">suit_rank_to_str</span><span class="p">[</span><span class="n">suit1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__point_rank__</span> <span class="o">=</span> <span class="n">point1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__suit_rank__</span>  <span class="o">=</span> <span class="n">suit1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__key__</span>        <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__point_str__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__suit_str__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__point__</span>      <span class="o">=</span> <span class="n">point_rank_to_str</span><span class="p">[</span><span class="n">real_point_int</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__suit__</span>       <span class="o">=</span> <span class="n">suit_rank_to_str</span><span class="p">[</span><span class="n">real_suit_int</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__point_rank__</span> <span class="o">=</span> <span class="n">real_point_int</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__suit_rank__</span>  <span class="o">=</span> <span class="n">real_suit_int</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__key__</span>        <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__point__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__suit__</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memodict</span><span class="o">=</span><span class="p">{},</span> <span class="n">newinstance</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>

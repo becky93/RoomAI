@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="roomai.doudizhu package" href="roomai.doudizhu.html" />
+    <link rel="next" title="roomai.fivecardstud package" href="roomai.fivecardstud.html" />
     <link rel="prev" title="roomai.bridge package" href="roomai.bridge.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -246,33 +246,32 @@ We strongly recommend you to use the lookup function to get an action with the s
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>The abstract class of the public state. The information in the public state is public to every player</p>
 <dl class="attribute">
+<dt id="roomai.common.common.AbstractPublicState.action_history">
+<code class="descname">action_history</code><a class="headerlink" href="#roomai.common.common.AbstractPublicState.action_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>def __get_previous_id__(self):  return self.__previous_id__
+previous_id = property(__get_previous_id__,doc = “The players[previous_id] took an action in the previous epoch. In the first epoch, previous_id is None”)</p>
+<p>def __get_previous_action(self):    return self.__previous_action__
+previous_action = property(__get_previous_action, doc = “The players[previous_id] took previous_action in the previous epoch. In the first epoch, previous_action is None”)</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="roomai.common.common.AbstractPublicState.is_terminal">
 <code class="descname">is_terminal</code><a class="headerlink" href="#roomai.common.common.AbstractPublicState.is_terminal" title="Permalink to this definition">¶</a></dt>
-<dd><p>is_terminal = true means the game is over. At this time, scores is not None, scores = [float0,float1,…] for player0, player1,..</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="roomai.common.common.AbstractPublicState.previous_action">
-<code class="descname">previous_action</code><a class="headerlink" href="#roomai.common.common.AbstractPublicState.previous_action" title="Permalink to this definition">¶</a></dt>
-<dd><p>players[previous_id] took previous_action in the previous epoch</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="roomai.common.common.AbstractPublicState.previous_id">
-<code class="descname">previous_id</code><a class="headerlink" href="#roomai.common.common.AbstractPublicState.previous_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>players[previous_id] took an action in the previous epoch</p>
+<dd><p>is_terminal = True means the game is over. At this time, scores is not None, scores = [float0,float1,…] for player0, player1,… For example, scores = [-1,2,-1].
+is_terminal = False, the scores is None.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="roomai.common.common.AbstractPublicState.scores">
 <code class="descname">scores</code><a class="headerlink" href="#roomai.common.common.AbstractPublicState.scores" title="Permalink to this definition">¶</a></dt>
-<dd><p>is_terminal = true means the game is over. At this time, scores is not None, scores = [float0,float1,…] for player0, player1,..</p>
+<dd><p>is_terminal = True means the game is over. At this time, scores is not None, scores = [float0,float1,…] for player0, player1,… For example, scores = [-1,3,-2].
+is_terminal = False, the scores is None.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="roomai.common.common.AbstractPublicState.turn">
 <code class="descname">turn</code><a class="headerlink" href="#roomai.common.common.AbstractPublicState.turn" title="Permalink to this definition">¶</a></dt>
-<dd><p>players[turn] is expected to take an action</p>
+<dd><p>The players[turn] is expected to take an action.</p>
 </dd></dl>
 
 </dd></dl>
@@ -465,7 +464,6 @@ The RandomPlayer is as a common baseline</p>
 <li class="toctree-l4"><a class="reference internal" href="#module-roomai.common">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="roomai.doudizhu.html">roomai.doudizhu package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="roomai.fivecardstud.html">roomai.fivecardstud package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="roomai.kuhn.html">roomai.kuhn package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="roomai.sevenking.html">roomai.sevenking package</a></li>
@@ -485,7 +483,7 @@ The RandomPlayer is as a common baseline</p>
   <li><a href="index.html">Documentation overview</a><ul>
   <li><a href="roomai.html">roomai package</a><ul>
       <li>Previous: <a href="roomai.bridge.html" title="previous chapter">roomai.bridge package</a></li>
-      <li>Next: <a href="roomai.doudizhu.html" title="next chapter">roomai.doudizhu package</a></li>
+      <li>Next: <a href="roomai.fivecardstud.html" title="next chapter">roomai.fivecardstud package</a></li>
   </ul></li>
   </ul></li>
 </ul>

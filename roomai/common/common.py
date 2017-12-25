@@ -201,8 +201,8 @@ class AbstractEnv(object):
     The abstract class of game environment
     '''
 
-    def __init__(self):
-        self.__params__ = dict()
+    def __init__(self, params = dict()):
+        self.__params__ = dict(params)
         self.__public_state_history__  = []
         self.__person_states_history__ = []
         self.__private_state_history__ = []
@@ -450,14 +450,6 @@ AllPokerCards["r_ForKing"] = (PokerCard("r_ForKing"))
 AllPokerCards["R_ForKing"] = (PokerCard("R_ForKing"))
 
 
-def version():
-    '''
-
-    :return: The version of RoomAI 
-    '''
-    version = "0.1.1"
-    print("roomai-%s" % version)
-    return ("roomai-%s" % version)
 
 
 class FrozenDict(dict):
