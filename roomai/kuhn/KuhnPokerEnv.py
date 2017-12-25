@@ -48,7 +48,7 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
 
 
         self.public_state.__turn__             = 2
-        self.public_state.__first__            = self.__params__["start_turn"] 
+        self.public_state.__first__            = self.__params__["start_turn"]
         self.public_state.__epoch__            = 0
         self.public_state.__action_history__   = []
         self.public_state.__is_terminal__      = False

@@ -17,6 +17,6 @@ class DQNModel:
     def update_model(self, experiences):
         raise NotImplemented("Not implemented yet")
 
-    def predict_q(self,state_feats, action_feats):
-        raise NotImplemented("Not implemented yet")
+    def predict_q(self,info):
+        raise NotImplementedError("Not implemented yet")
 

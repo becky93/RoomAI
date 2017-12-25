@@ -1,7 +1,9 @@
 #!/bin/python
 
-from Experience import Experience
 import random
+
+from algorithm.Experience import Experience
+
 
 class DQN:
     def __init__(self, model, env, params):
@@ -15,7 +17,7 @@ class DQN:
     def gen_experience(self, turn, info, action, reward):
 
         res = None
-        if turn in self.uncompleted_experiences[turn]:
+        if turn in self.uncompleted_experiences:
             res                             = self.uncompleted_experiences[turn]
             res.next_info_feat              = self.model.gen_info_feat(info)
             res.next_available_action_feats = []
@@ -24,11 +26,11 @@ class DQN:
 
 
         self.uncompleted_experiences[turn] = Experience( turn = turn,
-                                                    info_feat = self.model.gen_info_feat(info),
-                                                    action_feat = self.model.gen_info_feat(action),
-                                                    reward = reward,
-                                                    next_info_feat= None,
-                                                    next_available_action_feats = None)
+                                                         info_feat = self.model.gen_info_feat(info),
+                                                         action_feat = self.model.gen_info_feat(action),
+                                                         reward = reward,
+                                                         next_info_feat= None,
+                                                          next_available_action_feats = None)
         return res
 
     def add_experience_to_memories(self, experience):
