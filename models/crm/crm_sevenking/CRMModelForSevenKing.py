@@ -16,6 +16,7 @@ TIME_STEPS = 20     # backpropagation through time 的 time_steps
 BATCH_SIZE = 50
 INPUT_SIZE = 1      # sin 数据输入 size
 OUTPUT_SIZE = 1     # cos 数据输出 size
+CELL_SIZE = 10      # RNN 的 hidden unit size
 LR = 0.006          # learning rate
 
 class LSTMRNN(object):
@@ -159,40 +160,7 @@ class SevenKingPlayer(CRMPlayer):
             if total > 0 and val < total:
                 return key, cur_strategies[new_key]
 
-    def receive_info(self, info):
-        self.states = self.gen_state(info)
-        self.available_actions = info.person_state.available_actions
-
-    def take_action(self):
-        cur_strategies = self.get_strategies(self.states, self.available_actions)
-
-        # print self.states
-        # print cur_strategies
-
-        new_state = ''
-
-        val = random.random()
-        total = 0
-        for key in cur_strategies:
-            total += cur_strategies[key]
-            if total > 0 and val < total:
-                new_state = key
-
-        if new_state != '' and new_state[-1] != '_':
-            action1 = new_state.split("_")[-2]
-            action2 = new_state.split("_")[-1]
-            if len(action1) > 1:
-                action1 = action1[-1]
-            action = action1 + '_' + action2
-            return SevenKingAction.lookup(action)
-        else:
-            idx = int(random.random() * len(self.available_actions))
-            return list(self.available_actions.values())[idx]
-
-    def reset(self):
-        pass
-
-def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, depth=0):
+def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, regret_list, action=None, depth=0):
     infos = None
     public_state = None
     person_states = None
@@ -247,7 +215,9 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
             if j != this_turn:
                 temp_probs[j] = probs[j]
 
-        util, isTerminal = OutcomeSamplingCRM(env, this_turn, player, temp_probs, sampleProb*action_prob, available_actions[action_key], depth+1)
+        action_list.append(action_key)
+        regret_list.append(0.0)
+        util, isTerminal = OutcomeSamplingCRM(env, this_turn, player, temp_probs, sampleProb*action_prob, action_list, regret_list, available_actions[action_key], depth+1)
 
         temp_prob = 1.0
         for j in range(num_players):
@@ -264,6 +234,8 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
         else:
             player.regrets[new_key] = regrets[new_key] - temp_prob * strategy_util * cur_strategies[new_key]
 
+        regret_list[depth] = player.regrets[new_key]
+
         player.strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
 
         utility = util
@@ -272,3 +244,61 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action=None, de
         env.backward()
 
     return utility, terminal_state
+
+def Train(params = dict()):
+    # initialization
+    env = SevenKingEnv()
+    player = SevenKingPlayer()
+
+    num_players = 0
+
+    if "num_players" in params:
+        num_players = params["num_players"]
+    else:
+        num_players = 2
+
+    if "num_iter" in params:
+        num_iter = params["num_iter"]
+    else:
+        num_iter = 1000
+
+    probs = [1.0 for i in range(num_players)]
+    action_list = []
+    regret_list = []
+
+    for i in range(num_iter):
+        for p in range(num_players):
+            OutcomeSamplingCRM(env, p, player, probs, action_list, regret_list, 1)
+
+    return action_list, regret_list
+
+if __name__ == '__main__':
+    # 搭建 LSTMRNN 模型
+    model = LSTMRNN(TIME_STEPS, INPUT_SIZE, OUTPUT_SIZE, CELL_SIZE, BATCH_SIZE)
+    sess = tf.Session()
+    sess.run(tf.global_variables_initializer())
+
+    # 训练 200 次
+    for i in range(200):
+        seq, res = Train()  # 提取 batch data
+        if i == 0:
+            # 初始化 data
+            feed_dict = {
+                model.xs: seq,
+                model.ys: res,
+            }
+        else:
+            feed_dict = {
+                model.xs: seq,
+                model.ys: res,
+                model.cell_init_state: state  # 保持 state 的连续性
+            }
+
+        # 训练
+        _, cost, state, pred = sess.run(
+            [model.train_op, model.cost, model.cell_final_state, model.pred],
+            feed_dict=feed_dict)
+
+        # 打印 cost 结果
+        if i % 20 == 0:
+            print('cost: ', round(cost, 4))
