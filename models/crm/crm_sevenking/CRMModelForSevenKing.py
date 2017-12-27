@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import random
+import pdb
 
 import sys
 sys.path.append("E:/roomAI/RoomAI")
@@ -11,13 +12,13 @@ from roomai.sevenking import SevenKingEnv
 from roomai.sevenking import SevenKingUtils
 from roomai.sevenking import SevenKingAction
 
-BATCH_START = 0     # 建立 batch data 时候的 index
-TIME_STEPS = 20     # backpropagation through time 的 time_steps
+BATCH_START = 0
+TIME_STEPS = 20
 BATCH_SIZE = 50
-INPUT_SIZE = 1      # sin 数据输入 size
-OUTPUT_SIZE = 1     # cos 数据输出 size
-CELL_SIZE = 10      # RNN 的 hidden unit size
-LR = 0.006          # learning rate
+INPUT_SIZE = 1
+OUTPUT_SIZE = 1
+CELL_SIZE = 10
+LR = 0.006
 
 class LSTMRNN(object):
     def __init__(self, n_steps, input_size, output_size, cell_size, batch_size):
@@ -27,7 +28,7 @@ class LSTMRNN(object):
         self.cell_size = cell_size
         self.batch_size = batch_size
         with tf.name_scope('inputs'):
-            self.xs = tf.placeholder(tf.string, [None, n_steps, input_size], name='xs')
+            self.xs = tf.placeholder(tf.float32, [None, n_steps, input_size], name='xs')
             self.ys = tf.placeholder(tf.float32, [None, n_steps, output_size], name='ys')
         with tf.variable_scope('in_hidden'):
             self.add_input_layer()
@@ -69,10 +70,13 @@ class LSTMRNN(object):
             self.pred = tf.matmul(l_out_x, Ws_out) + bs_out
 
     def compute_cost(self):
+        logits = [tf.reshape(self.pred, [-1], name='reshape_pred')]
+        targets = [tf.reshape(self.ys, [-1], name='reshape_target')]
+        weights = [tf.ones([self.batch_size * self.n_steps], dtype=tf.float32)]
         losses = tf.contrib.legacy_seq2seq.sequence_loss_by_example(
-            [tf.reshape(self.pred, [-1], name='reshape_pred')],
-            [tf.reshape(self.ys, [-1], name='reshape_target')],
-            [tf.ones([self.batch_size * self.n_steps], dtype=tf.float32)],
+            logits,
+            targets,
+            weights,
             average_across_timesteps=True,
             softmax_loss_function=self.ms_error,
             name='losses'
@@ -84,8 +88,8 @@ class LSTMRNN(object):
                 name='average_cost')
             tf.summary.scalar('cost', self.cost)
 
-    def ms_error(self, y_target, y_pre):
-        return tf.square(tf.sub(y_target, y_pre))
+    def ms_error(self, labels, logits):
+        return tf.square(tf.subtract(labels, logits))
 
     def _weight_variable(self, shape, name='weights'):
         initializer = tf.random_normal_initializer(mean=0., stddev=1., )
@@ -160,6 +164,15 @@ class SevenKingPlayer(CRMPlayer):
             if total > 0 and val < total:
                 return key, cur_strategies[new_key]
 
+def input_trans(key):
+    kv = key.split("_")
+    point = SevenKingUtils.point_str_to_rank[kv[0]]
+    suit = SevenKingUtils.suit_str_to_rank[kv[1]]
+    res = str(point) + str(suit)
+    if len(res) < 3:
+        res = "0" + res
+    return res
+
 def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, regret_list, action=None, depth=0):
     infos = None
     public_state = None
@@ -215,7 +228,16 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
             if j != this_turn:
                 temp_probs[j] = probs[j]
 
-        action_list.append(action_key)
+        if action_key == "":
+            action_list.append(-1)
+        else:
+            kvs = action_key.split(",")
+            res = ""
+            for i in range(len(kvs)):
+                res = input_trans(kvs[i]) + res
+
+            action_list.append(float(res))
+
         regret_list.append(0.0)
         util, isTerminal = OutcomeSamplingCRM(env, this_turn, player, temp_probs, sampleProb*action_prob, action_list, regret_list, available_actions[action_key], depth+1)
 
@@ -268,21 +290,31 @@ def Train(params = dict()):
 
     for i in range(num_iter):
         for p in range(num_players):
-            OutcomeSamplingCRM(env, p, player, probs, action_list, regret_list, 1)
+            OutcomeSamplingCRM(env, p, player, probs, 1, action_list, regret_list)
 
     return action_list, regret_list
 
+def get_batch():
+    global BATCH_START, TIME_STEPS
+    # xs shape (50batch, 20steps)
+    xs = np.arange(BATCH_START, BATCH_START+TIME_STEPS*BATCH_SIZE).reshape((BATCH_SIZE, TIME_STEPS)) / (10*np.pi)
+    seq = np.sin(xs)
+    res = np.cos(xs)
+    BATCH_START += TIME_STEPS
+    # returned seq, res and xs: shape (batch, step, input)
+    return [seq[:, :, np.newaxis], res[:, :, np.newaxis], xs]
+
 if __name__ == '__main__':
-    # 搭建 LSTMRNN 模型
     model = LSTMRNN(TIME_STEPS, INPUT_SIZE, OUTPUT_SIZE, CELL_SIZE, BATCH_SIZE)
     sess = tf.Session()
     sess.run(tf.global_variables_initializer())
 
-    # 训练 200 次
+    seq, res, xs = get_batch()
+    pdb.set_trace()
+
     for i in range(200):
-        seq, res = Train()  # 提取 batch data
+        # seq, res = Train()
         if i == 0:
-            # 初始化 data
             feed_dict = {
                 model.xs: seq,
                 model.ys: res,
@@ -291,14 +323,14 @@ if __name__ == '__main__':
             feed_dict = {
                 model.xs: seq,
                 model.ys: res,
-                model.cell_init_state: state  # 保持 state 的连续性
+                model.cell_init_state: state
             }
 
-        # 训练
+        print(feed_dict)
+
         _, cost, state, pred = sess.run(
             [model.train_op, model.cost, model.cell_final_state, model.pred],
             feed_dict=feed_dict)
 
-        # 打印 cost 结果
         if i % 20 == 0:
             print('cost: ', round(cost, 4))
