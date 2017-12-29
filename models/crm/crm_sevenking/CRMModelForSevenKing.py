@@ -13,7 +13,7 @@ from roomai.sevenking import SevenKingUtils
 from roomai.sevenking import SevenKingAction
 
 BATCH_START = 0
-TIME_STEPS = 20
+TIME_STEPS = 1
 BATCH_SIZE = 50
 INPUT_SIZE = 1
 OUTPUT_SIZE = 1
@@ -292,45 +292,53 @@ def Train(params = dict()):
         for p in range(num_players):
             OutcomeSamplingCRM(env, p, player, probs, 1, action_list, regret_list)
 
-    return action_list, regret_list
+    return np.array(action_list), np.array(regret_list)
 
-def get_batch():
-    global BATCH_START, TIME_STEPS
-    # xs shape (50batch, 20steps)
-    xs = np.arange(BATCH_START, BATCH_START+TIME_STEPS*BATCH_SIZE).reshape((BATCH_SIZE, TIME_STEPS)) / (10*np.pi)
-    seq = np.sin(xs)
-    res = np.cos(xs)
-    BATCH_START += TIME_STEPS
-    # returned seq, res and xs: shape (batch, step, input)
-    return [seq[:, :, np.newaxis], res[:, :, np.newaxis], xs]
+# def get_batch():
+#     global BATCH_START, TIME_STEPS
+#     # xs shape (50batch, 20steps)
+#     xs = np.arange(BATCH_START, BATCH_START+TIME_STEPS*BATCH_SIZE).reshape((BATCH_SIZE, TIME_STEPS)) / (10*np.pi)
+#     seq = np.sin(xs)
+#     res = np.cos(xs)
+#     BATCH_START += TIME_STEPS
+#     # returned seq, res and xs: shape (batch, step, input)
+#     return [seq[:, :, np.newaxis], res[:, :, np.newaxis], xs]
 
 if __name__ == '__main__':
     model = LSTMRNN(TIME_STEPS, INPUT_SIZE, OUTPUT_SIZE, CELL_SIZE, BATCH_SIZE)
     sess = tf.Session()
     sess.run(tf.global_variables_initializer())
 
-    seq, res, xs = get_batch()
-    pdb.set_trace()
+    # seq, res, xs = get_batch()
 
     for i in range(200):
-        # seq, res = Train()
-        if i == 0:
-            feed_dict = {
-                model.xs: seq,
-                model.ys: res,
-            }
-        else:
-            feed_dict = {
-                model.xs: seq,
-                model.ys: res,
-                model.cell_init_state: state
-            }
+        seq, res = Train()
+        k = 0
+        while (k < len(seq)):
 
-        print(feed_dict)
+            batch_x = seq[k:k + BATCH_SIZE]
+            batch_y = res[k:k + BATCH_SIZE]
+            batch_x = batch_x.reshape(-1, TIME_STEPS, INPUT_SIZE)
+            batch_y = batch_y.reshape(-1, TIME_STEPS, INPUT_SIZE)
+            k = k + BATCH_SIZE
 
-        _, cost, state, pred = sess.run(
-            [model.train_op, model.cost, model.cell_final_state, model.pred],
-            feed_dict=feed_dict)
+            if i == 0:
+                feed_dict = {
+                    model.xs: batch_x,
+                    model.ys: batch_y,
+                }
+            else:
+                feed_dict = {
+                    model.xs: batch_x,
+                    model.ys: batch_y,
+                    model.cell_init_state: state
+                }
 
-        if i % 20 == 0:
-            print('cost: ', round(cost, 4))
+            # print(feed_dict)
+
+            _, cost, state, pred = sess.run(
+                [model.train_op, model.cost, model.cell_final_state, model.pred],
+                feed_dict=feed_dict)
+
+            if i % 20 == 0:
+                print('cost: ', round(cost, 4))
