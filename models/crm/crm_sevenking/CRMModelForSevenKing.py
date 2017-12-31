@@ -6,6 +6,8 @@ import pdb
 import sys
 sys.path.append("E:/roomAI/RoomAI")
 
+import crash_on_ipy
+
 from models.crm.algorithms.crm import CRMPlayer
 from roomai.sevenking import SevenKingInfo
 from roomai.sevenking import SevenKingEnv
@@ -311,18 +313,20 @@ if __name__ == '__main__':
 
     # seq, res, xs = get_batch()
 
+
     for i in range(200):
         seq, res = Train()
         k = 0
-        while (k < len(seq)):
+        while (k + BATCH_SIZE) < len(seq):
 
             batch_x = seq[k:k + BATCH_SIZE]
             batch_y = res[k:k + BATCH_SIZE]
+
             batch_x = batch_x.reshape(-1, TIME_STEPS, INPUT_SIZE)
             batch_y = batch_y.reshape(-1, TIME_STEPS, INPUT_SIZE)
             k = k + BATCH_SIZE
 
-            if i == 0:
+            if i == 0 and k == BATCH_SIZE:
                 feed_dict = {
                     model.xs: batch_x,
                     model.ys: batch_y,
