@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import random
 import pdb
+import math
 
 import sys
 sys.path.append("E:/roomAI/RoomAI")
@@ -315,12 +316,18 @@ if __name__ == '__main__':
 
 
     for i in range(200):
+        print(i)
+        print("========================")
         seq, res = Train()
+
         k = 0
         while (k + BATCH_SIZE) < len(seq):
 
             batch_x = seq[k:k + BATCH_SIZE]
             batch_y = res[k:k + BATCH_SIZE]
+
+            if math.fsum(batch_y) == 0.0:
+                pdb.set_trace()
 
             batch_x = batch_x.reshape(-1, TIME_STEPS, INPUT_SIZE)
             batch_y = batch_y.reshape(-1, TIME_STEPS, INPUT_SIZE)
@@ -343,6 +350,9 @@ if __name__ == '__main__':
             _, cost, state, pred = sess.run(
                 [model.train_op, model.cost, model.cell_final_state, model.pred],
                 feed_dict=feed_dict)
+
+            if math.isnan(cost):
+                pdb.set_trace()
 
             if i % 20 == 0:
                 print('cost: ', round(cost, 4))
