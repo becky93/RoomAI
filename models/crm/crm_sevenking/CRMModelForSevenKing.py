@@ -259,6 +259,8 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
         else:
             player.regrets[new_key] = regrets[new_key] - temp_prob * strategy_util * cur_strategies[new_key]
 
+        # pdb.set_trace()
+
         regret_list[depth] = player.regrets[new_key]
 
         player.strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
@@ -270,10 +272,8 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
 
     return utility, terminal_state
 
-def Train(params = dict()):
+def Train(player, env, params = dict()):
     # initialization
-    env = SevenKingEnv()
-    player = SevenKingPlayer()
 
     num_players = 0
 
@@ -282,18 +282,12 @@ def Train(params = dict()):
     else:
         num_players = 2
 
-    if "num_iter" in params:
-        num_iter = params["num_iter"]
-    else:
-        num_iter = 1000
-
     probs = [1.0 for i in range(num_players)]
     action_list = []
     regret_list = []
 
-    for i in range(num_iter):
-        for p in range(num_players):
-            OutcomeSamplingCRM(env, p, player, probs, 1, action_list, regret_list)
+    for p in range(num_players):
+        OutcomeSamplingCRM(env, p, player, probs, 1, action_list, regret_list)
 
     return np.array(action_list), np.array(regret_list)
 
@@ -314,11 +308,14 @@ if __name__ == '__main__':
 
     # seq, res, xs = get_batch()
 
+    env = SevenKingEnv()
+    player = SevenKingPlayer()
+    for i in range(200000):
 
-    for i in range(200):
-        print(i)
-        print("========================")
-        seq, res = Train()
+        seq, res = Train(player, env)
+
+        print(len(seq))
+        print(len(res))
 
         k = 0
         while (k + BATCH_SIZE) < len(seq):
@@ -326,14 +323,14 @@ if __name__ == '__main__':
             batch_x = seq[k:k + BATCH_SIZE]
             batch_y = res[k:k + BATCH_SIZE]
 
-            if math.fsum(batch_y) == 0.0:
-                pdb.set_trace()
+            # if math.fsum(batch_y) == 0.0:
+            #     pdb.set_trace()
 
             batch_x = batch_x.reshape(-1, TIME_STEPS, INPUT_SIZE)
             batch_y = batch_y.reshape(-1, TIME_STEPS, INPUT_SIZE)
             k = k + BATCH_SIZE
 
-            if i == 0 and k == BATCH_SIZE:
+            if k == BATCH_SIZE:
                 feed_dict = {
                     model.xs: batch_x,
                     model.ys: batch_y,
@@ -351,8 +348,8 @@ if __name__ == '__main__':
                 [model.train_op, model.cost, model.cell_final_state, model.pred],
                 feed_dict=feed_dict)
 
-            if math.isnan(cost):
-                pdb.set_trace()
+            # if math.isnan(cost):
+            #     pdb.set_trace()
 
-            if i % 20 == 0:
+            if i % 100 == 0:
                 print('cost: ', round(cost, 4))
