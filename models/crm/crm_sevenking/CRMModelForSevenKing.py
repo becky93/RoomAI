@@ -3,22 +3,18 @@ import numpy as np
 import random
 import pdb
 import math
-
 import sys
 sys.path.append("E:/roomAI/RoomAI")
 
 import crash_on_ipy
-
 from models.crm.algorithms.crm import CRMPlayer
-from roomai.sevenking import SevenKingInfo
 from roomai.sevenking import SevenKingEnv
 from roomai.sevenking import SevenKingUtils
-from roomai.sevenking import SevenKingAction
 
 BATCH_START = 0
 TIME_STEPS = 1
-BATCH_SIZE = 50
-INPUT_SIZE = 1
+BATCH_SIZE = 60
+INPUT_SIZE = 54
 OUTPUT_SIZE = 1
 CELL_SIZE = 10
 LR = 0.006
@@ -167,13 +163,22 @@ class SevenKingPlayer(CRMPlayer):
             if total > 0 and val < total:
                 return key, cur_strategies[new_key]
 
-def input_trans(key):
-    kv = key.split("_")
-    point = SevenKingUtils.point_str_to_rank[kv[0]]
-    suit = SevenKingUtils.suit_str_to_rank[kv[1]]
-    res = str(point) + str(suit)
-    if len(res) < 3:
-        res = "0" + res
+def input_trans(key_list):
+    str_to_rank = {'A': 0, '2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6, '8': 7, '9': 8, 'T': 9, 'J': 10, 'Q': 11, 'K': 12}
+    res = [0] * 54
+    kvs = key_list.split(",")
+
+    for kv_i in kvs:
+        kv = kv_i.split("_")
+        if kv[0] is not "r" and kv[0] is not "R":
+            point = str_to_rank[kv[0]]
+            suit = SevenKingUtils.suit_str_to_rank[kv[1]]
+            res[53 - point*4 - suit] = 1
+        elif kv[0] == "r":
+            res[1] = 1
+        elif kv[0] == "R":
+            res[0] = 1
+
     return res
 
 def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, regret_list, action=None, depth=0):
@@ -232,14 +237,9 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
                 temp_probs[j] = probs[j]
 
         if action_key == "":
-            action_list.append(-1)
+            action_list.extend([0] * 54)
         else:
-            kvs = action_key.split(",")
-            res = ""
-            for i in range(len(kvs)):
-                res = input_trans(kvs[i]) + res
-
-            action_list.append(float(res))
+            action_list.extend(input_trans(action_key))
 
         regret_list.append(0.0)
         util, isTerminal = OutcomeSamplingCRM(env, this_turn, player, temp_probs, sampleProb*action_prob, action_list, regret_list, available_actions[action_key], depth+1)
@@ -291,15 +291,6 @@ def Train(player, env, params = dict()):
 
     return np.array(action_list), np.array(regret_list)
 
-# def get_batch():
-#     global BATCH_START, TIME_STEPS
-#     # xs shape (50batch, 20steps)
-#     xs = np.arange(BATCH_START, BATCH_START+TIME_STEPS*BATCH_SIZE).reshape((BATCH_SIZE, TIME_STEPS)) / (10*np.pi)
-#     seq = np.sin(xs)
-#     res = np.cos(xs)
-#     BATCH_START += TIME_STEPS
-#     # returned seq, res and xs: shape (batch, step, input)
-#     return [seq[:, :, np.newaxis], res[:, :, np.newaxis], xs]
 
 if __name__ == '__main__':
     model = LSTMRNN(TIME_STEPS, INPUT_SIZE, OUTPUT_SIZE, CELL_SIZE, BATCH_SIZE)
@@ -314,20 +305,20 @@ if __name__ == '__main__':
 
         seq, res = Train(player, env)
 
-        print(len(seq))
-        print(len(res))
+        # print(len(seq))
+        # print(len(res))
 
         k = 0
-        while (k + BATCH_SIZE) < len(seq):
+        while (k + BATCH_SIZE) < len(res):
 
-            batch_x = seq[k:k + BATCH_SIZE]
+            batch_x = seq[k:k + BATCH_SIZE * INPUT_SIZE]
             batch_y = res[k:k + BATCH_SIZE]
 
             # if math.fsum(batch_y) == 0.0:
             #     pdb.set_trace()
 
             batch_x = batch_x.reshape(-1, TIME_STEPS, INPUT_SIZE)
-            batch_y = batch_y.reshape(-1, TIME_STEPS, INPUT_SIZE)
+            batch_y = batch_y.reshape(-1, TIME_STEPS, OUTPUT_SIZE)
             k = k + BATCH_SIZE
 
             if k == BATCH_SIZE:
