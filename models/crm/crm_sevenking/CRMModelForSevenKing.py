@@ -12,13 +12,15 @@ from roomai.sevenking import SevenKingEnv
 from roomai.sevenking import SevenKingUtils
 
 BATCH_START = 0
+BATCH_SIZE = 1
 TIME_STEPS = 1
-BATCH_SIZE = 60
 INPUT_SIZE = 54
 OUTPUT_SIZE = 1
 CELL_SIZE = 10
-LR = 0.006
+LR = 0.0
 
+
+'''
 class LSTMRNN(object):
     def __init__(self, n_steps, input_size, output_size, cell_size, batch_size):
         self.n_steps = n_steps
@@ -97,6 +99,7 @@ class LSTMRNN(object):
     def _bias_variable(self, shape, name='biases'):
         initializer = tf.constant_initializer(0.1)
         return tf.get_variable(name=name, shape=shape, initializer=initializer)
+'''
 
 class SevenKingPlayer(CRMPlayer):
 
@@ -163,6 +166,7 @@ class SevenKingPlayer(CRMPlayer):
             if total > 0 and val < total:
                 return key, cur_strategies[new_key]
 
+
 def input_trans(key_list):
     str_to_rank = {'A': 0, '2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6, '8': 7, '9': 8, 'T': 9, 'J': 10, 'Q': 11, 'K': 12}
     res = [0] * 54
@@ -180,6 +184,7 @@ def input_trans(key_list):
             res[0] = 1
 
     return res
+
 
 def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, regret_list, action=None, depth=0):
     infos = None
@@ -237,9 +242,9 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
                 temp_probs[j] = probs[j]
 
         if action_key == "":
-            action_list.extend([0] * 54)
+            action_list.append([0] * 54)
         else:
-            action_list.extend(input_trans(action_key))
+            action_list.append(input_trans(action_key))
 
         regret_list.append(0.0)
         util, isTerminal = OutcomeSamplingCRM(env, this_turn, player, temp_probs, sampleProb*action_prob, action_list, regret_list, available_actions[action_key], depth+1)
@@ -272,6 +277,7 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
 
     return utility, terminal_state
 
+
 def Train(player, env, params = dict()):
     # initialization
 
@@ -292,12 +298,36 @@ def Train(player, env, params = dict()):
     return np.array(action_list), np.array(regret_list)
 
 
+xs = tf.placeholder(tf.float32, [None, TIME_STEPS, INPUT_SIZE])
+ys = tf.placeholder(tf.float32, [None, TIME_STEPS, OUTPUT_SIZE])
+
+weights = {
+    'in': tf.Variable(tf.random_normal([INPUT_SIZE, CELL_SIZE])),
+    'out': tf.Variable(tf.random_normal([CELL_SIZE, OUTPUT_SIZE]))
+}
+
+biases = {
+    'in': tf.Variable(tf.constant(0.1, shape=[CELL_SIZE])),
+    'out': tf.Variable(tf.constant(0.1, shape=[OUTPUT_SIZE]))
+}
+
+
+from tensorflow.contrib import rnn
+def RNN(x,weights,biases):
+    x = tf.unstack(x,TIME_STEPS,1)
+    lstm_cell = rnn.BasicLSTMCell(CELL_SIZE,forget_bias=1.0)
+    outputs,states = rnn.static_rnn(lstm_cell,x,dtype=tf.float32)
+    return tf.matmul(outputs[-1],weights['out'])+biases['out']
+
+output = RNN(xs, weights, biases)
+output_reshape = tf.reshape(output, [-1, TIME_STEPS, OUTPUT_SIZE])
+cost = tf.losses.mean_squared_error(labels=ys, predictions=output_reshape)
+train = tf.train.AdamOptimizer(LR).minimize(cost)
+
 if __name__ == '__main__':
-    model = LSTMRNN(TIME_STEPS, INPUT_SIZE, OUTPUT_SIZE, CELL_SIZE, BATCH_SIZE)
+    # model = LSTMRNN(TIME_STEPS, INPUT_SIZE, OUTPUT_SIZE, CELL_SIZE, BATCH_SIZE)
     sess = tf.Session()
     sess.run(tf.global_variables_initializer())
-
-    # seq, res, xs = get_batch()
 
     env = SevenKingEnv()
     player = SevenKingPlayer()
@@ -305,22 +335,29 @@ if __name__ == '__main__':
 
         seq, res = Train(player, env)
 
-        # print(len(seq))
-        # print(len(res))
-
         k = 0
         while (k + BATCH_SIZE) < len(res):
 
-            batch_x = seq[k:k + BATCH_SIZE * INPUT_SIZE]
+            batch_x = seq[k:k + BATCH_SIZE]
             batch_y = res[k:k + BATCH_SIZE]
-
-            # if math.fsum(batch_y) == 0.0:
-            #     pdb.set_trace()
 
             batch_x = batch_x.reshape(-1, TIME_STEPS, INPUT_SIZE)
             batch_y = batch_y.reshape(-1, TIME_STEPS, OUTPUT_SIZE)
             k = k + BATCH_SIZE
 
+            _, c = sess.run([train, cost], feed_dict={xs: batch_x, ys: batch_y})
+
+            if math.isnan(c):
+                pdb.set_trace()
+
+            if i % 100 == 0:
+                print('cost: ', round(c, 4))
+
+        outputs = sess.run(output, feed_dict={xs: seq.reshape(-1, TIME_STEPS, INPUT_SIZE),
+                                              ys: res.reshape(-1, TIME_STEPS, OUTPUT_SIZE)})
+
+
+        '''
             if k == BATCH_SIZE:
                 feed_dict = {
                     model.xs: batch_x,
@@ -339,8 +376,9 @@ if __name__ == '__main__':
                 [model.train_op, model.cost, model.cell_final_state, model.pred],
                 feed_dict=feed_dict)
 
-            # if math.isnan(cost):
-            #     pdb.set_trace()
+            if math.isnan(cost):
+                pdb.set_trace()
 
             if i % 100 == 0:
                 print('cost: ', round(cost, 4))
+        '''
