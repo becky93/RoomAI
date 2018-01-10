@@ -5,7 +5,7 @@ import pdb
 
 import sys
 sys.path.append("E:/roomAI/RoomAI")
-
+import crash_on_ipy
 from models.crm.algorithms.crm import CRMPlayer
 from roomai.sevenking import SevenKingInfo
 from roomai.sevenking import SevenKingEnv
@@ -44,7 +44,7 @@ class SevenKingPlayer(CRMPlayer):
         for key in actions:
             state_action = "%s_%s" % (state, key)
             if state_action not in self.strategies:
-                strategy[state_action] = 0.0
+                strategy[state_action] = 1.0 / len(actions)
             else:
                 strategy[state_action] = self.strategies[state_action]
         return strategy
@@ -182,10 +182,13 @@ def CRMTrain(env, cur_turn, player, probs, action=None, depth=0):
             new_regrets[new_key] = regrets[new_key] + prob * (util[new_key] - strategy_util)
             new_strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
 
+            print('regrets: ', new_regrets[new_key])
+
         player.update_regrets(state, available_actions, new_regrets)
         player.update_strategies(state, available_actions, new_strategies)
 
         utility = strategy_util
+        # print(utility)
 
     if depth != 0:
         env.backward()
@@ -288,7 +291,7 @@ def Train(params = dict()):
     if "num_players" in params:
         num_players = params["num_players"]
     else:
-        num_players = 5
+        num_players = 2
 
     if "num_iter" in params:
         num_iter = params["num_iter"]
@@ -299,8 +302,8 @@ def Train(params = dict()):
 
     for i in range(num_iter):
         for p in range(num_players):
-            # CRMTrain(env, p, player, probs)
-            OutcomeSamplingCRM(env, p, player, probs, 1)
+            CRMTrain(env, p, player, probs)
+            # OutcomeSamplingCRM(env, p, player, probs, 1)
 
     return player
 

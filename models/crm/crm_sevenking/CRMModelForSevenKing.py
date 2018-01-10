@@ -16,8 +16,8 @@ BATCH_SIZE = 1
 TIME_STEPS = 1
 INPUT_SIZE = 54
 OUTPUT_SIZE = 1
-CELL_SIZE = 10
-LR = 0.0
+CELL_SIZE = 1
+LR = 0.0001
 
 
 '''
@@ -129,7 +129,7 @@ class SevenKingPlayer(CRMPlayer):
         for key in actions:
             state_action = "%s_%s" % (state, key)
             if state_action not in self.strategies:
-                strategy[state_action] = 0.0
+                strategy[state_action] = 1.0 / len(actions)
             else:
                 strategy[state_action] = self.strategies[state_action]
         return strategy
@@ -264,6 +264,9 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
         else:
             player.regrets[new_key] = regrets[new_key] - temp_prob * strategy_util * cur_strategies[new_key]
 
+        if player.regrets[new_key] != 0.0:
+            pdb.set_trace()
+
         # pdb.set_trace()
 
         regret_list[depth] = player.regrets[new_key]
@@ -302,8 +305,8 @@ xs = tf.placeholder(tf.float32, [None, TIME_STEPS, INPUT_SIZE])
 ys = tf.placeholder(tf.float32, [None, TIME_STEPS, OUTPUT_SIZE])
 
 weights = {
-    'in': tf.Variable(tf.random_normal([INPUT_SIZE, CELL_SIZE])),
-    'out': tf.Variable(tf.random_normal([CELL_SIZE, OUTPUT_SIZE]))
+    'in': tf.Variable(tf.random_normal([INPUT_SIZE, CELL_SIZE], 0, 0.01)),
+    'out': tf.Variable(tf.random_normal([CELL_SIZE, OUTPUT_SIZE], 0, 0.01))
 }
 
 biases = {
@@ -313,16 +316,20 @@ biases = {
 
 
 from tensorflow.contrib import rnn
+
+
 def RNN(x,weights,biases):
     x = tf.unstack(x,TIME_STEPS,1)
     lstm_cell = rnn.BasicLSTMCell(CELL_SIZE,forget_bias=1.0)
     outputs,states = rnn.static_rnn(lstm_cell,x,dtype=tf.float32)
     return tf.matmul(outputs[-1],weights['out'])+biases['out']
 
+
 output = RNN(xs, weights, biases)
 output_reshape = tf.reshape(output, [-1, TIME_STEPS, OUTPUT_SIZE])
 cost = tf.losses.mean_squared_error(labels=ys, predictions=output_reshape)
 train = tf.train.AdamOptimizer(LR).minimize(cost)
+check = tf.add_check_numerics_ops()
 
 if __name__ == '__main__':
     # model = LSTMRNN(TIME_STEPS, INPUT_SIZE, OUTPUT_SIZE, CELL_SIZE, BATCH_SIZE)
@@ -334,6 +341,7 @@ if __name__ == '__main__':
     for i in range(200000):
 
         seq, res = Train(player, env)
+        pdb.set_trace()
 
         k = 0
         while (k + BATCH_SIZE) < len(res):
@@ -345,13 +353,13 @@ if __name__ == '__main__':
             batch_y = batch_y.reshape(-1, TIME_STEPS, OUTPUT_SIZE)
             k = k + BATCH_SIZE
 
-            _, c = sess.run([train, cost], feed_dict={xs: batch_x, ys: batch_y})
+            _, _, pred, costs, w_t, b_t = sess.run([train, check, output_reshape, cost, weights['out'], biases['out']], feed_dict={xs: batch_x, ys: batch_y})
 
-            if math.isnan(c):
+            if math.isnan(costs):
                 pdb.set_trace()
 
             if i % 100 == 0:
-                print('cost: ', round(c, 4))
+                print('cost: ', round(costs, 4))
 
         outputs = sess.run(output, feed_dict={xs: seq.reshape(-1, TIME_STEPS, INPUT_SIZE),
                                               ys: res.reshape(-1, TIME_STEPS, OUTPUT_SIZE)})
