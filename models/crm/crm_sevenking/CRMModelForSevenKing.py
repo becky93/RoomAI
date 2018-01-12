@@ -12,7 +12,7 @@ from roomai.sevenking import SevenKingEnv
 from roomai.sevenking import SevenKingUtils
 
 BATCH_START = 0
-BATCH_SIZE = 1
+BATCH_SIZE = 60
 TIME_STEPS = 1
 INPUT_SIZE = 54
 OUTPUT_SIZE = 1
@@ -158,13 +158,16 @@ class SevenKingPlayer(CRMPlayer):
 
     def sample_action(self, state, actions, cur_strategies):
 
-        val = random.random()
-        total = 0
+        max_key = None
+        max_prob = 0.0
+
         for key in actions:
             new_key = state + '_' + key
-            total += cur_strategies[new_key]
-            if total > 0 and val < total:
-                return key, cur_strategies[new_key]
+            if cur_strategies[new_key] >= max_prob:
+                max_prob = cur_strategies[new_key]
+                max_key = key
+
+        return max_key, max_prob
 
 
 def input_trans(key_list):
@@ -254,7 +257,8 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
             if j != this_turn:
                 temp_prob *= probs[j]
 
-        strategy_util = action_prob * temp_prob * util / sampleProb
+        # strategy_util = action_prob * temp_prob * util / sampleProb
+        strategy_util = action_prob * temp_prob * util
 
         strategies = player.get_strategies(state, available_actions)
 
@@ -263,11 +267,6 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
             player.regrets[new_key] = regrets[new_key] + temp_prob * strategy_util * (1 - cur_strategies[new_key])
         else:
             player.regrets[new_key] = regrets[new_key] - temp_prob * strategy_util * cur_strategies[new_key]
-
-        if player.regrets[new_key] != 0.0:
-            pdb.set_trace()
-
-        # pdb.set_trace()
 
         regret_list[depth] = player.regrets[new_key]
 
@@ -341,7 +340,7 @@ if __name__ == '__main__':
     for i in range(200000):
 
         seq, res = Train(player, env)
-        pdb.set_trace()
+        # pdb.set_trace()
 
         k = 0
         while (k + BATCH_SIZE) < len(res):
