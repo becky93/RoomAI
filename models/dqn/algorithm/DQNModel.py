@@ -1,4 +1,6 @@
 #!/bin/python
+import roomai
+import roomai.common
 
 class DQNModel:
 
@@ -8,7 +10,7 @@ class DQNModel:
     def terminal_action_feat(self):
         raise NotImplementedError("Not implemented yet")
 
-    def gen_state_feat(self, info):
+    def gen_info_feat(self, info):
         raise NotImplementedError("Not implemented yet")
 
     def gen_action_feat(self, action):
@@ -17,6 +19,8 @@ class DQNModel:
     def update_model(self, experiences):
         raise NotImplemented("Not implemented yet")
 
-    def predict_q(self,info):
+    def take_action(self, info):
         raise NotImplementedError("Not implemented yet")
+
+
 
