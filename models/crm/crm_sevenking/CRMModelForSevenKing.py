@@ -239,7 +239,7 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
         new_key = "%s_%s" % (state, action_key)
 
         temp_probs = [0 for i_temp in range(num_players)]
-        temp_probs[this_turn] = probs[this_turn] * action_prob
+        temp_probs[this_turn] = probs[this_turn] * available_actions[action_key]
         for j in range(num_players):
             if j != this_turn:
                 temp_probs[j] = probs[j]
@@ -257,8 +257,8 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
             if j != this_turn:
                 temp_prob *= probs[j]
 
-        # strategy_util = action_prob * temp_prob * util / sampleProb
-        strategy_util = action_prob * temp_prob * util
+        # strategy_util = available_actions[action_key] * temp_prob * util / sampleProb
+        strategy_util = available_actions[action_key] * temp_prob * util
 
         strategies = player.get_strategies(state, available_actions)
 

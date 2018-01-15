@@ -73,13 +73,16 @@ class SevenKingPlayer(CRMPlayer):
 
     def sample_action(self, state, actions, cur_strategies):
 
-        val = random.random()
-        total = 0
+        max_key = None
+        max_prob = 0.0
+
         for key in actions:
             new_key = state + '_' + key
-            total += cur_strategies[new_key]
-            if total > 0 and val < total:
-                return key, cur_strategies[new_key]
+            if cur_strategies[new_key] >= max_prob:
+                max_prob = cur_strategies[new_key]
+                max_key = key
+
+        return max_key, max_prob
 
     def receive_info(self, info):
         self.states = self.gen_state(info)
