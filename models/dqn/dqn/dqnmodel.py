@@ -3,8 +3,7 @@ import roomai
 import roomai.common
 
 class DQNModel:
-
-    def terminal_state_feat(self):
+    def terminal_info_feat(self):
         raise NotImplementedError("Not implemented yet")
 
     def terminal_action_feat(self):
