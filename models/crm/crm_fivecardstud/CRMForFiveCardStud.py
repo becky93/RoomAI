@@ -9,27 +9,27 @@ import algorithms
 class KuhnPokerCRMPlayer(algorithms.CRMPlayer):
     """
     """
-    def __init__(self, num_players=2):
+    def __init__(self, num_normal_players=2):
         """
 
         Args:
-            num_players:
+            num_normal_players:
         """
 
         self.graph       = tf.Graph()
-        self.num_players = num_players
+        self.num_normal_players = num_normal_players
 
         with self.graph.as_default() as graph:
 
-            self.chips_variables = tf.placeholder(tf.float32, [None, self.num_players], "chips_variables")
-            self.bets_variables = tf.placeholder(tf.float32, [None, self.num_players], "bets_variables")
+            self.chips_variables = tf.placeholder(tf.float32, [None, self.num_normal_players], "chips_variables")
+            self.bets_variables = tf.placeholder(tf.float32, [None, self.num_normal_players], "bets_variables")
             self.handcards_variables = tf.placeholder(tf.float32, [None, 13, 4, 1], "handcards_variables")
-            self.opponent_handcards_variables = tf.placeholder(tf.float32, [None, 13, 4, self.num_players],
+            self.opponent_handcards_variables = tf.placeholder(tf.float32, [None, 13, 4, self.num_normal_players],
                                                            "opponent_handcards_variables")
 
             ########### chips and bets ###
-            self.chips_w = tf.Variable(tf.float32, [self.num_players, 50])
-            self.bets_w = tf.Variable(tf.float32, [self.num_players, 50])
+            self.chips_w = tf.Variable(tf.float32, [self.num_normal_players, 50])
+            self.bets_w = tf.Variable(tf.float32, [self.num_normal_players, 50])
 
             self.chips_vector = tf.matmul(self.chips_variables, self.chips_w)
             self.bets_vector = tf.matmul(self.bets_variables, self.bets_w)
@@ -49,9 +49,9 @@ class KuhnPokerCRMPlayer(algorithms.CRMPlayer):
 
             ########### opponent hand cards #####
             self.opponent_handcards_w = dict()
-            self.opponent_handcards_w["conv_w1"] = tf.Variable(tf.float32, [self.num_players, 5, 4, 5 * self.num_players])
+            self.opponent_handcards_w["conv_w1"] = tf.Variable(tf.float32, [self.num_normal_players, 5, 4, 5 * self.num_normal_players])
             self.opponent_handcards_w["conv_w2"] = tf.Variable(tf.float32,
-                                                               [5 * self.num_players, 2, 2, 10 * self.num_players])
+                                                               [5 * self.num_normal_players, 2, 2, 10 * self.num_normal_players])
 
             self.opponent_handcards_conv1 = tf.nn.conv2d(self.opponent_handcards_variables,
                                                      self.opponent_handcards_w["conv_w1"], \
@@ -119,10 +119,10 @@ class KuhnPokerCRMPlayer(algorithms.CRMPlayer):
 
         self.hand_cards = parseCards(pu, pe.id).reshape([1, 13, 4, 1])
         self.opponent_hand_cards = []
-        for i in range(pu.num_players):
+        for i in range(pu.num_normal_players):
             if i != pe.id:
                 self.opponent_hand_cards.append(parseCards(pu, i))
-        self.opponent_hand_cards = np.asarray(self.opponent_hand_cards).reshape([1, 13, 4, pu.num_players])
+        self.opponent_hand_cards = np.asarray(self.opponent_hand_cards).reshape([1, 13, 4, pu.num_normal_players])
 
     def __del__(self):
         """

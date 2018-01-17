@@ -50,7 +50,7 @@
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__stage__</span>              <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__num_players__</span>        <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__num_normal_players__</span>        <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__dealer_id__</span>          <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__public_cards__</span>       <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__big_blind_bet__</span>      <span class="o">=</span> <span class="kc">None</span>
@@ -75,8 +75,8 @@
         <span class="c1">#the raise acount</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__raise_account__</span>      <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">__get_num_players__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__num_players__</span>
-    <span class="n">num_players</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_num_players__</span><span class="p">,</span> <span class="n">doc</span> <span class="o">=</span> <span class="s2">&quot;The number of players in this game&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__get_num_normal_players__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__num_normal_players__</span>
+    <span class="n">num_normal_players</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_num_normal_players__</span><span class="p">,</span> <span class="n">doc</span> <span class="o">=</span> <span class="s2">&quot;The number of players in this game&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__get_max_bet_sofar__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__max_bet_sofar__</span>
     <span class="n">max_bet_sofar</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_max_bet_sofar__</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;The max bet used by one player so far&quot;</span><span class="p">)</span>
@@ -149,7 +149,7 @@
             <span class="k">if</span> <span class="n">newinstance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">newinstance</span> <span class="o">=</span> <span class="n">TexasHoldemPublicState</span><span class="p">()</span>
             <span class="n">newinstance</span><span class="o">.</span><span class="n">stage</span>         <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span>
-            <span class="n">newinstance</span><span class="o">.</span><span class="n">num_players</span>   <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_players</span>
+            <span class="n">newinstance</span><span class="o">.</span><span class="n">num_normal_players</span>   <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_normal_players</span>
             <span class="n">newinstance</span><span class="o">.</span><span class="n">dealer_id</span>     <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dealer_id</span>
             <span class="n">newinstance</span><span class="o">.</span><span class="n">big_blind_bet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">big_blind_bet</span>
 

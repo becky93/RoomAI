@@ -260,12 +260,12 @@ players:</dd>
 <dt id="roomai.fivecardstud.FiveCardStudEnv.FiveCardStudEnv.init">
 <code class="descname">init</code><span class="sig-paren">(</span><em>params={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roomai/fivecardstud/FiveCardStudEnv.html#FiveCardStudEnv.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#roomai.fivecardstud.FiveCardStudEnv.FiveCardStudEnv.init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize FiveCardStud game enviroment with the params. The params are as follows:
-1) num_players denotes how many players join in this game, default 3
+1) num_normal_players denotes how many players join in this game, default 3
 2) chips denotes the initialization chips of players, default [500,500,500]
 3) floor_bet denotes the minimal bet, default 10
 4) allcards denotes the order of the poker cards appearing, default random
-5) record_history denotes whether the environment will stores all history information. If you need call the backward function, please set it to bet True. default False
-An example of params is {“num_players”:3,”chips”:[500,500,500]}</p>
+5) backward_enable denotes whether the environment will stores all history information. If you need call the backward function, please set it to bet True. default False
+An example of params is {“num_normal_players”:3,”chips”:[500,500,500]}</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -445,8 +445,8 @@ person_state:</dd>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="roomai.fivecardstud.FiveCardStudInfo.FiveCardStudPublicState.num_players">
-<code class="descname">num_players</code><em class="property"> = None</em><a class="headerlink" href="#roomai.fivecardstud.FiveCardStudInfo.FiveCardStudPublicState.num_players" title="Permalink to this definition">¶</a></dt>
+<dt id="roomai.fivecardstud.FiveCardStudInfo.FiveCardStudPublicState.num_normal_players">
+<code class="descname">num_normal_players</code><em class="property"> = None</em><a class="headerlink" href="#roomai.fivecardstud.FiveCardStudInfo.FiveCardStudPublicState.num_normal_players" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">

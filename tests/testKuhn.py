@@ -1,5 +1,6 @@
 import unittest
 import roomai.kuhn
+import roomai.common
 
 class KuhnTester(unittest.TestCase):
     """
@@ -29,7 +30,7 @@ class KuhnTester(unittest.TestCase):
 
     def testKuhnEnvBackward(self):
         env = roomai.kuhn.KuhnPokerEnv()
-        env.init({"record_history":True})
+        env.init({"backward_enable":True})
         infos, public_state, person_states, private_state = env.forward(roomai.kuhn.KuhnPokerAction("bet"))
         print (public_state.action_history,person_states[public_state.turn].id)
         assert(len(public_state.action_history) == 1)
@@ -46,4 +47,5 @@ class KuhnTester(unittest.TestCase):
         players = [roomai.kuhn.Example_KuhnPokerAlwaysBetPlayer() for i in range(2)]
         env = roomai.kuhn.KuhnPokerEnv()
 
-        env.compete(env,players)
+
+        env.compete(env,players + [roomai.common.RandomChancePlayer()])

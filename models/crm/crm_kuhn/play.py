@@ -52,9 +52,9 @@ if __name__ == "__main__":
     players     = [HumanInputPlayer(), crm_player]
 
 
-    num_players = len(players)
-    infos, public_state, person_states, private_state = env.init({"num_players":2,"record_history":False})
-    for i in range(num_players):
+    num_normal_players = len(players)
+    infos, public_state, person_states, private_state = env.init({"num_normal_players":2,"backward_enable":False})
+    for i in range(num_normal_players):
         players[i].receive_info(infos[i])
         show_person(infos[i].person_state)
     show_public(public_state)
@@ -66,7 +66,7 @@ if __name__ == "__main__":
         action = players[turn].take_action()
         print "%d player take an action (%s)"%(turn,action.key)
         infos, public_state, person_states, private_state = env.forward(action)
-        for i in range(num_players):
+        for i in range(num_normal_players):
             players[i].receive_info(infos[i])
             show_person(infos[i].person_state)
         show_public(public_state)

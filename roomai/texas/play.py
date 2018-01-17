@@ -30,10 +30,10 @@ if __name__ == "__main__":
     players     = [Player(), Player(), Player()]
     env         = roomai.texas.TexasHoldemEnv()
 
-    num_players = len(players)
-    infos, public_state, person_states, private_state = env.init({"num_players": num_players})
+    num_normal_players = len(players)
+    infos, public_state, person_states, private_state = env.init({"num_normal_players": num_normal_players})
     show_public(public_state)
-    for i in range(env.num_players):
+    for i in range(env.num_normal_players):
         players[i].receive_info(infos[i])
         show_info(infos[i])
     print "\n"
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         print "%d player take an action (%s)"%(turn,action.key)
         infos, public_state, person_states, private_state = env.forward(action)
         show_public(public_state)
-        for i in range(env.num_players):
+        for i in range(env.num_normal_players):
             players[i].receive_info(infos[i])
             show_info(infos[i])
         print "\n"

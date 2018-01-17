@@ -26,11 +26,80 @@ class SevenKingModel(dqn.DQNModel):
         self.graph         = tf.Graph()
 
         with self.graph.as_default() as graph:
-            self.info_feat   = tf.placeholder(tf.float32, [None, self.num_point, self.num_suit, self.info_dim])
-            self.action_feat = tf.placeholder(tf.float32, [None, self.num_point, self.num_suit, self.action_dim])
+            self.info_feat           = tf.placeholder(tf.float32, [None, self.num_point, self.num_suit, self.info_dim])
+            self.action_feat         = tf.placeholder(tf.float32, [None, self.num_point, self.num_suit, self.action_dim])
+            self.reward_plus_gamma_q = tf.placeholder(tf.float32, [None])
+
+            #### info feat
+            info_conv1_weight = tf.get_variable('info_conv1w', shape=[3, 3, self.info_dim, 16],
+                                           initializer=tf.contrib.layers.xavier_initializer())
+            info_conv1_bias = tf.get_variable('info_conv1b', shape=[16],
+                                         initializer=tf.contrib.layers.xavier_initializer())
+            info_conv1 = tf.nn.conv2d(self.input_hand_feat, filter=info_conv1_weight, strides=[1, 1, 1, 1], padding='SAME')
+
+            info_h_conv1 = tf.nn.relu(info_conv1 + info_conv1_bias)
+            info_h_conv2 = tf.nn.max_pool(info_h_conv1, ksize=[1, 2, 2, 1],
+                                     strides=[1, 2, 2, 1], padding='SAME')
+
+            info_conv2_weight = tf.get_variable('info_conv2w', shape=[3, 3, 16, 32],
+                                           initializer=tf.contrib.layers.xavier_initializer())
+            info_conv2_bias = tf.get_variable('info_conv2b', shape=[32],
+                                         initializer=tf.contrib.layers.xavier_initializer())
+            info_conv2 = tf.nn.conv2d(info_h_conv2, filter=info_conv2_weight, strides=[1, 1, 1, 1], padding='SAME')
+
+            info_h_conv3 = tf.nn.relu(info_conv2 + info_conv2_bias)
+            info_h_conv3 = tf.nn.max_pool(info_h_conv3, ksize=[1, 2, 2, 1],
+                                     strides=[1, 2, 2, 1], padding='SAME')
+            info_h_conv3_flat  = tf.reshape(info_h_conv3, [-1, 1152])
+
+            info_vector_weight =  self.__variable_with_weight_decay__(name = 'conv_vector_weight', shape = [info_h_conv3_flat.get_shape()[1].value, 512],wd = self.weight_decay)
+            info_vector_bias   =  tf.get_variable('conv_vector_bias', shape=[512], initializer = tf.contrib.layers.xavier_initializer())
+            info_vector_feat   =  tf.nn.relu(tf.matmul(info_h_conv3_flat, info_vector_weight) + info_vector_bias)
+
+            #### action feat
+            action_conv1_weight = tf.get_variable('action_conv1w', shape=[3, 3, self.action_dim, 16],
+                                                initializer=tf.contrib.layers.xavier_initializer())
+            action_conv1_bias = tf.get_variable('action_conv1b', shape=[16],
+                                              initializer=tf.contrib.layers.xavier_initializer())
+            action_conv1 = tf.nn.conv2d(self.input_hand_feat, filter=action_conv1_weight, strides=[1, 1, 1, 1],
+                                      padding='SAME')
+
+            action_h_conv1 = tf.nn.relu(action_conv1 + action_conv1_bias)
+            action_h_conv2 = tf.nn.max_pool(action_h_conv1, ksize=[1, 2, 2, 1],
+                                          strides=[1, 2, 2, 1], padding='SAME')
+
+            action_conv2_weight = tf.get_variable('action_conv2w', shape=[3, 3, 16, 32],
+                                                initializer=tf.contrib.layers.xavier_initializer())
+            action_conv2_bias = tf.get_variable('action_conv2b', shape=[32],
+                                              initializer=tf.contrib.layers.xavier_initializer())
+            action_conv2 = tf.nn.conv2d(action_h_conv2, filter=action_conv2_weight, strides=[1, 1, 1, 1], padding='SAME')
+
+            action_h_conv3 = tf.nn.relu(action_conv2 + action_conv2_bias)
+            action_h_conv3 = tf.nn.max_pool(action_h_conv3, ksize=[1, 2, 2, 1],
+                                          strides=[1, 2, 2, 1], padding='SAME')
+            action_h_conv3_flat = tf.reshape(action_h_conv3, [-1, 1152])
+
+            action_vector_weight = self.__variable_with_weight_decay__('conv_vector_weight',
+                                                 shape=[action_h_conv3_flat.get_shape()[1].value, 512],
+                                                 wd=self.weight_decay)
+            action_vector_bias = tf.get_variable('conv_vector_bias', shape=[512],
+                                               initializer=tf.contrib.layers.xavier_initializer())
+            action_vector_feat = tf.nn.relu(tf.matmul(action_h_conv3_flat, action_vector_weight) + action_vector_bias)
+
+            self.q    = tf.reduce_mean(info_vector_feat * action_vector_feat,axis = 1)
+            self.loss = tf.reduce_mean((self.q - self.reward_plus_gamma_q) * (self.q - self.reward_plus_gamma_q))
+
+            self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
+            self.train_op = self.optimizer.minimize(self.loss)
+
+            self.init = tf.global_variables_initializer()
+            self.sess = tf.Session()
+            self.sess.run(self.init)
+            self.saver = tf.train.Saver(tf.global_variables())
 
 
-    def _variable_on_cpu(name, shape, initializer):
+
+    def __variable_on_cpu__(self,name, shape, initializer):
         """Helper to create a Variable stored on CPU memory.
         Args:
         name: name of the variable
@@ -44,7 +113,7 @@ class SevenKingModel(dqn.DQNModel):
             var = tf.get_variable(name, shape, initializer=initializer, dtype=dtype)
         return var
 
-    def _variable_with_weight_decay(name, shape, stddev, wd):
+    def __variable_with_weight_decay__(self,name, shape, stddev, wd):
         """Helper to create an initialized Variable with weight decay.
           Note that the Variable is initialized with a truncated normal distribution.
         A weight decay is added only if one is specified.
@@ -58,7 +127,7 @@ class SevenKingModel(dqn.DQNModel):
          Variable Tensor
         """
         dtype = tf.float32
-        var = _variable_on_cpu(
+        var = self.__variable_on_cpu__(
             name,
             shape,
             tf.truncated_normal_initializer(stddev=stddev, dtype=dtype))

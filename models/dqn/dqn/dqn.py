@@ -45,21 +45,17 @@ class DQN:
                 self.memories[self.memory_p] = experience
                 self.memory_p = (self.memory_p + 1) % max_memory_size
 
-    def eval(self, model, env, opponents = None,params = dict()):
+    def eval(self, model, env, opponents, params = dict()):
         model_player = DQNPlayer(model=model)
 
         scores       = None
         players      = None
         if opponents is not None:
-            players = [model_player]+ [opponent for opponent in opponents]
+            players = [model_player]+ [opponent for opponent in opponents] + [roomai.common.RandomChancePlayer()]
             scores  = [0 for i in range(len(opponents)+1)]
 
         for iter1 in range(200):
             infos, public_state, _, _ = env.init(params)
-
-            if players is None:
-                players = [model_player] + [roomai.common.RandomPlayer() for i in range(len(infos-1))]
-                scores = [0 for i in range(len(infos))]
 
             for i in range(len(infos)):
                 players[i].reset()
@@ -76,7 +72,7 @@ class DQN:
                 scores[i] += score[i]
 
         for i in range(len(scores)):
-            scores[i] /= 500
+            scores[i] /= 200
 
         return  scores
 
@@ -101,14 +97,16 @@ class DQN:
 
                 if public_state.is_terminal == False:
                     action                   = model.take_action(infos[public_state.turn])
-                    self.gen_experience_to_memories(model, turn = public_state.turn, info = infos[public_state.turn], action = action, reward=0, params = params)
+                    if public_state.turn != len(infos)-1:
+                        #Not Chance Player
+                        self.gen_experience_to_memories(model, turn = public_state.turn, info = infos[public_state.turn], action = action, reward=0, params = params)
 
-                    experiences_batch = []
-                    if len(self.memories) > 1000:
-                        for i in range(batch_size):
-                            idx = int(random.random() * len(self.memories))
-                            experiences_batch.append(self.memories[idx])
-                        model.update_model(experiences_batch)
+                        experiences_batch = []
+                        if len(self.memories) > 1000:
+                            for i in range(batch_size):
+                                idx = int(random.random() * len(self.memories))
+                                experiences_batch.append(self.memories[idx])
+                            model.update_model(experiences_batch)
                 else:
                     scores = public_state.scores
                     for i in range(len(scores)):

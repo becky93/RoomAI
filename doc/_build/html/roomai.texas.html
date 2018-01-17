@@ -199,13 +199,13 @@
 <p>The initialization is a dict with some options</p>
 <ol class="arabic simple">
 <li>allcards: the order of all poker cards appearing</li>
-<li>record_history: whether to record all history states. if you need call the backward function, please set it to True. default False</li>
-<li>num_players: how many players are in the game, default 3</li>
+<li>backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False</li>
+<li>num_normal_players: how many players are in the game, default 3</li>
 <li>dealer_id: the player id of the dealer, default random</li>
 <li>chips: the initialization chips, default [1000,1000,…]</li>
 <li>big_blind_bet: the number of chips for the big blind bet, default 10</li>
 </ol>
-<p>An example of the initialization param is {“num_players”:2,”record_history”:True}</p>
+<p>An example of the initialization param is {“num_normal_players”:2,”backward_enable”:True}</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -332,8 +332,8 @@ person_state:</dd>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="roomai.texas.TexasHoldemInfo.TexasHoldemPublicState.num_players">
-<code class="descname">num_players</code><a class="headerlink" href="#roomai.texas.TexasHoldemInfo.TexasHoldemPublicState.num_players" title="Permalink to this definition">¶</a></dt>
+<dt id="roomai.texas.TexasHoldemInfo.TexasHoldemPublicState.num_normal_players">
+<code class="descname">num_normal_players</code><a class="headerlink" href="#roomai.texas.TexasHoldemInfo.TexasHoldemPublicState.num_normal_players" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of players in this game</p>
 </dd></dl>
 

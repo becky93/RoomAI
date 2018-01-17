@@ -156,10 +156,10 @@
 <p>The initialization is a dict with some options</p>
 <ol class="arabic simple">
 <li>allcards: the order of all poker cards appearing</li>
-<li>record_history: whether to record all history states. if you need call the backward function, please set it to True. default False</li>
-<li>num_players: how many players are in the game</li>
+<li>backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False</li>
+<li>num_normal_players: how many players are in the game</li>
 </ol>
-<p>An example of the initialization param is {“num_players”:2,”record_history”:True}</p>
+<p>An example of the initialization param is {“num_normal_players”:2,”backward_enable”:True}</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -249,8 +249,8 @@
 </dd></dl>
 
 <dl class="attribute">
-<dt id="roomai.sevenking.SevenKingInfo.SevenKingPublicState.num_players">
-<code class="descname">num_players</code><a class="headerlink" href="#roomai.sevenking.SevenKingInfo.SevenKingPublicState.num_players" title="Permalink to this definition">¶</a></dt>
+<dt id="roomai.sevenking.SevenKingInfo.SevenKingPublicState.num_normal_players">
+<code class="descname">num_normal_players</code><a class="headerlink" href="#roomai.sevenking.SevenKingInfo.SevenKingPublicState.num_normal_players" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of players in this game</p>
 </dd></dl>
 

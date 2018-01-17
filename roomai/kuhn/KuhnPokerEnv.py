@@ -22,21 +22,20 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
         '''
         self.__params__ = dict()
 
-        if "record_history" in params:
-            self.__params__["record_history"] = params["record_history"]
+        if "backward_enable" in params:
+            self.__params__["backward_enable"] = params["backward_enable"]
         else:
-            self.__params__["record_history"] = False
+            self.__params__["backward_enable"] = False
 
         if "start_turn" in params:
             self.__params__["start_turn"] = params["start_turn"]
         else:
             self.__params__["start_turn"] = int(random.random() * 2)
 
-        self.__params__["num_players"] = 3
 
-        if "num_players" in params:
-            logger.warning("KuhnPoker is a game of two players and the number of players always be 3 (2 normal players, and 1 chance player). Ingores the \"num_players\" option")
-
+        if "num_normal_players" in params:
+            logger.warning("KuhnPoker is a game of two players and the number of players always be 2. Ingores the \"num_normal_players\" option")
+        self.__params__["num_normal_players"] = 2
 
         self.all_available_action = dict()
         self.all_available_action[roomai.kuhn.KuhnPokerUtils.KuhnPokerAction("check").key] = roomai.kuhn.KuhnPokerAction.lookup("check")
@@ -57,7 +56,7 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
         self.person_states[0].__number__      = -1
         self.person_states[1].__id__          = 1
         self.person_states[1].__number__      = -1
-        self.person_states[2].__id__          = 3
+        self.person_states[2].__id__          = 2
         self.person_states[2].__number__      = -1
 
         self.person_states[self.public_state.turn].__available_actions__ = roomai.kuhn.KuhnPokerUtils.AllKuhnChanceActions
@@ -120,7 +119,7 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
                 self.person_states[self.public_state.turn].__available_actions__ = self.all_available_action
 
                 self.__gen_history__()
-                infos                         = self.__gen_infos__()
+                infos   = self.__gen_infos__()
                 return infos,self.public_state, self.person_states, self.private_state
 
         elif self.public_state.epoch == 3:
@@ -128,7 +127,7 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
             self.public_state.__scores__     = self.__evalute_three_round__()
 
             self.__gen_history__()
-            infos                         = self.__gen_infos__()
+            infos = self.__gen_infos__()
             return infos,self.public_state, self.person_states, self.private_state
 
         else:
@@ -146,21 +145,20 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
         :return: scores for the players
         '''
 
-        if len(players) != 2:
-            raise  ValueError("The number of the players in Kuhn is two")
+        if len(players) != 3:
+            raise  ValueError("The len(players) in Kuhn is 3 (2 normal players and 1 chance player).")
 
-        new_players = players + [roomai.kuhn.KuhnPokerChancePlayer()]
 
         infos, public_state, person_state, private_state = env.init()
-        for i in range(len(new_players)):
-            new_players[i].receive_info(infos[i])
+        for i in range(len(players)):
+            players[i].receive_info(infos[i])
 
         while public_state.is_terminal == False:
             turn = infos[-1].public_state.turn
-            action = new_players[turn].take_action()
+            action = players[turn].take_action()
             infos,public_state, person_state, private_state = env.forward(action)
-            for i in range(len(new_players)):
-                new_players[i].receive_info(infos[i])
+            for i in range(len(players)):
+                players[i].receive_info(infos[i])
 
         return public_state.scores
 

@@ -47,7 +47,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SevenKingPublicState</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__stage__</span>            <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__num_players__</span>      <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__num_normal_players__</span>      <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__showed_cards__</span>     <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__num_showed_cards__</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__num_keep_cards__</span>   <span class="o">=</span> <span class="kc">None</span>
@@ -61,8 +61,8 @@
                                         <span class="s2">&quot;In the second stage (stage=1), the player doesn&#39;t get the supplement. The player who firstly throws all his hand cards is the winner. &quot;</span><span class="p">)</span>
 
 
-    <span class="k">def</span> <span class="nf">__get_num_players__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__num_players__</span>
-    <span class="n">num_players</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_num_players__</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;The number of players in this game&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__get_num_normal_players__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__num_normal_players__</span>
+    <span class="n">num_normal_players</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_num_normal_players__</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;The number of players in this game&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">__get_showed_cards__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -105,7 +105,7 @@
         <span class="n">newinstance</span>   <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">SevenKingPublicState</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__deepcopy__</span><span class="p">(</span><span class="n">newinstance</span> <span class="o">=</span> <span class="n">newinstance</span><span class="p">)</span>
 
         <span class="n">newinstance</span><span class="o">.</span><span class="n">__stage__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span>
-        <span class="n">newinstance</span><span class="o">.</span><span class="n">__num_players__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_players</span>
+        <span class="n">newinstance</span><span class="o">.</span><span class="n">__num_normal_players__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_normal_players</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">showed_cards</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">newinstance</span><span class="o">.</span><span class="n">__showed_cards</span> <span class="o">=</span> <span class="kc">None</span>

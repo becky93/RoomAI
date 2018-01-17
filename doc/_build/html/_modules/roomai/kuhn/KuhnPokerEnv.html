@@ -63,20 +63,20 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__params__</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="s2">&quot;record_history&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__params__</span><span class="p">[</span><span class="s2">&quot;record_history&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;record_history&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;backward_enable&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__params__</span><span class="p">[</span><span class="s2">&quot;backward_enable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;backward_enable&quot;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__params__</span><span class="p">[</span><span class="s2">&quot;record_history&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__params__</span><span class="p">[</span><span class="s2">&quot;backward_enable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="s2">&quot;start_turn&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__params__</span><span class="p">[</span><span class="s2">&quot;start_turn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;start_turn&quot;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__params__</span><span class="p">[</span><span class="s2">&quot;start_turn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">__params__</span><span class="p">[</span><span class="s2">&quot;num_players&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__params__</span><span class="p">[</span><span class="s2">&quot;num_normal_players&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
 
-        <span class="k">if</span> <span class="s2">&quot;num_players&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;KuhnPoker is a game of two players and the number of players always be 3 (2 normal players, and 1 chance player). Ingores the </span><span class="se">\&quot;</span><span class="s2">num_players</span><span class="se">\&quot;</span><span class="s2"> option&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;num_normal_players&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;KuhnPoker is a game of two players and the number of players always be 3 (2 normal players, and 1 chance player). Ingores the </span><span class="se">\&quot;</span><span class="s2">num_normal_players</span><span class="se">\&quot;</span><span class="s2"> option&quot;</span><span class="p">)</span>
 
 
         <span class="bp">self</span><span class="o">.</span><span class="n">all_available_action</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>

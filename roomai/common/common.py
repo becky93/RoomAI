@@ -23,15 +23,8 @@ class AbstractPublicState(object):
     turn = property(__get_turn__, doc = "The players[turn] is expected to take an action.")
 
     def __get_action_history__(self):   return tuple(self.__action_history__)
-    action_history = property(__get_action_history__, doc = "The action_history so far. For example, action_history = [(0, roomai.kuhn.KuhnAction.lookup(\"check\"),(1,roomai.kuhn.KuhnAction.lookup(\"bet\")]")
-
-    ''' 
-    def __get_previous_id__(self):  return self.__previous_id__
-    previous_id = property(__get_previous_id__,doc = "The players[previous_id] took an action in the previous epoch. In the first epoch, previous_id is None")
-
-    def __get_previous_action(self):    return self.__previous_action__
-    previous_action = property(__get_previous_action, doc = "The players[previous_id] took previous_action in the previous epoch. In the first epoch, previous_action is None")
-    '''
+    action_history = property(__get_action_history__, doc = "The action_history so far. For example, action_history = [(0, roomai.kuhn.KuhnAction.lookup(\"check\"),(1,roomai.kuhn.KuhnAction.lookup(\"bet\")].\n"
+                                                            "The format of the item in action_history is (person_id, action)")
 
     def __get_is_terminal__(self):   return  self.__is_terminal__
     is_terminal = property(__get_is_terminal__,doc = "is_terminal = True means the game is over. At this time, scores is not None, scores = [float0,float1,...] for player0, player1,... For example, scores = [-1,2,-1].\n"
@@ -47,15 +40,6 @@ class AbstractPublicState(object):
 
         newinstance.__turn__           = self.__turn__
         newinstance.__action_history__ = list(self.__action_history__)
-        '''
-        newinstance.__previous_id__= self.__previous_id__
-        if self.__previous_action__ is not None:
-            newinstance.__previous_action__ = self.previous_action.__deepcopy__()
-        else:
-            newinstance.__previous_action__ = None
-        '''
-
-
         newinstance.__is_terminal__ = self.is_terminal
         if self.scores is None:
             newinstance.__scores__ = None
@@ -120,6 +104,8 @@ class Info(object):
         newinstance.__personc_state__ = self.__person_state.__deepcopy__()
         return newinstance
 
+
+
 class AbstractAction(object):
     '''
     The abstract class of an action. 
@@ -146,9 +132,40 @@ class AbstractAction(object):
     def __deepcopy__(self, memodict={}, newinstance = None):
         if newinstance is None:
             newinstance = AbstractAction()
-        newinstance.__key = self.__key
+        newinstance.__key__ = self.__key__
         return newinstance
 
+
+class AbstractChance(object):
+    '''
+    The abstract class of an chance action. 
+    '''
+
+    def __init__(self, key):
+        self.__key__ = key
+
+    def __get_key__(self):
+        return self.__key__
+
+    key = property(__get_key__, doc="The key of the chance action. Every chance action in RoomAI has a key as its identification."
+                                    " We strongly recommend you to use the lookup function to get an chance action with the specified key")
+
+    @classmethod
+    def lookup(self, key):
+        '''
+        Get an action with the specified key. 
+        We strongly recommend you to use the lookup function to get an action with the specified key, rather than use the constructor function.
+
+        :param key: the specified key
+        :return:  the action with the specified key
+        '''
+        raise NotImplementedError("Not implemented")
+
+    def __deepcopy__(self, memodict={}, newinstance=None):
+        if newinstance is None:
+            newinstance = AbstractAction()
+        newinstance.__key__ = self.__key__
+        return newinstance
 
 
 
@@ -178,6 +195,33 @@ class AbstractPlayer(object):
         raise NotImplementedError("The reset function hasn't been implemented")
 
 
+class AbstractChancePlayer(object):
+    '''
+    The abstract class of a chance player. 
+    '''
+
+    def receive_info(self, info):
+        '''
+        Receive information 
+
+        :param:info: the information produced by a game environments
+        :raises: NotImplementedError: An error occurred when we doesn't implement this function
+        '''
+        raise NotImplementedError("The receiveInfo function hasn't been implemented")
+
+    def take_action(self):
+        """
+        :returns: The action produced by this player
+        """
+        raise NotImplementedError("The takeAction function hasn't been implemented")
+
+    def reset(self):
+        '''
+        reset for a new game 
+        '''
+        raise NotImplementedError("The reset function hasn't been implemented")
+
+
 class RandomPlayer(AbstractPlayer):
     '''
     The RandomPlayer is a player, who randomly takes an action.
@@ -193,6 +237,23 @@ class RandomPlayer(AbstractPlayer):
 
     def reset(self):
         pass
+
+class RandomChancePlayer(AbstractPlayer):
+    '''
+    The RandomPlayer is a player, who randomly takes an action.
+    The RandomPlayer is as a common baseline
+    '''
+    def receive_info(self, info):
+        self.available_actions = info.person_state.available_actions
+
+    def take_action(self):
+        import random
+        idx = int(random.random() * len(self.available_actions))
+        return list(self.available_actions.values())[idx]
+
+    def reset(self):
+        pass
+
 
 
 
@@ -225,9 +286,10 @@ class AbstractEnv(object):
         return tuple(__infos__)
 
 
+
     def __gen_history__(self):
 
-        if "record_history" not in self.__params__ or self.__params__["record_history"] == False:
+        if "backward_enable" not in self.__params__ or self.__params__["backward_enable"] == False:
             return
 
         self.__public_state_history__.append(self.public_state.__deepcopy__())
@@ -262,8 +324,8 @@ class AbstractEnv(object):
         :raise:Env has reached the initialization state and can't go back further.
         '''
 
-        if "record_history" not in self.__params__ or self.__params__["record_history"] == False:
-            raise ValueError("Env can't backward when params[\"record_history\"] = False. If you want to use this backward function, please env.init({\"record_history\":true,...})")
+        if "backward_enable" not in self.__params__ or self.__params__["backward_enable"] == False:
+            raise ValueError("Env can't backward when params[\"backward_enable\"] = False. If you want to use this backward function, please env.init({\"backward_enable\":true,...})")
 
         if len(self.__public_state_history__) == 1:
             raise ValueError("Env has reached the initialization state and can't go back further. ")
