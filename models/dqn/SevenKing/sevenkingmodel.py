@@ -140,10 +140,57 @@ class SevenKingModel_ThreePlayers(dqn.DQNModel):
     def gen_action_feat(self, info, action):
         action_feat = np.zeros(self.num_point, self.num_suit, self.action_dim)
         for card in action.cards:
-            action_feat[card.point_rank, card.suit_rank, 0] += 1
+            if info.public_state.stage == 0:
+                action_feat[card.point_rank, card.suit_rank, 0] += 1
+            else:
+                action_feat[card.point_rank, card.suit_rank, 1] += 1
 
     def gen_info_feat(self, info):
-        pass
+        logger = roomai.get_logger()
+
+        info_feat = np.zeros(self.num_point, self.num_suit, self.info_dim)
+        hand_cards = info_feat.person_state.hand_cards
+        current_id = info.person_state.id
+        previous_id = (current_id + 3 - 1) % 3
+        next_id = (current_id + 1) % 3
+
+        if info.public_state.stage == 0:
+            for card in hand_cards:
+                info_feat[card.point_rank, card.suit_rank, 0] += 1
+
+            for person_action in info.public_state.action_history:
+                person_id = person_action[0]
+                action    = person_action[1]
+                for card in action.cards:
+                    if person_id == current_id:
+                        info_feat[card.point_rank, card.suit_rank, 1] += 1
+                    elif person_id == previous_id:
+                        info_feat[card.point_rank, card.suit_rank, 2] += 1
+                    elif person_id == next_id:
+                        info_feat[card.point_rank, card.suit_rank, 3] += 1
+                    elif person_id == 3:
+                        logger.debug("SevenKingModel finds the chance player-action pair in public_state.action_history")
+
+        else:
+            for card in hand_cards:
+                info_feat[card.point_rank, card.suit_rank, 4] += 1
+
+            for person_action in info.public_state.action_history:
+                person_id = person_action[0]
+                action    = person_action[1]
+                for card in action.cards:
+                    if person_id == current_id:
+                        info_feat[card.point_rank, card.suit_rank, 5] += 1
+                    elif person_id == previous_id:
+                        info_feat[card.point_rank, card.suit_rank, 6] += 1
+                    elif person_id == next_id:
+                        info_feat[card.point_rank, card.suit_rank, 7] += 1
+                    elif person_id == 3:
+                        logger.debug("SevenKingModel finds the chance player-action pair in public_state.action_history")
+
+
+        return info_feat
+
     def terminal_info_feat(self):
         info_feat = np.zeros(self.num_point, self.num_suit, self.info_dim)
         return info_feat
