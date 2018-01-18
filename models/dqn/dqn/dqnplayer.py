@@ -3,8 +3,9 @@ import roomai
 import roomai.common
 
 class DQNPlayer(roomai.common.AbstractPlayer):
-    def __int__(self, model):
+    def __init__(self, model):
         self.dqn_model = model
+
     def receive_info(self, info):
         self.info = info
 

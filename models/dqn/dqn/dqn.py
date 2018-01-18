@@ -21,11 +21,11 @@ class DQN:
             res.next_info_feat              = model.gen_info_feat(info)
             res.next_available_action_feats = []
             for action in list(info.person_state.available_actions.values()):
-                res.next_available_action_feats.append(model.gen_action_feat(action))
+                res.next_available_action_feats.append(model.gen_action_feat(info,action))
 
         self.uncompleted_experiences[turn] = Experience(  turn = turn,
                                                           info_feat = model.gen_info_feat(info),
-                                                          action_feat = model.gen_action_feat(action),
+                                                          action_feat = model.gen_action_feat(info, action),
                                                           reward = reward,
                                                           next_info_feat= None,
                                                           next_available_action_feats = None)
@@ -59,13 +59,13 @@ class DQN:
 
             for i in range(len(infos)):
                 players[i].reset()
-                players[i].receive_info(infos)
+                players[i].receive_info(infos[i])
 
             while public_state.is_terminal != True:
-                action = players[public_state.turn]
+                action = players[public_state.turn].take_action()
                 infos, public_state, _, _ = env.forward(action=action)
                 for i in range(len(infos)):
-                    players[i].receive_info(infos)
+                    players[i].receive_info(infos[i])
 
             score = public_state.scores
             for i in range(len(score)):

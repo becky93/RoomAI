@@ -1,14 +1,15 @@
 import dqn
 import roomai
 import roomai.sevenking
+import roomai.common
 import tensorflow as tf
 import numpy as np
 
 class SevenKingModel_ThreePlayers(dqn.DQNModel):
     def __init__(self, model_address = None, params = dict()):
         self.num_point  = 15
-        self.num_suit   = 4
-        self.info_dim   = 4
+        self.num_suit   = 5 ## small king and three king
+        self.info_dim   = 8
         self.action_dim = 4
 
         self.learning_rate = 0.001
@@ -51,10 +52,10 @@ class SevenKingModel_ThreePlayers(dqn.DQNModel):
             info_h_conv3 = tf.nn.relu(info_conv2 + info_conv2_bias)
             info_h_conv3 = tf.nn.max_pool(info_h_conv3, ksize=[1, 2, 2, 1],
                                      strides=[1, 2, 2, 1], padding='SAME')
-            info_h_conv3_flat  = tf.reshape(info_h_conv3, [-1, 1152])
+            info_h_conv3_flat  = tf.reshape(info_h_conv3, [-1,256])
 
-            info_vector_weight =  self.__variable_with_weight_decay__(name = 'conv_vector_weight', shape = [info_h_conv3_flat.get_shape()[1].value, 512],wd = self.weight_decay)
-            info_vector_bias   =  tf.get_variable('conv_vector_bias', shape=[512], initializer = tf.contrib.layers.xavier_initializer())
+            info_vector_weight =  self.__variable_with_weight_decay__(name = 'info_conv_vector_weight', shape = [info_h_conv3_flat.get_shape()[1].value, 512],wd = self.weight_decay)
+            info_vector_bias   =  tf.get_variable('info_conv_vector_bias', shape=[512], initializer = tf.contrib.layers.xavier_initializer())
             info_vector_feat   =  tf.nn.relu(tf.matmul(info_h_conv3_flat, info_vector_weight) + info_vector_bias)
 
             #### action feat
@@ -78,12 +79,12 @@ class SevenKingModel_ThreePlayers(dqn.DQNModel):
             action_h_conv3 = tf.nn.relu(action_conv2 + action_conv2_bias)
             action_h_conv3 = tf.nn.max_pool(action_h_conv3, ksize=[1, 2, 2, 1],
                                           strides=[1, 2, 2, 1], padding='SAME')
-            action_h_conv3_flat = tf.reshape(action_h_conv3, [-1, 1152])
+            action_h_conv3_flat = tf.reshape(action_h_conv3, [-1, 256])
 
-            action_vector_weight = self.__variable_with_weight_decay__('conv_vector_weight',
+            action_vector_weight = self.__variable_with_weight_decay__('action_conv_vector_weight',
                                                  shape=[action_h_conv3_flat.get_shape()[1].value, 512],
                                                  wd=self.weight_decay)
-            action_vector_bias = tf.get_variable('conv_vector_bias', shape=[512],
+            action_vector_bias = tf.get_variable('action_conv_vector_bias', shape=[512],
                                                initializer=tf.contrib.layers.xavier_initializer())
             action_vector_feat = tf.nn.relu(tf.matmul(action_h_conv3_flat, action_vector_weight) + action_vector_bias)
 
@@ -114,7 +115,7 @@ class SevenKingModel_ThreePlayers(dqn.DQNModel):
             var = tf.get_variable(name, shape, initializer=initializer, dtype=dtype)
         return var
 
-    def __variable_with_weight_decay__(self,name, shape, stddev, wd):
+    def __variable_with_weight_decay__(self,name, shape,  wd, stddev = 0.01,):
         """Helper to create an initialized Variable with weight decay.
           Note that the Variable is initialized with a truncated normal distribution.
         A weight decay is added only if one is specified.
@@ -138,18 +139,19 @@ class SevenKingModel_ThreePlayers(dqn.DQNModel):
         return var
 
     def gen_action_feat(self, info, action):
-        action_feat = np.zeros(self.num_point, self.num_suit, self.action_dim)
+        action_feat = np.zeros((self.num_point, self.num_suit, self.action_dim))
         for card in action.cards:
             if info.public_state.stage == 0:
                 action_feat[card.point_rank, card.suit_rank, 0] += 1
             else:
                 action_feat[card.point_rank, card.suit_rank, 1] += 1
+        return action_feat
 
     def gen_info_feat(self, info):
         logger = roomai.get_logger()
+        hand_cards = info.person_state.hand_cards
+        info_feat = np.zeros((self.num_point, self.num_suit, self.info_dim))
 
-        info_feat = np.zeros(self.num_point, self.num_suit, self.info_dim)
-        hand_cards = info_feat.person_state.hand_cards
         current_id = info.person_state.id
         previous_id = (current_id + 3 - 1) % 3
         next_id = (current_id + 1) % 3
@@ -192,14 +194,17 @@ class SevenKingModel_ThreePlayers(dqn.DQNModel):
         return info_feat
 
     def terminal_info_feat(self):
-        info_feat = np.zeros(self.num_point, self.num_suit, self.info_dim)
+        info_feat = np.zeros((self.num_point, self.num_suit, self.info_dim))
         return info_feat
 
     def terminal_action_feat(self):
-        action_feat = np.zeros(self.num_point, self.num_suit, self.action_dim)
+        action_feat = np.zeros((self.num_point, self.num_suit, self.action_dim))
         return action_feat
 
     def take_action(self, info):
+
+        if info.public_state.is_terminal == True:
+            xxx = 0
 
         action_feats = []
         action_lists = list(info.person_state.available_actions.values())
@@ -223,3 +228,7 @@ if __name__ == "__main__":
     model = SevenKingModel_ThreePlayers()
     dqn   = dqn.DQN()
     dqn.train(env=env,model=model, params={"num_normal_players":3})
+
+    opponents = [roomai.common.RandomPlayer() for i in range(2)]
+    scores = dqn.eval(model = model, env = env, opponents = opponents)
+    print (scores)

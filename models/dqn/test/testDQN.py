@@ -1,8 +1,9 @@
 import unittest
 from dqn import DQN
+from dqn import DQNModel
 
 
-class ExampleModel(dqn.DQNModel):
+class ExampleModel(DQNModel):
     def terminal_info_feat(self):
         return [1]
 
