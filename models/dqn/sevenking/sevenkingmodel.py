@@ -231,8 +231,7 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
             next_action_feats = [action_feat for action_feat in experience.next_available_action_feats]
             next_info_feats   = [experience.next_info_feat for i in range(len(experience.next_available_action_feats))]
             q                 = self.sess.run(self.q, feed_dict = { self.info_feats:next_info_feats,
-                                                                    self.action_feats:next_action_feats}
-                                              )
+                                                                    self.action_feats:next_action_feats})
             reward_plus_gamma_q.append(experience.reward + self.gamma * np.max(q))
             info_feats.append(experience.info_feat)
             action_feats.append(experience.action_feat)
