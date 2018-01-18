@@ -2,7 +2,7 @@
 import roomai
 import roomai.common
 
-class DQNModel:
+class DqnModel:
     def terminal_info_feat(self):
         raise NotImplementedError("Not implemented yet")
 

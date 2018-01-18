@@ -5,7 +5,7 @@ import roomai.common
 import tensorflow as tf
 import numpy as np
 
-class SevenKingModel_ThreePlayers(dqn.DQNModel):
+class SevenKingModel_ThreePlayers(dqn.DqnModel):
     def __init__(self, model_address = None, params = dict()):
         self.num_point  = 15
         self.num_suit   = 5 ## small king and three king
@@ -221,12 +221,16 @@ class SevenKingModel_ThreePlayers(dqn.DQNModel):
 
 
     def update_model(self, experiences):
-        pass
+        reward_plus_gamma_q = []
+        #for experience in experiences:
+
+
+
 
 if __name__ == "__main__":
     env   = roomai.sevenking.SevenKingEnv()
     model = SevenKingModel_ThreePlayers()
-    dqn   = dqn.DQN()
+    dqn   = dqn.DqnAlgorithm()
     dqn.train(env=env,model=model, params={"num_normal_players":3})
 
     opponents = [roomai.common.RandomPlayer() for i in range(2)]

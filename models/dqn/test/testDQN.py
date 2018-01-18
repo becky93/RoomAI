@@ -1,9 +1,9 @@
 import unittest
-from dqn import DQN
-from dqn import DQNModel
+from dqn import DqnAlgorithm
+from dqn import DqnModel
 
 
-class ExampleModel(DQNModel):
+class ExampleModel(DqnModel):
     def terminal_info_feat(self):
         return [1]
 
@@ -30,5 +30,5 @@ class DQNTester(unittest.TestCase):
         import roomai.sevenking
         env   = roomai.sevenking.SevenKingEnv()
         model = ExampleModel()
-        dqn   = DQN()
+        dqn   = DqnAlgorithm()
         dqn.train(model=model,env=env,params={})

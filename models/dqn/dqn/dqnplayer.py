@@ -2,7 +2,7 @@
 import roomai
 import roomai.common
 
-class DQNPlayer(roomai.common.AbstractPlayer):
+class DqnPlayer(roomai.common.AbstractPlayer):
     def __init__(self, model):
         self.dqn_model = model
 
