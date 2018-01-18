@@ -12,7 +12,7 @@ class DQNModel:
     def gen_info_feat(self, info):
         raise NotImplementedError("Not implemented yet")
 
-    def gen_action_feat(self, action):
+    def gen_action_feat(self, info, action):
         raise NotImplementedError("Not implemented yet")
 
     def update_model(self, experiences):

@@ -2,8 +2,9 @@ import dqn
 import roomai
 import roomai.sevenking
 import tensorflow as tf
+import numpy as np
 
-class SevenKingModel(dqn.DQNModel):
+class SevenKingModel_ThreePlayers(dqn.DQNModel):
     def __init__(self, model_address = None, params = dict()):
         self.num_point  = 15
         self.num_suit   = 4
@@ -26,16 +27,16 @@ class SevenKingModel(dqn.DQNModel):
         self.graph         = tf.Graph()
 
         with self.graph.as_default() as graph:
-            self.info_feat           = tf.placeholder(tf.float32, [None, self.num_point, self.num_suit, self.info_dim])
-            self.action_feat         = tf.placeholder(tf.float32, [None, self.num_point, self.num_suit, self.action_dim])
-            self.reward_plus_gamma_q = tf.placeholder(tf.float32, [None])
+            self.info_feats           = tf.placeholder(tf.float32, [None, self.num_point, self.num_suit, self.info_dim])
+            self.action_feats         = tf.placeholder(tf.float32, [None, self.num_point, self.num_suit, self.action_dim])
+            self.reward_plus_gamma_q  = tf.placeholder(tf.float32, [None])
 
             #### info feat
             info_conv1_weight = tf.get_variable('info_conv1w', shape=[3, 3, self.info_dim, 16],
                                            initializer=tf.contrib.layers.xavier_initializer())
             info_conv1_bias = tf.get_variable('info_conv1b', shape=[16],
                                          initializer=tf.contrib.layers.xavier_initializer())
-            info_conv1 = tf.nn.conv2d(self.input_hand_feat, filter=info_conv1_weight, strides=[1, 1, 1, 1], padding='SAME')
+            info_conv1 = tf.nn.conv2d(self.info_feats, filter=info_conv1_weight, strides=[1, 1, 1, 1], padding='SAME')
 
             info_h_conv1 = tf.nn.relu(info_conv1 + info_conv1_bias)
             info_h_conv2 = tf.nn.max_pool(info_h_conv1, ksize=[1, 2, 2, 1],
@@ -61,7 +62,7 @@ class SevenKingModel(dqn.DQNModel):
                                                 initializer=tf.contrib.layers.xavier_initializer())
             action_conv1_bias = tf.get_variable('action_conv1b', shape=[16],
                                               initializer=tf.contrib.layers.xavier_initializer())
-            action_conv1 = tf.nn.conv2d(self.input_hand_feat, filter=action_conv1_weight, strides=[1, 1, 1, 1],
+            action_conv1 = tf.nn.conv2d(self.action_feats, filter=action_conv1_weight, strides=[1, 1, 1, 1],
                                       padding='SAME')
 
             action_h_conv1 = tf.nn.relu(action_conv1 + action_conv1_bias)
@@ -136,21 +137,42 @@ class SevenKingModel(dqn.DQNModel):
             tf.add_to_collection('losses', weight_decay)
         return var
 
-    def gen_action_feat(self, action):
-        pass
+    def gen_action_feat(self, info, action):
+        action_feat = np.zeros(self.num_point, self.num_suit, self.action_dim)
+        for card in action.cards:
+            action_feat[card.point_rank, card.suit_rank, 0] += 1
+
     def gen_info_feat(self, info):
         pass
     def terminal_info_feat(self):
-        pass
+        info_feat = np.zeros(self.num_point, self.num_suit, self.info_dim)
+        return info_feat
+
     def terminal_action_feat(self):
-        pass
+        action_feat = np.zeros(self.num_point, self.num_suit, self.action_dim)
+        return action_feat
+
     def take_action(self, info):
-        pass
+
+        action_feats = []
+        action_lists = list(info.person_state.available_actions.values())
+        for action in action_lists:
+            action_feats.append(self.gen_action_feat(info, action))
+
+        info_feat  = self.gen_info_feat(info)
+        info_feats = []
+        info_feats = [info_feat for i in range(len(action_lists))]
+
+        q = self.sess.run(self.q, feed_dict = {self.info_feats:info_feats, self.action_feats:action_feats})
+        idx = np.argmax(q)
+        return action_lists[idx]
+
+
     def update_model(self, experiences):
         pass
 
 if __name__ == "__main__":
     env   = roomai.sevenking.SevenKingEnv()
-    model = SevenKingModel()
+    model = SevenKingModel_ThreePlayers()
     dqn   = dqn.DQN()
-    dqn.train(env=env,model=model)
+    dqn.train(env=env,model=model, params={"num_normal_players":3})

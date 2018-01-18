@@ -77,7 +77,7 @@ class DQN:
         return  scores
 
 
-    def train(self, model, env, params = dict()):
+    def train(self, model, env, params):
 
         num_iters = 1000
         if "num_iters" in params:
@@ -86,6 +86,8 @@ class DQN:
         if "batch_size" in params:
             batch_size = params["batch_size"]
 
+        import roomai.common
+        random_chance_player = roomai.common.RandomChancePlayer()
 
         for i in range(num_iters):
             infos, public_state, _, _   = env.init(params)
@@ -96,8 +98,8 @@ class DQN:
                 infos, public_state,_, _ = env.forward(action)
 
                 if public_state.is_terminal == False:
-                    action                   = model.take_action(infos[public_state.turn])
                     if public_state.turn != len(infos)-1:
+                        action = model.take_action(infos[public_state.turn])
                         #Not Chance Player
                         self.gen_experience_to_memories(model, turn = public_state.turn, info = infos[public_state.turn], action = action, reward=0, params = params)
 
@@ -107,6 +109,9 @@ class DQN:
                                 idx = int(random.random() * len(self.memories))
                                 experiences_batch.append(self.memories[idx])
                             model.update_model(experiences_batch)
+                    else:
+                        random_chance_player.receive_info(infos[public_state.turn])
+                        action = random_chance_player.take_action()
                 else:
                     scores = public_state.scores
                     for i in range(len(scores)):
