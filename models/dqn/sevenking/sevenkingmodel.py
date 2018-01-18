@@ -24,6 +24,10 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
         if "print_step" in params:
             self.print_step = params["print_step"]
 
+        self.gamma      = 0.9
+        if "gamma" in params:
+            self.gamma = params["gamma"]
+
         self.model_address = model_address
         self.graph         = tf.Graph()
 
@@ -203,8 +207,6 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
 
     def take_action(self, info):
 
-        if info.public_state.is_terminal == True:
-            xxx = 0
 
         action_feats = []
         action_lists = list(info.person_state.available_actions.values())
@@ -222,8 +224,22 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
 
     def update_model(self, experiences):
         reward_plus_gamma_q = []
-        #for experience in experiences:
+        info_feats          = []
+        action_feats        = []
 
+        for experience in experiences:
+            next_action_feats = [action_feat for action_feat in experience.next_available_action_feats]
+            next_info_feats   = [experience.next_info_feat for i in range(len(experience.next_available_action_feats))]
+            q                 = self.sess.run(self.q, feed_dict = { self.info_feats:next_info_feats,
+                                                                    self.action_feats:next_action_feats}
+                                              )
+            reward_plus_gamma_q.append(experience.reward + self.gamma * np.max(q))
+            info_feats.append(experience.info_feat)
+            action_feats.append(experience.action_feat)
+
+        self.sess.run(self.train_op, feed_dict = { self.info_feats:next_info_feats,
+                                                   self.action_feats:next_action_feats,
+                                                   self.reward_plus_gamma_q:reward_plus_gamma_q})
 
 
 
