@@ -236,8 +236,8 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
             info_feats.append(experience.info_feat)
             action_feats.append(experience.action_feat)
 
-        self.sess.run(self.train_op, feed_dict = { self.info_feats:next_info_feats,
-                                                   self.action_feats:next_action_feats,
+        self.sess.run(self.train_op, feed_dict = { self.info_feats:info_feats,
+                                                   self.action_feats:action_feats,
                                                    self.reward_plus_gamma_q:reward_plus_gamma_q})
 
 
