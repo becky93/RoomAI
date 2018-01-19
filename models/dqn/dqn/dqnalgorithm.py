@@ -46,15 +46,18 @@ class DqnAlgorithm:
                 self.memory_p = (self.memory_p + 1) % max_memory_size
 
     def eval(self, model, env, opponents, params = dict()):
-        model_player = DqnPlayer(model=model)
+        logger = roomai.get_logger()
+        logger.info("start an evaluation process")
 
+        model_player = DqnPlayer(model=model)
         scores       = None
         players      = None
         if opponents is not None:
             players = [model_player]+ [opponent for opponent in opponents] + [roomai.common.RandomChancePlayer()]
             scores  = [0 for i in range(len(opponents)+1)]
 
-        for iter1 in range(1000):
+        num_eval = 2000
+        for iter1 in range(num_eval):
             infos, public_state, _, _ = env.init(params)
 
             for i in range(len(infos)):
@@ -72,22 +75,24 @@ class DqnAlgorithm:
                 scores[i] += score[i]
 
         for i in range(len(scores)):
-            scores[i] /= 1000
+            scores[i] /= num_eval
 
+        logger.info("complete an evaluation process, scores = [%s] for [model_player, opponent_player,....]."%(",".join([str(s) for s in scores])))
         return  scores
 
 
     def train(self, model, env, params):
 
-        num_iters = 1000
+        num_iters = 100
         if "num_iters" in params:
             num_iters = params["num_iters"]
         batch_size = 100
         if "batch_size" in params:
             batch_size = params["batch_size"]
 
-        import roomai.common
         random_chance_player = roomai.common.RandomChancePlayer()
+        logger = roomai.get_logger()
+        logger.info("start a training process with num_iters = %d"%(num_iters))
 
         for i in range(num_iters):
             infos, public_state, _, _   = env.init(params)
@@ -104,7 +109,7 @@ class DqnAlgorithm:
                         self.gen_experience_to_memories(model, turn = public_state.turn, info = infos[public_state.turn], action = action, reward=0, params = params)
 
                         experiences_batch = []
-                        if len(self.memories) > 1000 and random.random() < 1.0/batch_size:
+                        if len(self.memories) > 1000 and random.random() < 1.0 / batch_size:
                             for i in range(batch_size):
                                 idx = int(random.random() * len(self.memories))
                                 experiences_batch.append(self.memories[idx])
@@ -120,5 +125,7 @@ class DqnAlgorithm:
                         self.uncompleted_experiences[i].next_available_action_feats = [model.terminal_action_feat()]
                         self.add_experience_to_memories(self.uncompleted_experiences[i], params)
                     model.update_model([self.uncompleted_experiences[i] for i in range(len(scores))])
+
+        logger.info("complete a training process")
 
         return model

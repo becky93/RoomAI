@@ -8,7 +8,7 @@ project_name = "roomai";
 
 logger = logging.getLogger(project_name);
 handler = logging.StreamHandler(sys.stderr);
-formatter = logging.Formatter("%(asctime)s - line %(lineno)d in %(filename)s - %(levelname)s - %(message)s");
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - line %(lineno)d in %(filename)s - %(message)s");
 
 logger.setLevel(logging.INFO);
 handler.setLevel(logging.INFO);

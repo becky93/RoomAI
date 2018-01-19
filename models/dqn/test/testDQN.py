@@ -1,6 +1,7 @@
 import unittest
 from dqn import DqnAlgorithm
 from dqn import DqnModel
+import random
 import roomai
 import roomai.sevenking
 import dqn
@@ -23,7 +24,9 @@ class ExampleModel(DqnModel):
         print ("update_model")
 
     def take_action(self, info):
-        return list(info.person_state.available_actions.values())[0]
+        action_list = list(info.person_state.available_actions.values())
+        idx         = int(random.random() * len(action_list))
+        return action_list[idx]
 
 
 
@@ -34,7 +37,9 @@ class DQNTester(unittest.TestCase):
         env   = roomai.sevenking.SevenKingEnv()
         model = ExampleModel()
         dqn   = DqnAlgorithm()
+        opponents = [roomai.common.RandomPlayer() for i in range(2)]
         dqn.train(model=model,env=env,params={})
+        dqn.eval(model = model, env=env, opponents = opponents, params={})
 
     def test_sevenking_dqn(self):
         env = roomai.sevenking.SevenKingEnv()
