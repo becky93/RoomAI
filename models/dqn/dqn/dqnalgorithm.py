@@ -104,7 +104,7 @@ class DqnAlgorithm:
                         self.gen_experience_to_memories(model, turn = public_state.turn, info = infos[public_state.turn], action = action, reward=0, params = params)
 
                         experiences_batch = []
-                        if len(self.memories) > 1000:
+                        if len(self.memories) > 1000 and random.random() < 1.0/batch_size:
                             for i in range(batch_size):
                                 idx = int(random.random() * len(self.memories))
                                 experiences_batch.append(self.memories[idx])
