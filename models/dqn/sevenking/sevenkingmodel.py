@@ -60,7 +60,7 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
 
             info_vector_weight =  self.__variable_with_weight_decay__(name = 'info_conv_vector_weight', shape = [info_h_conv3_flat.get_shape()[1].value, 512],wd = self.weight_decay)
             info_vector_bias   =  tf.get_variable('info_conv_vector_bias', shape=[512], initializer = tf.contrib.layers.xavier_initializer())
-            info_vector_feat   =  tf.nn.relu(tf.matmul(info_h_conv3_flat, info_vector_weight) + info_vector_bias)
+            info_vector_feat   =  tf.matmul(info_h_conv3_flat, info_vector_weight) + info_vector_bias
 
             #### action feat
             action_conv1_weight = tf.get_variable('action_conv1w', shape=[3, 3, self.action_dim, 16],
@@ -90,9 +90,18 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
                                                  wd=self.weight_decay)
             action_vector_bias = tf.get_variable('action_conv_vector_bias', shape=[512],
                                                initializer=tf.contrib.layers.xavier_initializer())
-            action_vector_feat = tf.nn.relu(tf.matmul(action_h_conv3_flat, action_vector_weight) + action_vector_bias)
+            action_vector_feat = tf.matmul(action_h_conv3_flat, action_vector_weight) + action_vector_bias
 
-            self.q    = tf.reduce_mean(info_vector_feat * action_vector_feat,axis = 1)
+            ### DNN
+            dnn_x           = tf.nn.relu(tf.concat([info_vector_feat, action_vector_feat], axis=1))
+            dnn_weight      = self.__variable_with_weight_decay__('dnn_weight',shape=[dnn_x.get_shape()[1].value,256],wd = self.weight_decay)
+            dnn_weight_bias = tf.get_variable('dnn_bias', shape=[256], initializer=tf.contrib.layers.xavier_initializer())
+            dnn_x1          = tf.nn.relu(tf.matmul(dnn_x, dnn_weight) + dnn_weight_bias)
+            dnn_weight1     = self.__variable_with_weight_decay__('dnn_weight1',
+                                                             shape=[dnn_x1.get_shape()[1].value, 1],
+                                                             wd=self.weight_decay)
+            dnn_x2          = tf.matmul(dnn_x1, dnn_weight1)
+            self.q    = tf.reduce_mean(dnn_x2,axis = 1)
             self.loss = tf.reduce_mean((self.q - self.reward_plus_gamma_q) * (self.q - self.reward_plus_gamma_q))
 
             self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
@@ -223,6 +232,7 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
 
 
     def update_model(self, experiences):
+        logger = roomai.get_logger()
         reward_plus_gamma_q = []
         info_feats          = []
         action_feats        = []
@@ -232,14 +242,19 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
             next_info_feats   = [experience.next_info_feat for i in range(len(experience.next_available_action_feats))]
             q                 = self.sess.run(self.q, feed_dict = { self.info_feats:next_info_feats,
                                                                     self.action_feats:next_action_feats})
+            #print ("q = %s"%(q.__str__()))
             reward_plus_gamma_q.append(experience.reward + self.gamma * np.max(q))
             info_feats.append(experience.info_feat)
             action_feats.append(experience.action_feat)
 
-        self.sess.run(self.train_op, feed_dict = { self.info_feats:info_feats,
+
+
+        _, loss,q = self.sess.run((self.train_op,self.loss, self.q), feed_dict = { self.info_feats:info_feats,
                                                    self.action_feats:action_feats,
                                                    self.reward_plus_gamma_q:reward_plus_gamma_q})
-
+        logger.debug ("reward_plus_gamma_q = %s"%(reward_plus_gamma_q.__str__()))
+        logger.debug ("loss = %f"%(loss))
+        logger.debug ("q = %s"%(q.__str__()))
 
 
 if __name__ == "__main__":

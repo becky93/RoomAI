@@ -5,7 +5,10 @@ import random
 import copy
 import itertools
 
-from roomai.doudizhupoker.DouDiZhuPokerInfo   import *
+from roomai.doudizhupoker.DouDiZhuPokerHandCards     import *
+from roomai.doudizhupoker.DouDiZhuPokerPublicState   import *
+from roomai.doudizhupoker.DouDiZhuPokerPrivateState  import *
+from roomai.doudizhupoker.DouDiZhuPokerPersonState   import *
 from roomai.doudizhupoker.DouDiZhuPokerAction import *
 
 class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
@@ -15,9 +18,9 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
 
     def __init__(self):
         super(DouDiZhuPokerEnv, self).__init__()
-        self.public_state  = DouDiZhuPublicState()
-        self.private_state = DouDiZhuPrivateState()
-        self.person_states = [DouDiZhuPersonState() for i in range(3+1)] ## Three players and one chance player
+        self.public_state  = DouDiZhuPokerPublicState()
+        self.private_state = DouDiZhuPokerPrivateState()
+        self.person_states = [DouDiZhuPokerPersonState() for i in range(3+1)] ## Three players and one chance player
 
 
 
@@ -93,7 +96,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
         self.person_states[i].__id__ = 4
 
 
-        keep_cards = DouDiZhuPokerHandCards([self.__params__["allcards"][-1], self.__params__["allcards"][-2], self.__params__["allcards"][-3]])
+        keep_cards = DouDiZhuPokerHandCards([allcards[-1], allcards[-2], allcards[-3]])
         self.private_state.__keep_cards__ =  keep_cards;
 
         self.public_state.__turn__                = self.__params__["start_turn"]
@@ -521,8 +524,8 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
 
     @classmethod
     def __available_actions_generate_all__(cls):
-        public_state = DouDiZhuPublicState()
-        person_state = DouDiZhuPersonState()
+        public_state = DouDiZhuPokerPublicState()
+        person_state = DouDiZhuPokerPersonState()
         public_state.__is_response__    = False
         person_state.__hand_cards__     = DouDiZhuPokerHandCards("")
         for i in range(13):
