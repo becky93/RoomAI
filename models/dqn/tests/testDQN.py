@@ -32,6 +32,9 @@ class ExampleModel(DqnModel):
 
 
 class DQNTester(unittest.TestCase):
+    def setUp(self):
+        import logging
+        roomai.set_loglevel(logging.DEBUG)
     def test_dqn(self):
         import roomai.sevenking
         env   = roomai.sevenking.SevenKingEnv()
@@ -46,7 +49,16 @@ class DQNTester(unittest.TestCase):
         model = SevenKingModel_ThreePlayers()
         algo = dqn.DqnAlgorithm()
         algo.train(env=env, model=model, params={"num_normal_players": 3})
+        opponents = [roomai.common.RandomPlayer() for i in range(2)]
+        scores = algo.eval(model=model, env=env, opponents=opponents)
+        print(scores)
 
+        algo.train(env=env, model=model, params={"num_normal_players": 3})
+        opponents = [roomai.common.RandomPlayer() for i in range(2)]
+        scores = algo.eval(model=model, env=env, opponents=opponents)
+        print(scores)
+
+        algo.train(env=env, model=model, params={"num_normal_players": 3})
         opponents = [roomai.common.RandomPlayer() for i in range(2)]
         scores = algo.eval(model=model, env=env, opponents=opponents)
         print(scores)

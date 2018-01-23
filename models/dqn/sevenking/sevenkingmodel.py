@@ -5,6 +5,11 @@ import roomai.common
 import tensorflow as tf
 import numpy as np
 
+import shutil
+
+def remove_path(path):
+    shutil.rmtree(path)
+
 class SevenKingModel_ThreePlayers(dqn.DqnModel):
     def __init__(self, model_address = None, params = dict()):
         self.num_point  = 15
@@ -12,17 +17,13 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
         self.info_dim   = 8
         self.action_dim = 4
 
-        self.learning_rate = 0.001
+        self.learning_rate = 0.01
         if "learning_rate" in params:
             self.learning_rate = params["learning_rate"]
 
         self.weight_decay = 0.004
         if "weight_decay" in params:
             self.weight_decay = params["weight_decay"]
-
-        self.print_step = 200
-        if "print_step" in params:
-            self.print_step = params["print_step"]
 
         self.gamma      = 0.9
         if "gamma" in params:
@@ -36,66 +37,82 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
             self.action_feats         = tf.placeholder(tf.float32, [None, self.num_point, self.num_suit, self.action_dim])
             self.reward_plus_gamma_q  = tf.placeholder(tf.float32, [None])
 
-            #### info feat
+            ############################################## info feat ###############################################
             info_conv1_weight = tf.get_variable('info_conv1w', shape=[3, 3, self.info_dim, 16],
-                                           initializer=tf.contrib.layers.xavier_initializer())
+                                                initializer=tf.contrib.layers.xavier_initializer())
             info_conv1_bias = tf.get_variable('info_conv1b', shape=[16],
-                                         initializer=tf.contrib.layers.xavier_initializer())
+                                              initializer=tf.contrib.layers.xavier_initializer())
             info_conv1 = tf.nn.conv2d(self.info_feats, filter=info_conv1_weight, strides=[1, 1, 1, 1], padding='SAME')
 
             info_h_conv1 = tf.nn.relu(info_conv1 + info_conv1_bias)
             info_h_conv2 = tf.nn.max_pool(info_h_conv1, ksize=[1, 2, 2, 1],
-                                     strides=[1, 2, 2, 1], padding='SAME')
+                                          strides=[1, 2, 2, 1], padding='SAME')
 
             info_conv2_weight = tf.get_variable('info_conv2w', shape=[3, 3, 16, 32],
-                                           initializer=tf.contrib.layers.xavier_initializer())
+                                                initializer=tf.contrib.layers.xavier_initializer())
             info_conv2_bias = tf.get_variable('info_conv2b', shape=[32],
-                                         initializer=tf.contrib.layers.xavier_initializer())
+                                              initializer=tf.contrib.layers.xavier_initializer())
             info_conv2 = tf.nn.conv2d(info_h_conv2, filter=info_conv2_weight, strides=[1, 1, 1, 1], padding='SAME')
 
             info_h_conv3 = tf.nn.relu(info_conv2 + info_conv2_bias)
             info_h_conv3 = tf.nn.max_pool(info_h_conv3, ksize=[1, 2, 2, 1],
-                                     strides=[1, 2, 2, 1], padding='SAME')
-            info_h_conv3_flat  = tf.reshape(info_h_conv3, [-1,256])
+                                          strides=[1, 2, 2, 1], padding='SAME')
+            info_h_conv3_flat = tf.reshape(info_h_conv3, [-1, 256])
 
-            info_vector_weight =  self.__variable_with_weight_decay__(name = 'info_conv_vector_weight', shape = [info_h_conv3_flat.get_shape()[1].value, 512],wd = self.weight_decay)
-            info_vector_bias   =  tf.get_variable('info_conv_vector_bias', shape=[512], initializer = tf.contrib.layers.xavier_initializer())
-            info_vector_feat   =  tf.nn.relu(tf.matmul(info_h_conv3_flat, info_vector_weight) + info_vector_bias)
+            info_vector_weight = self.__variable_with_weight_decay__(name='info_conv_vector_weight',
+                                                                     shape=[info_h_conv3_flat.get_shape()[1].value,
+                                                                            512], wd=self.weight_decay)
+            info_vector_bias = tf.get_variable('info_conv_vector_bias', shape=[512],
+                                               initializer=tf.contrib.layers.xavier_initializer())
+            self.info_vector_feat = tf.matmul(info_h_conv3_flat, info_vector_weight) + info_vector_bias
 
-            #### action feat
+            ################################################# action feat ############################################
             action_conv1_weight = tf.get_variable('action_conv1w', shape=[3, 3, self.action_dim, 16],
-                                                initializer=tf.contrib.layers.xavier_initializer())
+                                                  initializer=tf.contrib.layers.xavier_initializer())
             action_conv1_bias = tf.get_variable('action_conv1b', shape=[16],
-                                              initializer=tf.contrib.layers.xavier_initializer())
+                                                initializer=tf.contrib.layers.xavier_initializer())
             action_conv1 = tf.nn.conv2d(self.action_feats, filter=action_conv1_weight, strides=[1, 1, 1, 1],
-                                      padding='SAME')
+                                        padding='SAME')
 
             action_h_conv1 = tf.nn.relu(action_conv1 + action_conv1_bias)
             action_h_conv2 = tf.nn.max_pool(action_h_conv1, ksize=[1, 2, 2, 1],
-                                          strides=[1, 2, 2, 1], padding='SAME')
+                                            strides=[1, 2, 2, 1], padding='SAME')
 
             action_conv2_weight = tf.get_variable('action_conv2w', shape=[3, 3, 16, 32],
-                                                initializer=tf.contrib.layers.xavier_initializer())
+                                                  initializer=tf.contrib.layers.xavier_initializer())
             action_conv2_bias = tf.get_variable('action_conv2b', shape=[32],
-                                              initializer=tf.contrib.layers.xavier_initializer())
-            action_conv2 = tf.nn.conv2d(action_h_conv2, filter=action_conv2_weight, strides=[1, 1, 1, 1], padding='SAME')
+                                                initializer=tf.contrib.layers.xavier_initializer())
+            action_conv2 = tf.nn.conv2d(action_h_conv2, filter=action_conv2_weight, strides=[1, 1, 1, 1],
+                                        padding='SAME')
 
             action_h_conv3 = tf.nn.relu(action_conv2 + action_conv2_bias)
             action_h_conv3 = tf.nn.max_pool(action_h_conv3, ksize=[1, 2, 2, 1],
-                                          strides=[1, 2, 2, 1], padding='SAME')
+                                            strides=[1, 2, 2, 1], padding='SAME')
             action_h_conv3_flat = tf.reshape(action_h_conv3, [-1, 256])
 
             action_vector_weight = self.__variable_with_weight_decay__('action_conv_vector_weight',
-                                                 shape=[action_h_conv3_flat.get_shape()[1].value, 512],
-                                                 wd=self.weight_decay)
+                                                                       shape=[action_h_conv3_flat.get_shape()[1].value,
+                                                                              512],
+                                                                       wd=self.weight_decay)
             action_vector_bias = tf.get_variable('action_conv_vector_bias', shape=[512],
-                                               initializer=tf.contrib.layers.xavier_initializer())
-            action_vector_feat = tf.nn.relu(tf.matmul(action_h_conv3_flat, action_vector_weight) + action_vector_bias)
+                                                 initializer=tf.contrib.layers.xavier_initializer())
+            self.action_vector_feat = tf.matmul(action_h_conv3_flat, action_vector_weight) + action_vector_bias
 
-            self.q    = tf.reduce_mean(info_vector_feat * action_vector_feat,axis = 1)
+            ###################################################### DNN ##############################################
+            dnn_x = tf.nn.relu(tf.concat([self.info_vector_feat, self.action_vector_feat], axis=1))
+            dnn_weight = self.__variable_with_weight_decay__('dnn_weight', shape=[dnn_x.get_shape()[1].value, 128],
+                                                             wd=self.weight_decay)
+            dnn_weight_bias = tf.get_variable('dnn_bias', shape=[128],
+                                              initializer=tf.contrib.layers.xavier_initializer())
+            dnn_x1 = tf.nn.relu(tf.matmul(dnn_x, dnn_weight) + dnn_weight_bias)
+            dnn_weight1 = self.__variable_with_weight_decay__('dnn_weight1',
+                                                              shape=[dnn_x1.get_shape()[1].value, 1],
+                                                              wd=self.weight_decay)
+            dnn_x2 = tf.matmul(dnn_x1, dnn_weight1)
+            self.q = tf.reduce_mean(dnn_x2, axis=1)
             self.loss = tf.reduce_mean((self.q - self.reward_plus_gamma_q) * (self.q - self.reward_plus_gamma_q))
 
-            self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
+            self.optimizer = tf.train.AdagradOptimizer(learning_rate=self.learning_rate)
             self.train_op = self.optimizer.minimize(self.loss)
 
             self.init = tf.global_variables_initializer()
@@ -226,19 +243,29 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
         reward_plus_gamma_q = []
         info_feats          = []
         action_feats        = []
+        logger = roomai.get_logger()
 
         for experience in experiences:
             next_action_feats = [action_feat for action_feat in experience.next_available_action_feats]
             next_info_feats   = [experience.next_info_feat for i in range(len(experience.next_available_action_feats))]
             q                 = self.sess.run(self.q, feed_dict = { self.info_feats:next_info_feats,
                                                                     self.action_feats:next_action_feats})
+            logger.debug("no zero element in next_info_feats = %d. no zero element in next_action_feats = %d. q = %s in the max_q of the model update"%(np.sum(next_info_feats), np.sum(next_action_feats),q.__str__()))
             reward_plus_gamma_q.append(experience.reward + self.gamma * np.max(q))
             info_feats.append(experience.info_feat)
             action_feats.append(experience.action_feat)
 
-        self.sess.run(self.train_op, feed_dict = { self.info_feats:info_feats,
-                                                   self.action_feats:action_feats,
-                                                   self.reward_plus_gamma_q:reward_plus_gamma_q})
+        _, loss, q, info_vector_feat, action_vector_feat = \
+                                                   self.sess.run((self.train_op, self.loss, self.q, self.info_vector_feat, self.action_vector_feat),\
+                                                                 feed_dict = {  self.info_feats:info_feats,\
+                                                                                self.action_feats:action_feats,\
+                                                                                self.reward_plus_gamma_q:reward_plus_gamma_q})
+
+        logger.debug("info_vector_feat = %s in the model update"%(info_vector_feat.__str__()))
+        logger.debug("action_vector_feat = %s in the model update" % (action_vector_feat.__str__()))
+        logger.debug("q = %s in the model update"%(q.__str__()))
+        logger.debug("reward_plus_gamma_q = %s in the model update"%(reward_plus_gamma_q.__str__()))
+        logger.debug("loss = %f in the model update"%(loss))
 
 
 

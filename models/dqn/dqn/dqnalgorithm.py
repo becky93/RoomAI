@@ -56,7 +56,7 @@ class DqnAlgorithm:
             players = [model_player]+ [opponent for opponent in opponents] + [roomai.common.RandomChancePlayer()]
             scores  = [0 for i in range(len(opponents)+1)]
 
-        num_eval = 2000
+        num_eval = 1000
         for iter1 in range(num_eval):
             infos, public_state, _, _ = env.init(params)
 
@@ -89,6 +89,9 @@ class DqnAlgorithm:
         batch_size = 100
         if "batch_size" in params:
             batch_size = params["batch_size"]
+        exploit_ratio = 0.9
+        if "exploit_ratio" in params:
+            exploit_ratio = params["exploit_ratio"]
 
         random_chance_player = roomai.common.RandomChancePlayer()
         logger = roomai.get_logger()
@@ -96,17 +99,24 @@ class DqnAlgorithm:
 
         for i in range(num_iters):
             infos, public_state, _, _   = env.init(params)
-            action                      = model.take_action(infos[public_state.turn])
-            self.gen_experience_to_memories(model, public_state.turn, infos[public_state.turn], action, reward=0, params = params)
+            if random.random() < exploit_ratio:
+                action  = model.take_action(infos[public_state.turn])
+            else:
+                action_list = list(infos[public_state.turn].person_state.available_actions.values())
+                action      = action_list[int(random.random() * len(action_list))]
+            self.gen_experience_to_memories(model, public_state.turn, infos[public_state.turn], action, reward=-1, params = params)
 
             while public_state.is_terminal == False:
                 infos, public_state,_, _ = env.forward(action)
-
                 if public_state.is_terminal == False:
                     if public_state.turn != len(infos)-1:
-                        action = model.take_action(infos[public_state.turn])
+                        if random.random() < exploit_ratio:
+                            action = model.take_action(infos[public_state.turn])
+                        else:
+                            action_list = list(infos[public_state.turn].person_state.available_actions.values())
+                            action = action_list[int(random.random() * len(action_list))]
                         #Not Chance Player
-                        self.gen_experience_to_memories(model, turn = public_state.turn, info = infos[public_state.turn], action = action, reward=0, params = params)
+                        self.gen_experience_to_memories(model, turn = public_state.turn, info = infos[public_state.turn], action = action, reward=-1, params = params)
 
                         experiences_batch = []
                         if len(self.memories) > 1000 and random.random() < 1.0 / batch_size:
