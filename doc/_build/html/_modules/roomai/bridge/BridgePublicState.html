@@ -1,0 +1,195 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>roomai.bridge.BridgePublicState &#8212; roomai  documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for roomai.bridge.BridgePublicState</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/bin/python</span>
+<span class="kn">import</span> <span class="nn">roomai.common</span>
+
+<div class="viewcode-block" id="BridgePublicState"><a class="viewcode-back" href="../../../roomai.bridge.html#roomai.bridge.BridgePublicState.BridgePublicState">[docs]</a><span class="k">class</span> <span class="nc">BridgePublicState</span><span class="p">(</span><span class="n">roomai</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">AbstractPublicState</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The public state of Bridge.</span>
+
+<span class="sd">    The attributes whose names start with &quot;bidding&quot; are used in the bidding stage \n</span>
+<span class="sd">    The attributes whose names start with &quot;playing&quot; are used in the playing stage\n</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BridgePublicState</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__stage__</span> <span class="o">=</span> <span class="s2">&quot;bidding&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_candidate_contract_point__</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_candidate_contract_suit__</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_magnification__</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_last_bidder__</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__playing_is_vulnerable__</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__playing_contract_point__</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__playing_contract_suit__</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__playing_magnification__</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__playing_dealerid__</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__playing_cards_on_table__</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__playing_card_turn__</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__playing_win_tricks_sofar__</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">__get_stage__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__stage__</span>
+
+    <span class="n">stage</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_stage__</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot; There are two stages: </span><span class="se">\&quot;</span><span class="s2">bidding</span><span class="se">\&quot;</span><span class="s2"> and </span><span class="se">\&quot;</span><span class="s2">playing</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1">################## bidding stage #####################</span>
+    <span class="k">def</span> <span class="nf">__get_bidding_candidate_contract_suit__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_candidate_contract_suit__</span>
+
+    <span class="n">bidding_candidate_contract_suit</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_bidding_candidate_contract_suit__</span><span class="p">,</span>
+                                               <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;The candidate contract suit at the bidding stage. The candidate contract suit is one of </span><span class="se">\&quot;</span><span class="s2">NotTrump</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">Spade</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">Heart</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">Diamond</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">Club</span><span class="se">\&quot;</span><span class="s2"> and None]. </span><span class="se">\n</span><span class="s2">&quot;</span>
+                                                   <span class="s2">&quot;At the beginning of the bidding stage, the candidate_contract_suit is None&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_bidding_candidate_contract_point__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_candidate_contract_point__</span>
+
+    <span class="n">bidding_candidate_contract_point</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_bidding_candidate_contract_point__</span><span class="p">,</span>
+                                                <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;The candidate contract point at the bidding stage. The candidate contract point is one of &#39;7&#39;, &#39;6&#39;, &#39;5&#39;, &#39;4&#39;, &#39;3&#39;, &#39;2&#39;,  &#39;A&#39; and None&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_bidding_magnification__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_magnification__</span>
+
+    <span class="n">bidding_magnification</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_bidding_magnification__</span><span class="p">,</span>
+                                     <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;In the bidding stage, normally, the magnification = 1. The </span><span class="se">\&quot;</span><span class="s2">double</span><span class="se">\&quot;</span><span class="s2"> action makes magnification = 2, and the </span><span class="se">\&quot;</span><span class="s2">redouble</span><span class="se">\&quot;</span><span class="s2"> makes magnification = 4&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_bidding_last_bidder__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bidding_last_bidder__</span>
+
+    <span class="n">bidding_last_bidder</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_bidding_last_bidder__</span><span class="p">,</span>
+                                   <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;In the bidding stage, the last playerid who lastly takes the </span><span class="se">\&quot;</span><span class="s2">bid</span><span class="se">\&quot;</span><span class="s2"> action. The bidding_last_bidder is one of [roomai.bridge.Direction.north,roomai.bridge.Direction.east, roomai.bridge.Direction.south,roomai.bridge.Direction.west]. </span><span class="se">\n</span><span class="s2">&quot;</span>
+                                       <span class="s2">&quot;For example, the bidding_last_bidder = roomai.bridge.Direction.west&quot;</span><span class="p">)</span>
+
+    <span class="c1">########################## playing stage ####################</span>
+    <span class="k">def</span> <span class="nf">__get_playing_contract_point__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__playing_contract_point__</span>
+
+    <span class="n">playing_contract_point</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_playing_contract_point__</span><span class="p">,</span>
+                                      <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;The contract point at the playing stage. The contract point is one of &#39;A&#39;,&#39;K&#39;,&#39;Q&#39;,&#39;J&#39;,&#39;10&#39;,&#39;9&#39;,&#39;8&#39;,&#39;7&#39;, &#39;6&#39;, &#39;5&#39;, &#39;4&#39;, &#39;3&#39;, &#39;2&#39; and &#39;A&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_playing_contract_suit__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__playing_contract_suit__</span>
+
+    <span class="n">playing_contract_suit</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_playing_contract_suit__</span><span class="p">,</span>
+                                     <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;The contract suit at the playing stage. The candidate contract suit is one of </span><span class="se">\&quot;</span><span class="s2">Spade</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">Heart</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">Diamond</span><span class="se">\&quot;</span><span class="s2"> and </span><span class="se">\&quot;</span><span class="s2">Club</span><span class="se">\&quot;</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_playing_dealerid__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__playing_dealerid__</span>
+
+    <span class="n">playing_dealerid</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_playing_dealerid__</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;The players[playing_dealerid] is the dealer&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_playing_cards_on_table__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__playing_cards_on_table__</span><span class="p">)</span>
+
+    <span class="n">playing_cards_on_table</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_playing_cards_on_table__</span><span class="p">,</span>
+                                      <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;The playing_cards_on_table is the cards so far in this pier. For example, playing_cards_on_table = [roomai.bridge.BridgePokerCard.lookup(</span><span class="se">\&quot;</span><span class="s2">A_Spade</span><span class="se">\&quot;</span><span class="s2">),roomai.bridge.BridgePokerCard.lookup(</span><span class="se">\&quot;</span><span class="s2">2_Spade</span><span class="se">\&quot;</span><span class="s2">)] when two players have taken actions in this pier.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_playing_real_turn__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__playing_card_turn__</span>
+
+    <span class="n">playing_card_turn</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_playing_real_turn__</span><span class="p">,</span>
+                                 <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;The players[turn] uses the players[playing_card_turn]&#39;s cards to take an action. In general, turn == playing_card_turn. When playing_card_turn = dummy, turn = playing_dealerid&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_playing_win_tricks_sofar__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__playing_win_tricks_sofar__</span>
+
+    <span class="n">playing_win_tricks_sofar</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_playing_win_tricks_sofar__</span><span class="p">,</span>
+                                        <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;playing_win_tricks_sofar is the number of the win tricks. For example, playing_win_tricks_sofar = [1,2,1,2] means 1) that players[0] and players[2] win 1 trick, and 2) that players[1] and players[3] win 2 tricks.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_playing_magnification__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__playing_magnification__</span>
+
+    <span class="n">playing_magnification</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_playing_magnification__</span><span class="p">,</span>
+                                     <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;The playing_magnification will affect the final scores. In general, playing_magnification = 1. The valid double in the bidding stage will make playing_magnification = 2 and the valid redouble will make playing_magnification = 4</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_playing_is_vulnerable__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__playing_is_vulnerable__</span>
+
+    <span class="n">playing_is_vulnerable</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">__get_playing_is_vulnerable__</span><span class="p">,</span>
+                                     <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;The playing_is_vulnerable will affect the final scores. In general, playing_is_vulnerable = [False,False,False,False].&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">roomai</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../roomai.html">roomai package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
