@@ -16,6 +16,8 @@ def compete(env, players):
    for player in players:
         players.reset()
    params = dict()
+   params["num_normal_players"] = len(players) - 1
+   #len(players)-1 normal players and 1 chance player
    
    infos, public_state, person_states, private_state = env.init(params)
    for i in range(len(players)):
@@ -93,10 +95,10 @@ Player takes a action, and Env forwards with this action.
 
 <pre>
 class AbstractAction:
-    def key(self):
-        raise NotImplementedError("The key function hasn't been implemented")
     def lookup(self, key):
         raise NotImplementedError("The lookup function hasn't been implemented")
+
+
 </pre>
 
 

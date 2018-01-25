@@ -54,11 +54,11 @@ The initilization parameters of Kuhn Env.
 class KuhnPokerEnv(roomai.common.AbstractEnv)
     def init(self, params=dict()):
 
-        if "record_history" in params:
-            self.record_history = params["record_history"]
+        if "backward_enable" in params:
+            self.backward_enable = params["backward_enable"]
         else:
-            self.record_history = False
-        # record_history must be true, when you need call backward
+            self.backward_enable = False
+        # backward_enable must be true, when you need call backward
 
         if "start_turn" in params:
             self.start_turn = params["start_turn"]

@@ -8,8 +8,9 @@ class TexasHoldemPublicState(roomai.common.AbstractPublicState):
     The public state of TexasHoldem
     '''
     def __init__(self):
+        super(TexasHoldemPublicState,self).__init__()
         self.__stage__              = None
-        self.__num_players__        = None
+        self.__num_normal_players__        = None
         self.__dealer_id__          = None
         self.__public_cards__       = None
         self.__big_blind_bet__      = None
@@ -34,8 +35,8 @@ class TexasHoldemPublicState(roomai.common.AbstractPublicState):
         #the raise acount
         self.__raise_account__      = None
 
-    def __get_num_players__(self):  return self.__num_players__
-    num_players = property(__get_num_players__, doc = "The number of players in this game")
+    def __get_num_normal_players__(self):  return self.__num_normal_players__
+    num_normal_players = property(__get_num_normal_players__, doc = "The number of players in this game")
 
     def __get_max_bet_sofar__(self):    return self.__max_bet_sofar__
     max_bet_sofar = property(__get_max_bet_sofar__, doc="The max bet used by one player so far")
@@ -108,7 +109,7 @@ class TexasHoldemPublicState(roomai.common.AbstractPublicState):
             if newinstance is None:
                 newinstance = TexasHoldemPublicState()
             newinstance.stage         = self.stage
-            newinstance.num_players   = self.num_players
+            newinstance.num_normal_players   = self.num_normal_players
             newinstance.dealer_id     = self.dealer_id
             newinstance.big_blind_bet = self.big_blind_bet
 
@@ -171,10 +172,13 @@ class TexasHoldemPublicState(roomai.common.AbstractPublicState):
 
 
 class TexasHoldemPrivateState(roomai.common.AbstractPrivateState):
+
     '''
     The private state of TexasHoldem
     '''
-    __keep_cards__ = []
+    def __init__(self):
+        super(TexasHoldemPrivateState, self).__init__()
+        self.__keep_cards__ = []
 
     def __get_keep_cards__(self):   return tuple(self.__keep_cards__)
     keep_cards = property(__get_keep_cards__, doc="the keep cards")

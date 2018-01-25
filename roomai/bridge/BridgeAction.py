@@ -4,7 +4,7 @@ import roomai.bridge
 
 class BridgeAction(roomai.common.AbstractAction):
     '''
-    The action of Bridge. There are two stages:1) bidding and 2) playing. 
+    The action of Bridge. There are two stages:1) bidding and 2) playing. \n
     The example of the Bridge action's usages:\n
     \n\n
     ################ In the bidding stage, the action key looks like "bidding"_option_(point)_(suit). ################ \n

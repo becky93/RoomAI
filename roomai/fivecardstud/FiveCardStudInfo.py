@@ -53,7 +53,7 @@ class FiveCardStudPublicState(roomai.common.AbstractPublicState):
 
     turn                   = None
     round                  = None
-    num_players            = None
+    num_normal_players            = None
 
     previous_id            = None
     previous_action        = None
@@ -127,7 +127,7 @@ class FiveCardStudPublicState(roomai.common.AbstractPublicState):
 
         copyinstance.turn          = self.turn
         copyinstance.round         = self.round
-        copyinstance.num_players   = self.num_players
+        copyinstance.num_normal_players   = self.num_normal_players
 
         copyinstance.previous_id     = self.previous_id
         if self.previous_action is None:

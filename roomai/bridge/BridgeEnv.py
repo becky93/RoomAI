@@ -22,34 +22,41 @@ class BridgeEnv(roomai.common.AbstractEnv):
         if self.__params__["start_turn"] not in [roomai.bridge.Direction.north,roomai.bridge.Direction.east, roomai.bridge.Direction.south,roomai.bridge.Direction.west]:
             raise ValueError("start_turn is %s, not one of [roomai.bridge.Direction.north,roomai.bridge.Direction.east, roomai.bridge.Direction.south,roomai.bridge.Direction.west]"%(str(self.__params__["start_turn"])))
 
-        if "allcards" in params:
-            self.__params__["allcards"] = list(params["allcards"])
-        else:
-            self.__params__["allcards"] = list(roomai.bridge.AllBridgePokerCards.values())
-            random.shuffle(self.__params__["allcards"])
 
         if "vulnerable" in params:
             self.__params__["vulnerable"] = list(params["vulnerable"])
         else:
             self.__params__["vulnerable"] = [False for i in range(4)]
+
         if len(self.__params__["vulnerable"]) != 4:
             raise ValueError("len(self.__params__[\"vulnerable\"]) != 4")
+
         if self.__params__["vulnerable"][roomai.bridge.Direction.south] != self.__params__["vulnerable"][roomai.bridge.Direction.north]:
             raise ValueError("The north and south players have different vulnerable states. (north vulnerable: %s, south vulnerable: %s)"%(str(self.__params__["vulnerable"][roomai.bridge.Direction.north]),str(self.__params__["vulnerable"][roomai.bridge.Direction.south])))
+
         if self.__params__["vulnerable"][roomai.bridge.Direction.west]  != self.__params__["vulnerable"][roomai.bridge.Direction.east]:
             raise ValueError("The east and west players have different vulnerable states. (north vulnerable: %s, south vulnerable: %s)"%(str(self.__params__["vulnerable"][roomai.bridge.Direction.north]),str(self.__params__["vulnerable"][roomai.bridge.Direction.south])))
 
+        if "num_normal_players" in params:
+            logger = roomai.get_logger()
+            logger.warning("Bridge is a game of 4 normal players. Ingores the \"num_normal_players\" option")
+        self.__params__["num_normal_players"] = 4
 
         self.public_state                        = roomai.bridge.BridgePublicState()
         self.public_state.__stage__              = "bidding"
         self.public_state.__turn__               = self.__params__["start_turn"]
         self.public_state.__playing_is_vulnerable__ = list(self.__params__["vulnerable"])
 
-        self.person_states = [roomai.bridge.BridgePersonState() for i in range(4)]
+        self.person_states = [roomai.bridge.BridgePersonState() for i in range(5)]
+        for i in range(5):
+            self.person_states[i].__id__ = i
         num = int(len(roomai.bridge.AllBridgePokerCards) / 4)
+
+        allcards = list(roomai.bridge.AllBridgePokerCards.values())
+        random.shuffle(allcards)
         for i in range(4):
             self.person_states[i].__hand_cards_dict__ = dict()
-            for card in self.__params__["allcards"][i*num:(i+1)*num]:
+            for card in allcards[i*num:(i+1)*num]:
                 self.person_states[i].__hand_cards_dict__[card.key] = card
         self.person_states[self.public_state.turn].__available_actions__ \
             = self.available_actions(self.public_state, self.person_states[self.public_state.turn])
@@ -74,9 +81,9 @@ class BridgeEnv(roomai.common.AbstractEnv):
         if self.is_action_valid(action, pu, pes[pu.turn]) == False:
             raise ValueError("%s is invalid action"%(action.key))
         pes[pu.turn].__available_actions__ = dict()
+        pu.__action_history__.append((pu.turn, action))
 
         if pu.stage == "bidding": ## the bidding stage
-            pu.__action_history__.append((pu.turn,action))
             if len(pu.action_history) == 4:
                 flag = True
                 for i in range(4):

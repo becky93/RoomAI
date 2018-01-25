@@ -14,7 +14,7 @@ class BridgeTester(unittest.TestCase):
         env = roomai.bridge.BridgeEnv()
         infos, public_state, person_states, private_state = env.init()
         xxx = 0
-        self.assertEqual(len(infos),4)
+        self.assertEqual(len(infos),5)
         for i in range(4):
             self.assertEqual(len(person_states[i].hand_cards_dict.keys()), 52 / 4)
 

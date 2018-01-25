@@ -23,15 +23,8 @@ class AbstractPublicState(object):
     turn = property(__get_turn__, doc = "The players[turn] is expected to take an action.")
 
     def __get_action_history__(self):   return tuple(self.__action_history__)
-    action_history = property(__get_action_history__, doc = "The action_history so far. For example, action_history = [(0, roomai.kuhn.KuhnAction.lookup(\"check\"),(1,roomai.kuhn.KuhnAction.lookup(\"bet\")]")
-
-    ''' 
-    def __get_previous_id__(self):  return self.__previous_id__
-    previous_id = property(__get_previous_id__,doc = "The players[previous_id] took an action in the previous epoch. In the first epoch, previous_id is None")
-
-    def __get_previous_action(self):    return self.__previous_action__
-    previous_action = property(__get_previous_action, doc = "The players[previous_id] took previous_action in the previous epoch. In the first epoch, previous_action is None")
-    '''
+    action_history = property(__get_action_history__, doc = "The action_history so far. For example, action_history = [(0, roomai.kuhn.KuhnAction.lookup(\"check\"),(1,roomai.kuhn.KuhnAction.lookup(\"bet\")].\n"
+                                                            "The format of the item in action_history is (person_id, action)")
 
     def __get_is_terminal__(self):   return  self.__is_terminal__
     is_terminal = property(__get_is_terminal__,doc = "is_terminal = True means the game is over. At this time, scores is not None, scores = [float0,float1,...] for player0, player1,... For example, scores = [-1,2,-1].\n"
@@ -47,15 +40,6 @@ class AbstractPublicState(object):
 
         newinstance.__turn__           = self.__turn__
         newinstance.__action_history__ = list(self.__action_history__)
-        '''
-        newinstance.__previous_id__= self.__previous_id__
-        if self.__previous_action__ is not None:
-            newinstance.__previous_action__ = self.previous_action.__deepcopy__()
-        else:
-            newinstance.__previous_action__ = None
-        '''
-
-
         newinstance.__is_terminal__ = self.is_terminal
         if self.scores is None:
             newinstance.__scores__ = None
@@ -120,6 +104,8 @@ class Info(object):
         newinstance.__personc_state__ = self.__person_state.__deepcopy__()
         return newinstance
 
+
+
 class AbstractAction(object):
     '''
     The abstract class of an action. 
@@ -146,9 +132,40 @@ class AbstractAction(object):
     def __deepcopy__(self, memodict={}, newinstance = None):
         if newinstance is None:
             newinstance = AbstractAction()
-        newinstance.__key = self.__key
+        newinstance.__key__ = self.__key__
         return newinstance
 
+
+class AbstractChance(object):
+    '''
+    The abstract class of an chance action. 
+    '''
+
+    def __init__(self, key):
+        self.__key__ = key
+
+    def __get_key__(self):
+        return self.__key__
+
+    key = property(__get_key__, doc="The key of the chance action. Every chance action in RoomAI has a key as its identification."
+                                    " We strongly recommend you to use the lookup function to get an chance action with the specified key")
+
+    @classmethod
+    def lookup(self, key):
+        '''
+        Get an action with the specified key. \n
+        We strongly recommend you to use the lookup function to get an action with the specified key, rather than use the constructor function.\n
+
+        :param key: the specified key
+        :return:  the action with the specified key
+        '''
+        raise NotImplementedError("Not implemented")
+
+    def __deepcopy__(self, memodict={}, newinstance=None):
+        if newinstance is None:
+            newinstance = AbstractAction()
+        newinstance.__key__ = self.__key__
+        return newinstance
 
 
 
@@ -178,10 +195,52 @@ class AbstractPlayer(object):
         raise NotImplementedError("The reset function hasn't been implemented")
 
 
+class AbstractChancePlayer(object):
+    '''
+    The abstract class of a chance player. 
+    '''
+
+    def receive_info(self, info):
+        '''
+        Receive information 
+
+        :param:info: the information produced by a game environments
+        :raises: NotImplementedError: An error occurred when we doesn't implement this function
+        '''
+        raise NotImplementedError("The receiveInfo function hasn't been implemented")
+
+    def take_action(self):
+        """
+        :returns: The action produced by this player
+        """
+        raise NotImplementedError("The takeAction function hasn't been implemented")
+
+    def reset(self):
+        '''
+        reset for a new game 
+        '''
+        raise NotImplementedError("The reset function hasn't been implemented")
+
+
 class RandomPlayer(AbstractPlayer):
     '''
-    The RandomPlayer is a player, who randomly takes an action.
-    The RandomPlayer is as a common baseline
+    The RandomPlayer is a player, who randomly takes an action.\n
+    The RandomPlayer is as a common baseline.\n
+    '''
+    def receive_info(self, info):
+        self.available_actions = info.person_state.available_actions
+
+    def take_action(self):
+        import random
+        idx = int(random.random() * len(self.available_actions))
+        return list(self.available_actions.values())[idx]
+
+    def reset(self):
+        pass
+
+class RandomChancePlayer(AbstractPlayer):
+    '''
+    The RandomChancePlayer is a chance player, who randomly takes an action.
     '''
     def receive_info(self, info):
         self.available_actions = info.person_state.available_actions
@@ -196,13 +255,14 @@ class RandomPlayer(AbstractPlayer):
 
 
 
+
 class AbstractEnv(object):
     '''
     The abstract class of game environment
     '''
 
-    def __init__(self):
-        self.__params__ = dict()
+    def __init__(self, params = dict()):
+        self.__params__ = dict(params)
         self.__public_state_history__  = []
         self.__person_states_history__ = []
         self.__private_state_history__ = []
@@ -225,9 +285,10 @@ class AbstractEnv(object):
         return tuple(__infos__)
 
 
+
     def __gen_history__(self):
 
-        if "record_history" not in self.__params__ or self.__params__["record_history"] == False:
+        if "backward_enable" not in self.__params__ or self.__params__["backward_enable"] == False:
             return
 
         self.__public_state_history__.append(self.public_state.__deepcopy__())
@@ -239,7 +300,7 @@ class AbstractEnv(object):
         Initialize the game environment 
         
         :param params:  
-        :return:  infos, public_state, person_states, private_state, other_chance_actions
+        :return:  infos, public_state, person_states, private_state
         '''
 
         raise ("The init function hasn't been implemented")
@@ -249,7 +310,7 @@ class AbstractEnv(object):
         The game environment steps with the action taken by the current player
         
         :param action, chance_action
-        :returns:infos, public_state, person_states, private_state, other_chance_actions
+        :returns:infos, public_state, person_states, private_state
         """
         raise NotImplementedError("The forward hasn't been implemented")
 
@@ -262,8 +323,8 @@ class AbstractEnv(object):
         :raise:Env has reached the initialization state and can't go back further.
         '''
 
-        if "record_history" not in self.__params__ or self.__params__["record_history"] == False:
-            raise ValueError("Env can't backward when params[\"record_history\"] = False. If you want to use this backward function, please env.init({\"record_history\":true,...})")
+        if "backward_enable" not in self.__params__ or self.__params__["backward_enable"] == False:
+            raise ValueError("Env can't backward when params[\"backward_enable\"] = False. If you want to use this backward function, please env.init({\"backward_enable\":true,...})")
 
         if len(self.__public_state_history__) == 1:
             raise ValueError("Env has reached the initialization state and can't go back further. ")
@@ -340,25 +401,24 @@ suit_str_to_rank   = {'Spade':0, 'Heart':1, 'Diamond':2, 'Club':3,  'ForKing':4}
 suit_rank_to_str   = {0:'Spade', 1: 'Heart', 2: 'Diamond', 3:'Club', 4:'ForKing'}
 class PokerCard(object):
     '''
-    A Poker Card. 
-    A Poker Card has a point (2,3,4,....,K,A,r,R) and a suit (Spade, Heart, Diamond, Club, ForKing). 
-    Different points have different ranks, for example the point 2 's rank is 0, and the point A 's rank is 12. 
-    Different suits have different ranks too.
-    The "ForKing" suit is a placeholder used for the card with the point "r" or "R"
-    A Poker Card has a key (point_suit). We strongly recommend you to get a poker card by using the class function lookup with the key.
-    Examples of the class usages:
-    >> import roomai.common
-    >> card = roomai.common.PokerCard.lookup("2_Spade")
-    >> card.point 
-    2
-    >> card.suit
-    Spade
-    >> card.point_rank
-    0
-    >> card.suit_rank
-    0
-    >> card.key
-    "2_Spade"
+    A Poker Card. \n
+    A Poker Card has a point (2,3,4,....,K,A,r,R) and a suit (Spade, Heart, Diamond, Club, ForKing). \n
+    Different points have different ranks, for example the point 2's rank is 0, and the point A's rank is 12. \n
+    Different suits have different ranks too. The "ForKing" suit is a placeholder used for the card with the point "r" or "R".\n
+    A Poker Card has a key (point_suit). We strongly recommend you to get a poker card by using the class function lookup with the key. \n
+    Examples of the class usages: \n
+    >> import roomai.common \n
+    >> card = roomai.common.PokerCard.lookup("2_Spade") \n
+    >> card.point \n
+    2\n
+    >> card.suit\n
+    Spade\n
+    >> card.point_rank\n
+    0\n
+    >> card.suit_rank\n
+    0\n
+    >> card.key\n
+    "2_Spade"\n
     '''
     def __init__(self, point, suit = None):
         point1 = 0
@@ -450,14 +510,6 @@ AllPokerCards["r_ForKing"] = (PokerCard("r_ForKing"))
 AllPokerCards["R_ForKing"] = (PokerCard("R_ForKing"))
 
 
-def version():
-    '''
-
-    :return: The version of RoomAI 
-    '''
-    version = "0.1.1"
-    print("roomai-%s" % version)
-    return ("roomai-%s" % version)
 
 
 class FrozenDict(dict):

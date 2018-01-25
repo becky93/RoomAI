@@ -93,8 +93,8 @@ class testSevenKing(unittest.TestCase):
         """
         env = SevenKingEnv()
 
-        infos, public_state, person_states, private_state = env.init({"num_players":2})
-        assert(len(infos) == 2)
+        infos, public_state, person_states, private_state = env.init({"num_normal_players":2})
+        assert(len(infos) == 3)
         turn = public_state.turn
         self.show_hand_card(person_states[turn].hand_cards)
         print (turn)
@@ -111,7 +111,7 @@ class testSevenKing(unittest.TestCase):
 
         """
         env = SevenKingEnv()
-        env.num_players = 2
+        env.num_normal_players = 2
         players = [RandomPlayer() for i in range(2)]
 
         for i in range(100):
@@ -122,7 +122,7 @@ class testSevenKing(unittest.TestCase):
 
         """
         env = SevenKingEnv()
-        env.num_players = 3
+        env.num_normal_players = 3
 
         print ("aaa")
         players = [AlwaysFoldPlayer(), AlwaysFoldPlayer(), AlwaysNotFoldPlayer()]
