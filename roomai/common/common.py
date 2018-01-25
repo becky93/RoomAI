@@ -136,7 +136,7 @@ class AbstractAction(object):
         return newinstance
 
 
-class AbstractChance(object):
+class AbstractChanceAction(object):
     '''
     The abstract class of an chance action. 
     '''
