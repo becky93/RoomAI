@@ -43,16 +43,3 @@ def get_logger():
     '''
     return logger
 
-
-def make(game_name):
-    if game_name == "bridge":
-        import roomai.bridge
-        return roomai.bridge.BridgeEnv()
-    elif game_name == "sevenking":
-        import roomai.sevenking
-        return roomai.sevenking.SevenKingEnv()
-    elif game_name == "kuhn":
-        import roomai.kuhn
-        return roomai.kuhn.KuhnPokerEnv()
-    else:
-        raise ValueError("")

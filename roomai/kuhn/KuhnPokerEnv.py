@@ -2,7 +2,7 @@
 import random
 import math
 import copy
-import roomai.kuhn.KuhnPokerUtils
+import roomai.kuhn.KuhnPokerChanceAction
 import roomai.common
 logger = roomai.get_logger()
 
@@ -38,12 +38,12 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
         self.__params__["num_normal_players"] = 2
 
         self.all_available_action = dict()
-        self.all_available_action[roomai.kuhn.KuhnPokerUtils.KuhnPokerAction("check").key] = roomai.kuhn.KuhnPokerAction.lookup("check")
-        self.all_available_action[roomai.kuhn.KuhnPokerUtils.KuhnPokerAction("bet").key]   = roomai.kuhn.KuhnPokerAction.lookup("bet")
+        self.all_available_action[roomai.kuhn.KuhnPokerAction("check").key] = roomai.kuhn.KuhnPokerAction.lookup("check")
+        self.all_available_action[roomai.kuhn.KuhnPokerAction("bet").key]   = roomai.kuhn.KuhnPokerAction.lookup("bet")
 
-        self.private_state = roomai.kuhn.KuhnPokerUtils.KuhnPokerPrivateState()
-        self.public_state  = roomai.kuhn.KuhnPokerUtils.KuhnPokerPublicState()
-        self.person_states = [roomai.kuhn.KuhnPokerUtils.KuhnPokerPersonState() for i in range(3)]
+        self.private_state = roomai.kuhn.KuhnPokerPrivateState()
+        self.public_state  = roomai.kuhn.KuhnPokerPublicState()
+        self.person_states = [roomai.kuhn.KuhnPokerPersonState() for i in range(3)]
 
 
         self.public_state.__turn__             = 2
@@ -59,7 +59,7 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
         self.person_states[2].__id__          = 2
         self.person_states[2].__number__      = -1
 
-        self.person_states[self.public_state.turn].__available_actions__ = roomai.kuhn.KuhnPokerUtils.AllKuhnChanceActions
+        self.person_states[self.public_state.turn].__available_actions__ = roomai.kuhn.AllKuhnChanceActions
 
         self.__gen_history__()
         infos = self.__gen_infos__()
@@ -165,9 +165,9 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
     @classmethod
     def available_actions(self, public_state, person_state):
         if len(public_state.action_history) == 0:
-            return roomai.kuhn.KuhnPokerUtils.AllKuhnChanceActions
+            return roomai.kuhn.AllKuhnChanceActions
         else:
-            return roomai.kuhn.KuhnPokerUtils.AllKuhnActions
+            return roomai.kuhn.AllKuhnActions
 
     def __higher_number_player__(self):
         if self.person_states[0].number > self.person_states[1].number:

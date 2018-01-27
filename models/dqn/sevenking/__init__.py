@@ -1,2 +1,2 @@
 #!/bin/python
-from sevenking.sevenkingmodel import SevenKingModel_ThreePlayers
+from sevenking.sevenkingplayer import SevenKingModel_ThreePlayers

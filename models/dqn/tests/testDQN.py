@@ -45,6 +45,8 @@ class DQNTester(unittest.TestCase):
         dqn.eval(model = model, env=env, opponents = opponents, params={})
 
     def test_sevenking_dqn(self):
+        import logging
+        roomai.set_loglevel(logging.DEBUG)
         env = roomai.sevenking.SevenKingEnv()
         model = SevenKingModel_ThreePlayers()
         algo = dqn.DqnAlgorithm()

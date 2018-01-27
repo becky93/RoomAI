@@ -8,11 +8,11 @@ import sys
 from functools import cmp_to_key
 
 
-from roomai.fivecardstud.FiveCardStudUtils  import FiveCardStudPokerCard
-from roomai.fivecardstud.FiveCardStudInfo   import FiveCardStudPublicState
-from roomai.fivecardstud.FiveCardStudInfo   import FiveCardStudPersonState
-from roomai.fivecardstud.FiveCardStudInfo   import FiveCardStudPrivateState
-from roomai.fivecardstud.FiveCardStudAction import FiveCardStudAction
+from roomai.fivecardstud   import FiveCardStudPokerCard
+from roomai.fivecardstud   import FiveCardStudPublicState
+from roomai.fivecardstud   import FiveCardStudPersonState
+from roomai.fivecardstud   import FiveCardStudPrivateState
+from roomai.fivecardstud   import FiveCardStudAction
 
 class FiveCardStudEnv(roomai.common.AbstractEnv):
     '''

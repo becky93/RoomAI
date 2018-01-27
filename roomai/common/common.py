@@ -136,7 +136,7 @@ class AbstractAction(object):
         return newinstance
 
 
-class AbstractChance(object):
+class AbstractChanceAction(object):
     '''
     The abstract class of an chance action. 
     '''
@@ -153,8 +153,8 @@ class AbstractChance(object):
     @classmethod
     def lookup(self, key):
         '''
-        Get an action with the specified key. 
-        We strongly recommend you to use the lookup function to get an action with the specified key, rather than use the constructor function.
+        Get an action with the specified key. \n
+        We strongly recommend you to use the lookup function to get an action with the specified key, rather than use the constructor function.\n
 
         :param key: the specified key
         :return:  the action with the specified key
@@ -224,8 +224,8 @@ class AbstractChancePlayer(object):
 
 class RandomPlayer(AbstractPlayer):
     '''
-    The RandomPlayer is a player, who randomly takes an action.
-    The RandomPlayer is as a common baseline
+    The RandomPlayer is a player, who randomly takes an action.\n
+    The RandomPlayer is as a common baseline.\n
     '''
     def receive_info(self, info):
         self.available_actions = info.person_state.available_actions
@@ -240,8 +240,7 @@ class RandomPlayer(AbstractPlayer):
 
 class RandomChancePlayer(AbstractPlayer):
     '''
-    The RandomPlayer is a player, who randomly takes an action.
-    The RandomPlayer is as a common baseline
+    The RandomChancePlayer is a chance player, who randomly takes an action.
     '''
     def receive_info(self, info):
         self.available_actions = info.person_state.available_actions
@@ -301,7 +300,7 @@ class AbstractEnv(object):
         Initialize the game environment 
         
         :param params:  
-        :return:  infos, public_state, person_states, private_state, other_chance_actions
+        :return:  infos, public_state, person_states, private_state
         '''
 
         raise ("The init function hasn't been implemented")
@@ -311,7 +310,7 @@ class AbstractEnv(object):
         The game environment steps with the action taken by the current player
         
         :param action, chance_action
-        :returns:infos, public_state, person_states, private_state, other_chance_actions
+        :returns:infos, public_state, person_states, private_state
         """
         raise NotImplementedError("The forward hasn't been implemented")
 
@@ -402,25 +401,24 @@ suit_str_to_rank   = {'Spade':0, 'Heart':1, 'Diamond':2, 'Club':3,  'ForKing':4}
 suit_rank_to_str   = {0:'Spade', 1: 'Heart', 2: 'Diamond', 3:'Club', 4:'ForKing'}
 class PokerCard(object):
     '''
-    A Poker Card. 
-    A Poker Card has a point (2,3,4,....,K,A,r,R) and a suit (Spade, Heart, Diamond, Club, ForKing). 
-    Different points have different ranks, for example the point 2 's rank is 0, and the point A 's rank is 12. 
-    Different suits have different ranks too.
-    The "ForKing" suit is a placeholder used for the card with the point "r" or "R"
-    A Poker Card has a key (point_suit). We strongly recommend you to get a poker card by using the class function lookup with the key.
-    Examples of the class usages:
-    >> import roomai.common
-    >> card = roomai.common.PokerCard.lookup("2_Spade")
-    >> card.point 
-    2
-    >> card.suit
-    Spade
-    >> card.point_rank
-    0
-    >> card.suit_rank
-    0
-    >> card.key
-    "2_Spade"
+    A Poker Card. \n
+    A Poker Card has a point (2,3,4,....,K,A,r,R) and a suit (Spade, Heart, Diamond, Club, ForKing). \n
+    Different points have different ranks, for example the point 2's rank is 0, and the point A's rank is 12. \n
+    Different suits have different ranks too. The "ForKing" suit is a placeholder used for the card with the point "r" or "R".\n
+    A Poker Card has a key (point_suit). We strongly recommend you to get a poker card by using the class function lookup with the key. \n
+    Examples of the class usages: \n
+    >> import roomai.common \n
+    >> card = roomai.common.PokerCard.lookup("2_Spade") \n
+    >> card.point \n
+    2\n
+    >> card.suit\n
+    Spade\n
+    >> card.point_rank\n
+    0\n
+    >> card.suit_rank\n
+    0\n
+    >> card.key\n
+    "2_Spade"\n
     '''
     def __init__(self, point, suit = None):
         point1 = 0

@@ -1,6 +1,7 @@
 #!/bin/python
 import roomai.common
 
+
 AllSevenKingPatterns = dict()
 ###
 ###numCards
