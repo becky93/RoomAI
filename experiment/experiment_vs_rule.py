@@ -4,7 +4,7 @@
 import sys
 sys.path.append("/cephfs/person/gotoli/dqnalgorithm")
 sys.path.append("/cephfs/person/gotoli/roomai")
-import models
+
 import shutil
 import time
 import random
@@ -13,25 +13,27 @@ import roomai.common
 def remove_path(path):
     shutil.rmtree(path)
 
+
+
 import roomai
 import roomai.sevenking
-
-from models.dqn.sevenking import SevenKingModel_ThreePlayers
-from models.dqn.dqnalgorithm import DqnAlgorithm
+import roomai.common
+from modelzoo.dqn.sevenking import SevenKingModel_ThreePlayers
+from modelzoo.dqn.dqnalgorithm import DqnAlgorithm
 import tensorflow as tf
-
+import modelzoo
 
 if __name__ == "__main__":
 
     env = roomai.sevenking.SevenKingEnv()
-    train_players        = [SevenKingModel_ThreePlayers()] + [roomai.common.RandomPlayer() for i in range(2)] + [roomai.common.RandomChancePlayer()]
+    train_players        = [SevenKingModel_ThreePlayers()] + [roomai.sevenking.AlwaysMaxPatternPlayer()] + [roomai.common.RandomChancePlayer()]
     eval_random_players  = [None] + [roomai.common.RandomPlayer() for i in range(2)] + [roomai.common.RandomChancePlayer()]
     eval_rule_players    = [None] + [roomai.sevenking.AlwaysMaxPatternPlayer() for i in range(2)] + [roomai.common.RandomChancePlayer()]
     
 
     dqn = DqnAlgorithm()
-    tensorboard_address = "/cephfs/person/gotoli/dqn/tensorboard_vs_random"
-    #models.dqn.sevenking.sevenkingplayer.remove_path(tensorboard_address)
+    tensorboard_address = "/cephfs/person/gotoli/dqn/tensorboard_vs_rule"
+    modelzoo.dqn.sevenking.sevenkingplayer.remove_path(tensorboard_address)
 
     with tf.Graph().as_default() as g:
         ai_vs_random_score = tf.placeholder(tf.float32, [1])

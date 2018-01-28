@@ -1,10 +1,6 @@
 #!/bin/python
 #!coding:utf-8
 
-import sys
-sys.path.append("/cephfs/person/gotoli/dqnalgorithm")
-sys.path.append("/cephfs/person/gotoli/roomai")
-
 import shutil
 import time
 import random
@@ -13,27 +9,28 @@ import roomai.common
 def remove_path(path):
     shutil.rmtree(path)
 
-
+import sys
+sys.path.append("/cephfs/person/gotoli/dqnalgorithm")
+sys.path.append("/cephfs/person/gotoli/roomai")
 
 import roomai
 import roomai.sevenking
-import roomai.common
-from models.dqn.sevenking import SevenKingModel_ThreePlayers
-from models.dqn.dqnalgorithm import DqnAlgorithm
+import dqnalgorithm
+from sevenking import SevenKingModel_ThreePlayers
 import tensorflow as tf
-import models
 
 if __name__ == "__main__":
 
     env = roomai.sevenking.SevenKingEnv()
-    train_players        = [SevenKingModel_ThreePlayers()] + [roomai.sevenking.AlwaysMaxPatternPlayer()] + [roomai.common.RandomChancePlayer()]
+    train_players        = [SevenKingModel_ThreePlayers() for i in range(3)] + [roomai.common.RandomChancePlayer()]
     eval_random_players  = [None] + [roomai.common.RandomPlayer() for i in range(2)] + [roomai.common.RandomChancePlayer()]
     eval_rule_players    = [None] + [roomai.sevenking.AlwaysMaxPatternPlayer() for i in range(2)] + [roomai.common.RandomChancePlayer()]
     
 
-    dqn = DqnAlgorithm()
-    tensorboard_address = "/cephfs/person/gotoli/dqn/tensorboard_vs_rule"
-    models.dqn.sevenking.sevenkingplayer.remove_path(tensorboard_address)
+    dqn = dqnalgorithm.DqnAlgorithm()
+    import sevenking.sevenkingplayer
+    tensorboard_address = "/cephfs/person/gotoli/dqnalgorithm/tensorboard1"
+    sevenking.sevenkingplayer.remove_path(tensorboard_address)
 
     with tf.Graph().as_default() as g:
         ai_vs_random_score = tf.placeholder(tf.float32, [1])
@@ -45,7 +42,7 @@ if __name__ == "__main__":
         writer = tf.summary.FileWriter(tensorboard_address, sess.graph)
 
     for i in range(10000):
-        dqn.train(env=env, players=train_players, params={"num_normal_players": 3, "num_iters":50})
+        dqn.train(env=env, players=train_players, params={"num_normal_players": 3, "num_iters":10})
         eval_random_players[0] = train_players[0]
         eval_rule_players[0] = train_players[0]
         

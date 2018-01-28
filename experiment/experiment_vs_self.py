@@ -9,15 +9,15 @@ import shutil
 import time
 import random
 import roomai.common
-import models
+import modelzoo
 
 def remove_path(path):
     shutil.rmtree(path)
 
 import roomai
 import roomai.sevenking
-from models.dqn.sevenking import SevenKingModel_ThreePlayers
-from models.dqn.dqnalgorithm import DqnAlgorithm
+from modelzoo.dqn.sevenking import SevenKingModel_ThreePlayers
+from modelzoo.dqn.dqnalgorithm import DqnAlgorithm
 import tensorflow as tf
 
 if __name__ == "__main__":
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     dqn = DqnAlgorithm()
     import sevenking.sevenkingplayer
     tensorboard_address = "/cephfs/person/gotoli/dqn/tensorboard_vs_self"
-    models.dqn.sevenking.sevenkingplayer.remove_path(tensorboard_address)
+    modelzoo.dqn.sevenking.sevenkingplayer.remove_path(tensorboard_address)
 
     with tf.Graph().as_default() as g:
         ai_vs_random_score = tf.placeholder(tf.float32, [1])
