@@ -1,11 +1,16 @@
-import dqn
+import models.dqn.dqnalgorithm
 import roomai
 import roomai.sevenking
 import roomai.common
 import tensorflow as tf
 import numpy as np
 
-class SevenKingModel_ThreePlayers(dqn.DqnModel):
+import shutil
+
+def remove_path(path):
+    shutil.rmtree(path)
+
+class SevenKingModel_ThreePlayers(models.dqn.dqnalgorithm.DqnPlayer):
     def __init__(self, model_address = None, params = dict()):
         self.num_point  = 15
         self.num_suit   = 5 ## small king and three king
@@ -20,10 +25,6 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
         if "weight_decay" in params:
             self.weight_decay = params["weight_decay"]
 
-        self.print_step = 200
-        if "print_step" in params:
-            self.print_step = params["print_step"]
-
         self.gamma      = 0.9
         if "gamma" in params:
             self.gamma = params["gamma"]
@@ -36,58 +37,61 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
             self.action_feats         = tf.placeholder(tf.float32, [None, self.num_point, self.num_suit, self.action_dim])
             self.reward_plus_gamma_q  = tf.placeholder(tf.float32, [None])
 
-            #### info feat
+            ############################################## info feat ###############################################
             info_conv1_weight = tf.get_variable('info_conv1w', shape=[3, 3, self.info_dim, 16],
-                                           initializer=tf.contrib.layers.xavier_initializer())
+                                                initializer=tf.contrib.layers.xavier_initializer())
             info_conv1_bias = tf.get_variable('info_conv1b', shape=[16],
-                                         initializer=tf.contrib.layers.xavier_initializer())
+                                              initializer=tf.contrib.layers.xavier_initializer())
             info_conv1 = tf.nn.conv2d(self.info_feats, filter=info_conv1_weight, strides=[1, 1, 1, 1], padding='SAME')
 
             info_h_conv1 = tf.nn.relu(info_conv1 + info_conv1_bias)
             info_h_conv2 = tf.nn.max_pool(info_h_conv1, ksize=[1, 2, 2, 1],
-                                     strides=[1, 2, 2, 1], padding='SAME')
+                                          strides=[1, 2, 2, 1], padding='SAME')
 
             info_conv2_weight = tf.get_variable('info_conv2w', shape=[3, 3, 16, 32],
-                                           initializer=tf.contrib.layers.xavier_initializer())
+                                                initializer=tf.contrib.layers.xavier_initializer())
             info_conv2_bias = tf.get_variable('info_conv2b', shape=[32],
-                                         initializer=tf.contrib.layers.xavier_initializer())
+                                              initializer=tf.contrib.layers.xavier_initializer())
             info_conv2 = tf.nn.conv2d(info_h_conv2, filter=info_conv2_weight, strides=[1, 1, 1, 1], padding='SAME')
 
             info_h_conv3 = tf.nn.relu(info_conv2 + info_conv2_bias)
             info_h_conv3 = tf.nn.max_pool(info_h_conv3, ksize=[1, 2, 2, 1],
-                                     strides=[1, 2, 2, 1], padding='SAME')
-            info_h_conv3_flat  = tf.reshape(info_h_conv3, [-1,256])
+                                          strides=[1, 2, 2, 1], padding='SAME')
+            info_h_conv3_flat = tf.reshape(info_h_conv3, [-1, 256])
+
 
             info_vector_weight =  self.__variable_with_weight_decay__(name = 'info_conv_vector_weight', shape = [info_h_conv3_flat.get_shape()[1].value, 512],wd = self.weight_decay)
             info_vector_bias   =  tf.get_variable('info_conv_vector_bias', shape=[512], initializer = tf.contrib.layers.xavier_initializer())
             info_vector_feat   =  tf.matmul(info_h_conv3_flat, info_vector_weight) + info_vector_bias
 
-            #### action feat
+            ################################################# action feat ############################################
             action_conv1_weight = tf.get_variable('action_conv1w', shape=[3, 3, self.action_dim, 16],
-                                                initializer=tf.contrib.layers.xavier_initializer())
+                                                  initializer=tf.contrib.layers.xavier_initializer())
             action_conv1_bias = tf.get_variable('action_conv1b', shape=[16],
-                                              initializer=tf.contrib.layers.xavier_initializer())
+                                                initializer=tf.contrib.layers.xavier_initializer())
             action_conv1 = tf.nn.conv2d(self.action_feats, filter=action_conv1_weight, strides=[1, 1, 1, 1],
-                                      padding='SAME')
+                                        padding='SAME')
 
             action_h_conv1 = tf.nn.relu(action_conv1 + action_conv1_bias)
             action_h_conv2 = tf.nn.max_pool(action_h_conv1, ksize=[1, 2, 2, 1],
-                                          strides=[1, 2, 2, 1], padding='SAME')
+                                            strides=[1, 2, 2, 1], padding='SAME')
 
             action_conv2_weight = tf.get_variable('action_conv2w', shape=[3, 3, 16, 32],
-                                                initializer=tf.contrib.layers.xavier_initializer())
+                                                  initializer=tf.contrib.layers.xavier_initializer())
             action_conv2_bias = tf.get_variable('action_conv2b', shape=[32],
-                                              initializer=tf.contrib.layers.xavier_initializer())
-            action_conv2 = tf.nn.conv2d(action_h_conv2, filter=action_conv2_weight, strides=[1, 1, 1, 1], padding='SAME')
+                                                initializer=tf.contrib.layers.xavier_initializer())
+            action_conv2 = tf.nn.conv2d(action_h_conv2, filter=action_conv2_weight, strides=[1, 1, 1, 1],
+                                        padding='SAME')
 
             action_h_conv3 = tf.nn.relu(action_conv2 + action_conv2_bias)
             action_h_conv3 = tf.nn.max_pool(action_h_conv3, ksize=[1, 2, 2, 1],
-                                          strides=[1, 2, 2, 1], padding='SAME')
+                                            strides=[1, 2, 2, 1], padding='SAME')
             action_h_conv3_flat = tf.reshape(action_h_conv3, [-1, 256])
 
             action_vector_weight = self.__variable_with_weight_decay__('action_conv_vector_weight',
-                                                 shape=[action_h_conv3_flat.get_shape()[1].value, 512],
-                                                 wd=self.weight_decay)
+                                                                       shape=[action_h_conv3_flat.get_shape()[1].value,
+                                                                              512],
+                                                                       wd=self.weight_decay)
             action_vector_bias = tf.get_variable('action_conv_vector_bias', shape=[512],
                                                initializer=tf.contrib.layers.xavier_initializer())
             action_vector_feat = tf.matmul(action_h_conv3_flat, action_vector_weight) + action_vector_bias
@@ -101,11 +105,10 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
                                                              shape=[dnn_x1.get_shape()[1].value, 1],
                                                              wd=self.weight_decay)
             dnn_x2          = tf.matmul(dnn_x1, dnn_weight1)
-            self.q    = tf.reduce_mean(dnn_x2,axis = 1)
-            self.loss = tf.reduce_mean((self.q - self.reward_plus_gamma_q) * (self.q - self.reward_plus_gamma_q))
-
-            self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
-            self.train_op = self.optimizer.minimize(self.loss)
+            self.q          = tf.reduce_mean(dnn_x2,axis = 1)
+            self.loss       = tf.reduce_mean((self.q - self.reward_plus_gamma_q) * (self.q - self.reward_plus_gamma_q))
+            self.optimizer  = tf.train.AdagradOptimizer(learning_rate=self.learning_rate)
+            self.train_op   = self.optimizer.minimize(self.loss)
 
             self.init = tf.global_variables_initializer()
             self.sess = tf.Session()
@@ -214,35 +217,19 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
         action_feat = np.zeros((self.num_point, self.num_suit, self.action_dim))
         return action_feat
 
-    def take_action(self, info):
-
-
-        action_feats = []
-        action_lists = list(info.person_state.available_actions.values())
-        for action in action_lists:
-            action_feats.append(self.gen_action_feat(info, action))
-
-        info_feat  = self.gen_info_feat(info)
-        info_feats = []
-        info_feats = [info_feat for i in range(len(action_lists))]
-
-        q = self.sess.run(self.q, feed_dict = {self.info_feats:info_feats, self.action_feats:action_feats})
-        idx = np.argmax(q)
-        return action_lists[idx]
-
-
     def update_model(self, experiences):
         logger = roomai.get_logger()
         reward_plus_gamma_q = []
         info_feats          = []
         action_feats        = []
+        logger = roomai.get_logger()
 
         for experience in experiences:
             next_action_feats = [action_feat for action_feat in experience.next_available_action_feats]
             next_info_feats   = [experience.next_info_feat for i in range(len(experience.next_available_action_feats))]
             q                 = self.sess.run(self.q, feed_dict = { self.info_feats:next_info_feats,
                                                                     self.action_feats:next_action_feats})
-            #print ("q = %s"%(q.__str__()))
+
             reward_plus_gamma_q.append(experience.reward + self.gamma * np.max(q))
             info_feats.append(experience.info_feat)
             action_feats.append(experience.action_feat)
@@ -256,13 +243,25 @@ class SevenKingModel_ThreePlayers(dqn.DqnModel):
         logger.debug ("loss = %f"%(loss))
         logger.debug ("q = %s"%(q.__str__()))
 
+    ################################ player functions ###################
+    def receive_info(self,info):
+        self.info = info
 
-if __name__ == "__main__":
-    env   = roomai.sevenking.SevenKingEnv()
-    model = SevenKingModel_ThreePlayers()
-    dqn   = dqn.DqnAlgorithm()
-    dqn.train(env=env,model=model, params={"num_normal_players":3})
+    def take_action(self):
+        info = self.info
+        action_feats = []
+        action_lists = list(info.person_state.available_actions.values())
+        for action in action_lists:
+            action_feats.append(self.gen_action_feat(info, action))
 
-    opponents = [roomai.common.RandomPlayer() for i in range(2)]
-    scores = dqn.eval(model = model, env = env, opponents = opponents)
-    print (scores)
+        info_feat = self.gen_info_feat(info)
+        info_feats = []
+        info_feats = [info_feat for i in range(len(action_lists))]
+
+        q = self.sess.run(self.q, feed_dict={self.info_feats: info_feats, self.action_feats: action_feats})
+        idx = np.argmax(q)
+        return action_lists[idx]
+
+    def reset(self):
+        pass
+

@@ -2,7 +2,7 @@
 import roomai
 import roomai.common
 
-class DqnModel:
+class DqnPlayer(roomai.common.AbstractPlayer):
     def terminal_info_feat(self):
         raise NotImplementedError("Not implemented yet")
 
@@ -17,9 +17,4 @@ class DqnModel:
 
     def update_model(self, experiences):
         raise NotImplemented("Not implemented yet")
-
-    def take_action(self, info):
-        raise NotImplementedError("Not implemented yet")
-
-
 
