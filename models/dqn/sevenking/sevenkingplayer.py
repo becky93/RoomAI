@@ -1,4 +1,4 @@
-import modelzoo.dqn.dqnalgorithm
+import models.dqn.dqnalgorithm
 import roomai
 import roomai.sevenking
 import roomai.common
@@ -10,7 +10,7 @@ import shutil
 def remove_path(path):
     shutil.rmtree(path)
 
-class SevenKingModel_ThreePlayers(modelzoo.dqn.dqnalgorithm.DqnPlayer):
+class SevenKingModel_ThreePlayers(models.dqn.dqnalgorithm.DqnPlayer):
     def __init__(self, model_address = None, params = dict()):
         self.num_point  = 15
         self.num_suit   = 5 ## small king and three king
