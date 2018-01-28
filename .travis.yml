@@ -11,8 +11,8 @@ python:
   - "3.7-dev" # 3.7 development branch
   - "nightly"
 # command to run tests
+install:
+  - pip install -q tensorflow
 script:
   - python --version
   - python -m unittest discover -s tests
-  - python3 --version
-  - python3 -m unittest discover -s tests
