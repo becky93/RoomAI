@@ -15,4 +15,4 @@ install:
   - pip install -q tensorflow
 script:
   - python --version
-  - python -m unittest discover -s tests
+  - python -m unittest discover -s tests -p testDQN.py
