@@ -23,7 +23,7 @@ install:
   - docker exec ${DOCKER_JOB_NAME}  /bin/sh -c 'cd /roomai && python -m pip install .';
 
 script:
-  - docker exec ${DOCKER_JOB_NAME}  /bin/sh -c 'cd /roomai && python -m discover -s tests';
+  - docker exec ${DOCKER_JOB_NAME}  /bin/sh -c 'cd /roomai && python -m unittest discover -s tests';
 
 notifications:
   email:
