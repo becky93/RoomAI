@@ -2,8 +2,9 @@
 
 import random
 import roomai.common
-from dqn import Experience
-from dqn import DqnPlayer
+from models.dqn.dqnalgorithm import Experience
+from models.dqn.dqnalgorithm import DqnPlayer
+
 
 
 class DqnAlgorithm:
@@ -15,6 +16,9 @@ class DqnAlgorithm:
 
     def gen_experience_to_memories(self,info, action, reward, player, params):
         turn = info.public_state.turn
+        if turn not in self.memory_experiences:
+            self.memory_experiences[turn] = []
+            self.memory_experiences_p[turn] = 0
 
         res = None
         if turn in self.uncompleted_experiences:
@@ -103,7 +107,19 @@ class DqnAlgorithm:
             while public_state.is_terminal == False:
                 ## The chance event
                 if public_state.turn == len(infos) - 1:
-                    infos, public_state,_, _ = env.forward(players[-1].take_action())
+                    action = players[-1].take_action()
+                    infos, public_state,_, _ = env.forward(action)
+                    for i in range(len(infos)):
+                        players[i].receive_info(infos[i])
+                    continue
+
+
+                ## only train DqnPlayer
+                if isinstance(players[public_state.turn], DqnPlayer) == False:
+                    action = players[public_state.turn].take_action()
+                    infos, public_state, _, _ = env.forward(action)
+                    for i in range(len(infos)):
+                        players[i].receive_info(infos[i])
                     continue
 
                 ### choose the action
@@ -114,30 +130,37 @@ class DqnAlgorithm:
                     action = action_list[int(random.random() * len(action_list))]
 
                 ### generate experiences, add them to memory, and update model
-                self.gen_experience_to_memories(players[public_state.turn], public_state.turn, infos[public_state.turn], action, reward=-1, params=params)
+                self.gen_experience_to_memories(info = infos[public_state.turn], action = action, reward=-1,
+                                                player= players[public_state.turn], params=params)
                 experiences_batch = []
                 if len(self.memory_experiences[public_state.turn]) > 1000 and random.random() < 1.0 / batch_size:
                     for i in range(batch_size):
-                        idx = int(random.random() * len(self.memories))
-                        experiences_batch.append(self.memories[idx])
-                players[public_state.turn].update_model(experiences_batch)
+                        idx = int(random.random() * len(self.memory_experiences[public_state.turn]))
+                        experiences_batch.append(self.memory_experiences[public_state.turn][idx])
+                    players[public_state.turn].update_model(experiences_batch)
+                    logger.debug("update the model")
 
                 ### the game goes forward
                 infos, public_state,_, _ = env.forward(action)
+                for i in range(len(infos)):
+                    players[i].receive_info(infos[i])
 
 
             scores = public_state.scores
-            for i in range(len(scores)):
-                if i not in self.uncompleted_experiences:continue
-                self.uncompleted_experiences[i].reward                      = scores[i]
-                self.uncompleted_experiences[i].next_info_feat              = players[i].terminal_info_feat()
-                self.uncompleted_experiences[i].next_available_action_feats = [players[i].terminal_action_feat()]
-                self.add_experience_to_memory(self.uncompleted_experiences[i], i, params)
+            for playerid in range(len(scores)):
+                if playerid not in self.uncompleted_experiences:continue
+                if isinstance(players[playerid], DqnPlayer) == False: continue
+                experience = self.uncompleted_experiences[playerid]
+                experience.reward                      = scores[playerid]
+                experience.next_info_feat              = players[playerid].terminal_info_feat()
+                experience.next_available_action_feats = [players[playerid].terminal_action_feat()]
+                self.add_experience_to_memory(experience, playerid, params)
                 experiences_batch = []
-                for i in range(batch_size):
-                    idx = int(random.random() * len(self.memory_experiences[i]))
-                    experiences_batch.append(self.memory_experiences[i][idx])
-                players[i].update_model(experiences_batch)
+                for i in range(batch_size-1):
+                    idx = int(random.random() * len(self.memory_experiences[playerid]))
+                    experiences_batch.append(self.memory_experiences[playerid][idx])
+                experiences_batch.append(experience)
+                players[playerid].update_model(experiences_batch)
             self.uncompleted_experiences = dict()
 
         logger.info("complete a training process")

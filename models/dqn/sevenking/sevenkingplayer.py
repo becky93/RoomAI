@@ -1,4 +1,4 @@
-import dqn
+import models.dqn.dqnalgorithm
 import roomai
 import roomai.sevenking
 import roomai.common
@@ -10,7 +10,7 @@ import shutil
 def remove_path(path):
     shutil.rmtree(path)
 
-class SevenKingModel_ThreePlayers(dqn.DqnPlayer):
+class SevenKingModel_ThreePlayers(models.dqn.dqnalgorithm.DqnPlayer):
     def __init__(self, model_address = None, params = dict()):
         self.num_point  = 15
         self.num_suit   = 5 ## small king and three king
@@ -265,38 +265,3 @@ class SevenKingModel_ThreePlayers(dqn.DqnPlayer):
     def reset(self):
         pass
 
-class SevenKingDQN_RandomPlayer(roomai.common.AbstractPlayer):
-    def gen_action_feat(self, info, action):
-        pass
-    def gen_info_feat(self, info):
-        pass
-    def terminal_info_feat(self):
-        pass
-    def terminal_action_feat(self):
-        pass
-    def update_model(self, experiences):
-        pass
-
-    ################################ player functions ###################
-    def receive_info(self, info):
-        self.info = info
-
-    def take_action(self):
-        import random
-        info = self.info
-        idx  = int(random.random() * len(info.person_state.available_actions))
-        return list(info.person_state.available_actions.values())[idx]
-
-    def reset(self):
-        pass
-
-
-if __name__ == "__main__":
-    env   = roomai.sevenking.SevenKingEnv()
-    model = SevenKingModel_ThreePlayers()
-    dqn   = dqn.DqnAlgorithm()
-    dqn.train(env=env,model=model, params={"num_normal_players":3})
-
-    opponents = [roomai.common.RandomPlayer() for i in range(2)]
-    scores = dqn.eval(model = model, env = env, opponents = opponents)
-    print (scores)

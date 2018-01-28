@@ -1,13 +1,12 @@
 import unittest
-from dqn import DqnAlgorithm
-from dqn import DqnModel
+from models.dqn.dqnalgorithm import DqnAlgorithm
 import random
 import roomai
 import roomai.sevenking
-import dqn
-from sevenking import SevenKingModel_ThreePlayers
+from models.dqn.dqnalgorithm import DqnPlayer
+from models.dqn.sevenking import SevenKingModel_ThreePlayers
 
-class ExampleModel(DqnModel):
+class ExamplePlayer(DqnPlayer):
     def terminal_info_feat(self):
         return [1]
 
@@ -23,12 +22,17 @@ class ExampleModel(DqnModel):
     def update_model(self, experiences):
         print ("update_model")
 
-    def take_action(self, info):
+    def reset(self):
+        pass
+    def receive_info(self, info):
+        self.info = info
+    def take_action(self):
+        info = self.info
         action_list = list(info.person_state.available_actions.values())
         idx         = int(random.random() * len(action_list))
         return action_list[idx]
 
-
+import roomai.common
 
 
 class DQNTester(unittest.TestCase):
@@ -38,29 +42,21 @@ class DQNTester(unittest.TestCase):
     def test_dqn(self):
         import roomai.sevenking
         env   = roomai.sevenking.SevenKingEnv()
-        model = ExampleModel()
+        player = ExamplePlayer()
         dqn   = DqnAlgorithm()
         opponents = [roomai.common.RandomPlayer() for i in range(2)]
-        dqn.train(model=model,env=env,params={})
-        dqn.eval(model = model, env=env, opponents = opponents, params={})
+        dqn.train(env=env,players = [player] + opponents + [roomai.common.RandomChancePlayer()], params={})
+        dqn.eval( env=env,players = [player] + opponents + [roomai.common.RandomChancePlayer()], params={})
 
     def test_sevenking_dqn(self):
         import logging
         roomai.set_loglevel(logging.DEBUG)
         env = roomai.sevenking.SevenKingEnv()
-        model = SevenKingModel_ThreePlayers()
-        algo = dqn.DqnAlgorithm()
-        algo.train(env=env, model=model, params={"num_normal_players": 3})
+        player = SevenKingModel_ThreePlayers()
+        algo = DqnAlgorithm()
         opponents = [roomai.common.RandomPlayer() for i in range(2)]
-        scores = algo.eval(model=model, env=env, opponents=opponents)
+        algo.train(env=env,players = [player] + opponents + [roomai.common.RandomChancePlayer()], params={"num_normal_players": 3})
+        opponents = [roomai.common.RandomPlayer() for i in range(2)]
+        scores = algo.eval(players = [player] + opponents + [roomai.common.RandomChancePlayer()], env=env)
         print(scores)
 
-        algo.train(env=env, model=model, params={"num_normal_players": 3})
-        opponents = [roomai.common.RandomPlayer() for i in range(2)]
-        scores = algo.eval(model=model, env=env, opponents=opponents)
-        print(scores)
-
-        algo.train(env=env, model=model, params={"num_normal_players": 3})
-        opponents = [roomai.common.RandomPlayer() for i in range(2)]
-        scores = algo.eval(model=model, env=env, opponents=opponents)
-        print(scores)
