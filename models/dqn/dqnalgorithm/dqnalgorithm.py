@@ -76,9 +76,11 @@ class DqnAlgorithm:
             score = public_state.scores
             for i in range(len(score)):
                 scores[i] += score[i]
+            logger.debug("score = %s for one competition"%(score.__str__()))
+            logger.debug("scores = %s after this competition"%(scores.__str__()))
 
         for i in range(len(scores)):
-            scores[i] /= num_eval
+            scores[i] /= float(num_eval)
 
         logger.info("complete an evaluation process, scores = [%s] for [model_player, opponent_player,....]."%(",".join([str(s) for s in scores])))
         return  scores
@@ -133,7 +135,7 @@ class DqnAlgorithm:
                 self.gen_experience_to_memories(info = infos[public_state.turn], action = action, reward=-1,
                                                 player= players[public_state.turn], params=params)
                 experiences_batch = []
-                if len(self.memory_experiences[public_state.turn]) > 1000 and random.random() < 1.0 / batch_size:
+                if len(self.memory_experiences[public_state.turn]) > batch_size and random.random() < 1.0 / batch_size:
                     for i in range(batch_size):
                         idx = int(random.random() * len(self.memory_experiences[public_state.turn]))
                         experiences_batch.append(self.memory_experiences[public_state.turn][idx])
@@ -161,6 +163,7 @@ class DqnAlgorithm:
                     experiences_batch.append(self.memory_experiences[playerid][idx])
                 experiences_batch.append(experience)
                 players[playerid].update_model(experiences_batch)
+                logger.debug("update the model at the end of episode.")
             self.uncompleted_experiences = dict()
 
         logger.info("complete a training process")
