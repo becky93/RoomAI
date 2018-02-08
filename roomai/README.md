@@ -35,7 +35,7 @@ def compete(env, players):
 
 ![the basic procedure of roomai](https://github.com/roomai/RoomAI/blob/master/roomai/game.png)
 
-We define these basic concepts as classes in the [common package](https://github.com/roomai/RoomAI/blob/master/roomai/common), and all corresponding classes of specific games, i.e. the Information class in the Bridge game, must extend them.  
+We define these basic concepts as classes in the [common package](https://github.com/roomai/RoomAI/blob/master/roomai/common), and all corresponding classes of specific games, i.e. the action class in the Bridge game, must extend them.  
 
 
 #### 1. Information
