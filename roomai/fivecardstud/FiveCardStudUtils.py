@@ -59,9 +59,9 @@ class FiveCardStudPokerCard(roomai.common.PokerCard):
 
 
 FiveCardStudAllPokerCards = dict()
-for point_str in roomai.common.common.point_str_to_rank:
+for point_str in roomai.common.CommonUtils.point_str_to_rank:
     if point_str != 'r' and point_str != "R":
-        for suit_str in roomai.common.common.suit_str_to_rank:
+        for suit_str in roomai.common.CommonUtils.suit_str_to_rank:
             if suit_str != "ForKing":
                 FiveCardStudAllPokerCards["%s_%s"%(point_str,suit_str)] = FiveCardStudPokerCard("%s_%s"%(point_str,suit_str))
 #FiveCardStudAllPokerCards["r_ForKing"] = (FiveCardStudPokerCard("r_ForKing"))

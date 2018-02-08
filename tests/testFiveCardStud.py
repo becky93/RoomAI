@@ -64,7 +64,7 @@ class FiveCardStudTester(unittest.TestCase):
 
         for i in range(100):
             import roomai.common
-            players = [roomai.common.RandomPlayer() for i in range(3)] + [roomai.common.RandomChancePlayer()]
+            players = [roomai.common.RandomPlayer() for i in range(3)] + [roomai.common.RandomPlayerChance()]
             env     = roomai.fivecardstud.FiveCardStudEnv()
             num_normal_players = 3
             chips       = [1000,1000,1000]
@@ -104,7 +104,7 @@ class FiveCardStudTester(unittest.TestCase):
     def testCompete(self):
         import roomai.common
         env     = FiveCardStudEnv()
-        players = [roomai.common.RandomPlayer() for i in range(5)] + [roomai.common.RandomChancePlayer()]
+        players = [roomai.common.RandomPlayer() for i in range(5)] + [roomai.common.RandomPlayerChance()]
         scores  = FiveCardStudEnv.compete(env, players)
         print (scores)
         assert(abs(sum(scores)) < 1e-9 )

@@ -53,10 +53,16 @@ class FiveCardStudAction(roomai.common.AbstractAction):
 
 
     def __get_option__(self): return self.__option__
-    option = property(__get_option__, doc = "The option of the action")
+    option = property(__get_option__, doc = "The option of the action. The option must be one of \"Fold\",\"Check\",\"Call\",\"Raise\",\"Bet\",\"Showhand\".")
 
     def __get_price__(self): return self.__price__
-    price = property(__get_price__, doc = "The price of the action (chips used by this action)")
+    price = property(__get_price__)
+    '''
+    The price of the action (chips used by this action). If the action's option is \"Fold\", the price should be 0. Example of usage,\n
+    >>action = roomai.fivecardstud.FiveCardStudAction.lookup(\"Bet_200\")\n
+    >>acton.price\n
+    200\n
+    '''
 
     @classmethod
     def lookup(cls,key):

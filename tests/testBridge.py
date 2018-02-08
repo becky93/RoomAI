@@ -25,8 +25,8 @@ class BridgeTester(unittest.TestCase):
         action = roomai.bridge.BridgeAction.lookup("bidding_bid_A_Heart")
         self.assertEqual(action.stage, "bidding")
         self.assertEqual(action.bidding_option,"bid")
-        self.assertEqual(action.bidding_contract_point, "A")
-        self.assertEqual(action.bidding_contract_suit,"Heart")
+        self.assertEqual(action.bidding_card.point, "A")
+        self.assertEqual(action.bidding_card.suit,"Heart")
         self.assertEqual(action.playing_card,None)
         xxx = 0
         print (xxx)
@@ -34,7 +34,7 @@ class BridgeTester(unittest.TestCase):
 
     def testAGame(self):
         env = roomai.bridge.BridgeEnv()
-        allcards = list(roomai.bridge.AllBridgePokerCards.values())
+        allcards = list(roomai.bridge.AllBridgePlayingPokerCards.values())
         allcards.sort(key = cmp_to_key(roomai.common.PokerCard.compare))
         infos, public_state, person_states, private_state = env.init({"allcards":allcards, "start_turn":0})
         for i in range(4):
@@ -67,7 +67,7 @@ class BridgeTester(unittest.TestCase):
 
     def testAGame1(self):
         env = roomai.bridge.BridgeEnv()
-        allcards = list(roomai.bridge.AllBridgePokerCards.values())
+        allcards = list(roomai.bridge.AllBridgePlayingPokerCards.values())
         allcards.sort(key = cmp_to_key(roomai.common.PokerCard.compare))
         infos, public_state, person_states, private_state = env.init({"allcards":allcards, "start_turn":0})
         for i in range(4):
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     start = time.time()
     for iter in range(1000):
         env = roomai.bridge.BridgeEnv()
-        allcards = list(roomai.bridge.AllBridgePokerCards.values())
+        allcards = list(roomai.bridge.AllBridgePlayingPokerCards.values())
         allcards.sort(key = cmp_to_key(roomai.common.PokerCard.compare))
         infos, public_state, person_states, private_state = env.init({"allcards":allcards, "start_turn":0})
 

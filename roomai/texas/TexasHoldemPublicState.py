@@ -83,7 +83,7 @@ class TexasHoldemPublicState(roomai.common.AbstractPublicState):
     def __get_is_needed_to_action__(self):
         if self.__is_needed_to_action__ is None:    return None
         else:   return tuple(self.__is_needed_to_action__)
-    is_needed_to_action = property(__get_is_needed_to_action__, doc="is_needed_to_action is an array of which player has take the needed_to_action action. For example, is_needed_to_action = [true,true,false] denotes the player0 and player1 have taken the needed_to_action action")
+    is_needed_to_action = property(__get_is_needed_to_action__, doc="is_needed_to_action is an array of which player has take the needed_to_action action. For example, is_needed_to_action = [true,true,false] denotes the player0 and player1 are need to take action")
 
     def __get_num_needed_to_action__(self):
         return self.__num_needed_to_action__
@@ -98,12 +98,11 @@ class TexasHoldemPublicState(roomai.common.AbstractPublicState):
 
     def __get_stage__(self):
         return self.__stage__
-    stage = property(__get_stage__, doc="stage in [1,2,3,4]")
+    stage = property(__get_stage__, doc="The stage of the TexasHoldem game. The stage must be one of 1,2,3 or 4.")
 
 
     def __get_dealer_id__(self):    return self.__dealer_id__
     dealer_id = property(__get_dealer_id__, doc="The player id of the dealer. The next player after the dealer is the small blind. The next player after the small blind is the big blind.")
-
 
     def __deepcopy__(self, memodict={}, newinstance = None):
             if newinstance is None:
@@ -169,68 +168,3 @@ class TexasHoldemPublicState(roomai.common.AbstractPublicState):
                 newinstance.scores = [self.scores[i] for i in range(len(self.scores))]
 
             return newinstance
-
-
-class TexasHoldemPrivateState(roomai.common.AbstractPrivateState):
-
-    '''
-    The private state of TexasHoldem
-    '''
-    def __init__(self):
-        super(TexasHoldemPrivateState, self).__init__()
-        self.__keep_cards__ = []
-
-    def __get_keep_cards__(self):   return tuple(self.__keep_cards__)
-    keep_cards = property(__get_keep_cards__, doc="the keep cards")
-
-
-    def __deepcopy__(self, memodict={}, newinstance = None):
-        if newinstance is None:
-            newinstance = TexasHoldemPrivateState()
-        if self.keep_cards is None:
-            newinstance.__keep_cards__ = None
-        else:
-            newinstance.__keep_cards__ = [self.keep_cards[i].__deepcopy__() for i in range(len(self.keep_cards))]
-        return newinstance
-
-
-class TexasHoldemPersonState(roomai.common.AbstractPersonState):
-
-
-    def __init__(self):
-        super(TexasHoldemPersonState, self).__init__()
-        self.__hand_cards__  =    []
-
-    def __get_hand_cards__(self):   return tuple(self.__hand_cards__)
-    hand_cards = property(__get_hand_cards__, doc="The hand cards of the corresponding player. It contains two poker cards. For example, hand_cards=[roomai.coomon.PokerCard.lookup(\"A_Spade\"),roomai.coomon.PokerCard.lookup(\"A_Heart\")]")
-
-    def __deepcopy__(self, memodict={}, newinstance = None):
-        if newinstance is None:
-            newinstance    = TexasHoldemPersonState()
-        newinstance = super(TexasHoldemPersonState, self).__deepcopy__(newinstance=newinstance)
-        newinstance.__hand_cards__ = [c.__deepcopy__() for c in self.hand_cards]
-        return  newinstance
-
-
-
-AllCardsPattern = dict()
-#0     1           2       3           4                                    5     6
-#name, isStraight, isPair, isSameSuit, [SizeOfPair1, SizeOfPair2,..](desc), rank, cards
-AllCardsPattern["Straight_SameSuit"] = \
-["Straight_SameSuit",   True,  False, True,  [],         100]
-AllCardsPattern["4_1"] = \
-["4_1",                 False, True,  False, [4,1],      98]
-AllCardsPattern["3_2"] = \
-["3_2",                 False, True,  False, [3,2],      97]
-AllCardsPattern["SameSuit"] = \
-["SameSuit",            False, False, True,  [],         96]
-AllCardsPattern["Straight_DiffSuit"] = \
-["Straight_DiffSuit",   True,  False, False, [],         95]
-AllCardsPattern["3_1_1"] = \
-["3_1_1",               False, True,  False, [3,1,1],    94]
-AllCardsPattern["2_2_1"] = \
-["2_2_1",               False, True,  False, [2,2,1],    93]
-AllCardsPattern["2_1_1_1"] = \
-["2_1_1_1",             False, True,  False, [2,1,1,1],  92]
-AllCardsPattern["1_1_1_1_1"] = \
-["1_1_1_1_1",           False, True,  False, [1,1,1,1,1],91]
