@@ -61,7 +61,8 @@ class AbstractPublicState:
 
     action_history   = []
     ## The action_history records all actions taken by all players so far.
-    ## For example, action_history = [(0, roomai.kuhn.KuhnAction.lookup(\"check\"),(1,roomai.kuhn.KuhnAction.lookup(\"bet\")]
+    ## For example, action_history = [(0, roomai.kuhn.KuhnAction.lookup("check"),\
+                                      (1,roomai.kuhn.KuhnAction.lookup("bet")]
     ## default action_history is []
     
     
