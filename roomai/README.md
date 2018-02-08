@@ -91,13 +91,12 @@ class Info:
     person_state
 </pre>
 
-The class Info sent to different players is different. It contains the same public state and different person states. The private_state isn't in any Info, hence no player can access it.
+The Infos sent to different players are different. They contain the same public state and different person states. The private_state isn't in any Info, hence no player can access it.
 
 #### 2. Player
 
-We implemented games in RoomAI in the [extensive form game](https://en.wikipedia.org/wiki/Extensive-form_game). The players in the extensive form game can be categorized into two types: the normal player and the 
-chance player. The chance player is a kind of fictitious player, which generates the random events in the game. For example, the chance player
-decides the hand cards of three players in DouDiZhu.
+We implemented games in RoomAI in the [extensive form game](https://en.wikipedia.org/wiki/Extensive-form_game). The extensive form games add the nature as the chance player, so that the players in the extensive form game can be categorized into two types: the normal player and the
+chance player. The normal player acts as the AI or one of human to play the games. The chance player is a fictitious player, who generates the random events in the game. For example, the chance player decides the hand cards of three players in DouDiZhu.
 
 <pre>
 class AbstractPlayer:
@@ -110,7 +109,7 @@ class AbstractPlayer:
     def reset(self):
         raise NotImplementedError("The reset function hasn't been implemented")
         
-class AbstractChancePlayer:
+class AbstractPlayerChance:
     '''
     The chance player 
     '''
@@ -124,9 +123,9 @@ class AbstractChancePlayer:
         raise NotImplementedError("The reset function hasn't been implemented")
 </pre>
 
-In general, the chance player has the uniform distribution over the chance events. We have implemented the class RandomChancePlayer, which can be viewed as the default chance player.
+In default, the chance player has the uniform distribution over the chance events. We have implemented the class RandomChancePlayer, which acts as the default chance player.
 <pre> 
-class RandomChancePlayer(AbstractPlayer):
+class RandomPlayerChance(AbstractPlayer):
     '''
     The RandomChancePlayer is a chance player, who randomly takes an chance action.
     '''
@@ -143,14 +142,13 @@ class RandomChancePlayer(AbstractPlayer):
    
 </pre>
 
-To develop an AI-bot, you should extend this AbstractPlayer and implement the receive_info、take_action and reset function.
+To develop an AI-bot, you should extend this AbstractPlayer and implement the receive_info, take_action and reset function.
 
 
 
 #### 3. Action
 
-The player takes a action, and the game environment forwards with this action. The action in RoomAI
-can be categorized in two two types: the normal action and the chance action. The chance action is for the chance players.
+The player takes a action, and the game environment forwards with this action. The action in RoomAI can be categorized in two two types: the normal action and the chance action. The chance action is used by the chance player.
 
 <pre>
 class AbstractAction:
@@ -176,20 +174,10 @@ Enviroment is a environment of a game.
 <pre>
 class AbstractEnv:
 
-    def backward(self):
-        '''
-        The game goes back to the previous states. 
-        The backward function has been implemented in this abstract Env.
-        To use the backward
-        
-        :return:infos, public_state, person_states, private_state 
-        '''
-        ....
-
     def init(self, params = dict()):
         '''
         Init the game environment
-        
+
         :param: params for the game initialization. \n
         1. "num_normal_players" denotes how many normal players are in this game. \n
         2. "backward_enable" enables users to use the backward function. Default False. \n
@@ -197,6 +185,16 @@ class AbstractEnv:
         :return: infos, public_state, person_states, private_state
         '''
         raise NotImplementedError("The init function hasn't been implemented")
+
+    def backward(self):
+        '''
+        The game goes back to the previous states.
+        To use the backward, you need to set "backward_enable" option to be true when initialize the game.
+        
+        :return:infos, public_state, person_states, private_state 
+        '''
+        The backward function has been implemented in this abstract Env.
+
         
     def forward(self, action):
         '''
@@ -211,7 +209,7 @@ class AbstractEnv:
         '''
         holds a competition for the players, and computes the scores.
         '''
-        raise NotImplementedError("The round function hasn't been implemented")
+        raise NotImplementedError("The compete function hasn't been implemented")
 
     @classmethod
     def available_actions(cls, public_state, person_state):
@@ -233,5 +231,5 @@ class AbstractEnv:
 
 If you want to develop an AI-bot for a particular game, you need to know the details of this game.
 For example,  if you want to deveop an AI for TexasHoldem, you need to know where to find your hand cards.
-You can find these information in the [API doc](http://roomai.readthedocs.io/en/latest/?badge=latest).
+You can find the in [API doc](http://roomai.readthedocs.io/en/latest/?badge=latest).
 

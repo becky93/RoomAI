@@ -63,9 +63,9 @@ class SevenKingPokerCard(roomai.common.PokerCard):
 
 
 AllSevenKingPokerCards = dict()
-for point_str in roomai.common.common.point_str_to_rank:
+for point_str in roomai.common.CommonUtils.point_str_to_rank:
     if point_str != 'r' and point_str != "R":
-        for suit_str in roomai.common.common.suit_str_to_rank:
+        for suit_str in roomai.common.CommonUtils.suit_str_to_rank:
             if suit_str != "ForKing":
                 AllSevenKingPokerCards["%s_%s" % (point_str, suit_str)] = SevenKingPokerCard("%s_%s" % (point_str, suit_str))
 AllSevenKingPokerCards["r_ForKing"] = SevenKingPokerCard("r_ForKing")

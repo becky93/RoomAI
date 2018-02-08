@@ -11,7 +11,9 @@ from roomai.common import Info
 
 from roomai.texas.TexasHoldemUtil import *
 from roomai.texas.TexasHoldemAction import *
-from roomai.texas.TexasHoldemInfo import *
+from roomai.texas.TexasHoldemPersonState import *
+from roomai.texas.TexasHoldemPublicState import *
+from roomai.texas.TexasHoldemPrivateState import *
 from functools                    import cmp_to_key
 
 

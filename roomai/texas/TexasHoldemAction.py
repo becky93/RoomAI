@@ -5,7 +5,8 @@ import roomai.common
 class TexasHoldemAction(roomai.common.AbstractAction):
     '''
     The TexasHoldemAction. The action consists of two parts, namely option and price.\n
-    The option is ["Fold","Check","Call","Raise","AllIn"], and the price is the chips used by this action.\n
+    The option is one of "Fold","Check","Call","Raise","AllIn", and the price is the chips used by this action.\n
+    When the option is Fold, the price must be 0.\n
     The TexasHoldemAction has a key "%s_%d"%(option, price) as its identification. Examples of usages:\n
     >> import roomai.TexasHoldem\n
     >> a = roomai.TexasHoldem.TexasHoldemAction.lookup("Fold_0")\n
@@ -39,16 +40,16 @@ class TexasHoldemAction(roomai.common.AbstractAction):
 
     def __get_key__(self):
         return self.__key__
-    key = property(__get_key__, doc = "The key of this action")
+    key = property(__get_key__, doc = "The key of this action. For example, the key is \"Fold_0\".")
 
     def __get_option__(self):
         return self.__option__
-    option = property(__get_option__, doc = "The option of this action")
+    option = property(__get_option__, doc = "The option of this action. The option must be one of \"Fold\",\"Check\",\"Call\",\"Raise\",\"AllIn\".")
     
     
     def __get_price__(self):
         return self.__price__
-    price = property(__get_price__, doc = "The price of this action")
+    price = property(__get_price__, doc = "The price of this action. For example, the price is 0")
 
     @classmethod
     def lookup(cls, key):

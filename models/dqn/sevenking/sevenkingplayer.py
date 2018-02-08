@@ -107,7 +107,7 @@ class SevenKingModel_ThreePlayers(models.dqn.dqnalgorithm.DqnPlayer):
             dnn_x2          = tf.matmul(dnn_x1, dnn_weight1)
             self.q          = tf.reduce_mean(dnn_x2,axis = 1)
             self.loss       = tf.reduce_mean((self.q - self.reward_plus_gamma_q) * (self.q - self.reward_plus_gamma_q))
-            self.optimizer  = tf.train.AdagradOptimizer(learning_rate=self.learning_rate)
+            self.optimizer  = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
             self.train_op   = self.optimizer.minimize(self.loss)
 
             self.init = tf.global_variables_initializer()
@@ -239,9 +239,9 @@ class SevenKingModel_ThreePlayers(models.dqn.dqnalgorithm.DqnPlayer):
         _, loss,q = self.sess.run((self.train_op,self.loss, self.q), feed_dict = { self.info_feats:info_feats,
                                                    self.action_feats:action_feats,
                                                    self.reward_plus_gamma_q:reward_plus_gamma_q})
-        logger.debug ("reward_plus_gamma_q = %s"%(reward_plus_gamma_q.__str__()))
-        logger.debug ("loss = %f"%(loss))
-        logger.debug ("q = %s"%(q.__str__()))
+        #logger.debug ("reward_plus_gamma_q = %s"%(reward_plus_gamma_q.__str__()))
+        #logger.debug ("loss = %f"%(loss))
+        #logger.debug ("q = %s"%(q.__str__()))
 
     ################################ player functions ###################
     def receive_info(self,info):

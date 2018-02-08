@@ -48,4 +48,4 @@ class KuhnTester(unittest.TestCase):
         env = roomai.kuhn.KuhnPokerEnv()
 
 
-        env.compete(env,players + [roomai.common.RandomChancePlayer()])
+        env.compete(env, players + [roomai.common.RandomPlayerChance()])

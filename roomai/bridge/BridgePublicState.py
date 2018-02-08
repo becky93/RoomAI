@@ -13,14 +13,14 @@ class BridgePublicState(roomai.common.AbstractPublicState):
         super(BridgePublicState, self).__init__()
         self.__stage__ = "bidding"
 
-        self.__bidding_candidate_contract_point__ = None
-        self.__bidding_candidate_contract_suit__ = None
+        #self.__bidding_candidate_contract_point__ = None
+        #self.__bidding_candidate_contract_suit__ = None
+        self.__bidding_candidate_contract_card__ = None
         self.__bidding_magnification__ = 1
         self.__bidding_last_bidder__ = None
 
         self.__playing_is_vulnerable__ = [False for i in range(4)]
-        self.__playing_contract_point__ = None
-        self.__playing_contract_suit__ = None
+        self.__playing_contract_card__ = None
         self.__playing_magnification__ = 1
         self.__playing_dealerid__ = -1
         self.__playing_cards_on_table__ = []
@@ -32,16 +32,10 @@ class BridgePublicState(roomai.common.AbstractPublicState):
     stage = property(__get_stage__, doc=" There are two stages: \"bidding\" and \"playing\"")
 
     ################## bidding stage #####################
-    def __get_bidding_candidate_contract_suit__(self): return self.__bidding_candidate_contract_suit__
+    def __get_bidding_candidate_contract_card__(self): return self.__bidding_candidate_contract_card__
 
-    bidding_candidate_contract_suit = property(__get_bidding_candidate_contract_suit__,
-                                               doc="The candidate contract suit at the bidding stage. The candidate contract suit is one of \"NotTrump\",\"Spade\",\"Heart\", \"Diamond\",\"Club\" and None]. \n"
-                                                   "At the beginning of the bidding stage, the candidate_contract_suit is None")
-
-    def __get_bidding_candidate_contract_point__(self):    return self.__bidding_candidate_contract_point__
-
-    bidding_candidate_contract_point = property(__get_bidding_candidate_contract_point__,
-                                                doc="The candidate contract point at the bidding stage. The candidate contract point is one of '7', '6', '5', '4', '3', '2',  'A' and None")
+    bidding_candidate_contract_card = property(__get_bidding_candidate_contract_card__,
+                                               doc="The candidate contract card at the bidding stage. The candidate contract card is None (at beginning) or one of BridgeBiddingPokerCard.\n")
 
     def __get_bidding_magnification__(self):    return self.__bidding_magnification__
 
@@ -55,15 +49,11 @@ class BridgePublicState(roomai.common.AbstractPublicState):
                                        "For example, the bidding_last_bidder = roomai.bridge.Direction.west")
 
     ########################## playing stage ####################
-    def __get_playing_contract_point__(self):    return self.__playing_contract_point__
 
-    playing_contract_point = property(__get_playing_contract_point__,
-                                      doc="The contract point at the playing stage. The contract point is one of 'A','K','Q','J','10','9','8','7', '6', '5', '4', '3', '2' and 'A'.")
+    def __get_playing_contract_card__(self):    return self.__playing_contract_card__
 
-    def __get_playing_contract_suit__(self):    return self.__playing_contract_suit__
-
-    playing_contract_suit = property(__get_playing_contract_suit__,
-                                     doc="The contract suit at the playing stage. The candidate contract suit is one of \"Spade\",\"Heart\", \"Diamond\" and \"Club\".")
+    playing_contract_card = property(__get_playing_contract_card__,
+                                      doc="The contract point at the playing stage. The contract card is one of BridgeBiddingCard")
 
     def __get_playing_dealerid__(self): return self.__playing_dealerid__
 

@@ -41,7 +41,7 @@ class KuhnPokerExamplePlayer(roomai.common.AbstractPlayer):
         pass
 
 if __name__ == "__main__":
-        players = [KuhnPokerExamplePlayer() for i in range(2)] + [roomai.common.RandomChancePlayer()]
+        players = [KuhnPokerExamplePlayer() for i in range(2)] + [roomai.common.RandomPlayerChance()]
         //RandomChancePlayer is the chance player with the uniform distribution over every output
         env = KuhnPokerEnv()
         scores = KuhnPokerEnv.compete(env, players)
