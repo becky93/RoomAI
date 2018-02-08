@@ -1,9 +1,6 @@
 
 #  RoomAI Tutorials
 
-## Summary
-
-
 There are some basic concepts in RoomAI: Player, Environment, Information and Action. The basic procedure of a competition is shown as follows. All players receive information from env, the current player takes a action, and the env forwards with this action.
 
 <pre>
@@ -225,9 +222,6 @@ class AbstractEnv:
 </pre>
 
 
-
-
-## Details of different games
 
 If you want to develop an AI-bot for a particular game, you need to know the details of this game.
 For example,  if you want to deveop an AI for TexasHoldem, you need to know where to find your hand cards.
