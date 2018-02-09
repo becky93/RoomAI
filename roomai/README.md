@@ -69,7 +69,7 @@ class AbstractPublicState:
     
     self.is_terminal = False
     self.scores      = None
-    ## when is_terminal = true,  scores = [float0, float1, ..., float_n] are scores for player0, player1,.., player_n.
+    ## when is_terminal = true,  scores = [float0, ..., float_n] are scores for player0,..., player_n.
     ## when is_terminal = false, scores = None
     ## default is_terminal is False.
 
@@ -227,4 +227,5 @@ class AbstractEnv:
 If you want to develop an AI-bot for a particular game, you need to know the details of this game.
 For example,  if you want to deveop an AI for TexasHoldem, you need to know where to find your hand cards.
 You can find the in [API doc](http://roomai.readthedocs.io/en/latest/?badge=latest).
+
 
