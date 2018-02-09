@@ -107,64 +107,59 @@ class TexasHoldemPublicState(roomai.common.AbstractPublicState):
     def __deepcopy__(self, memodict={}, newinstance = None):
             if newinstance is None:
                 newinstance = TexasHoldemPublicState()
-            newinstance.stage         = self.stage
-            newinstance.num_normal_players   = self.num_normal_players
-            newinstance.dealer_id     = self.dealer_id
-            newinstance.big_blind_bet = self.big_blind_bet
+            newinstance = super(TexasHoldemPublicState,self).__deepcopy__(newinstance=newinstance)
+
+            newinstance.__stage__         = self.stage
+            newinstance.__num_normal_players__   = self.num_normal_players
+            newinstance.__dealer_id__     = self.dealer_id
+            newinstance.__big_blind_bet__ = self.big_blind_bet
 
             if self.public_cards is None:
-                newinstance.public_cards = None
+                newinstance.__public_cards__ = None
             else:
-                newinstance.public_cards = [self.public_cards[i].__deepcopy__() for i in range(len(self.public_cards))]
-
+                newinstance.__public_cards__ = [self.public_cards[i].__deepcopy__() for i in range(len(self.public_cards))]
 
             ######## quit, allin , needed_to_action
-            copy.num_quit = self.num_quit
+            newinstance.__num_fold__ = self.__num_fold__
             if self.is_fold is None:
-                newinstance.is_fold = None
+                newinstance.__is_fold__ = None
             else:
-                newinstance.is_fold = [self.is_fold[i] for i in range(len(self.is_fold))]
+                newinstance.__is_fold__ = [self.is_fold[i] for i in range(len(self.is_fold))]
 
-            newinstance.num_allin = self.num_allin
+            newinstance.__num_allin__ = self.__num_allin__
             if self.is_allin is None:
-                newinstance.is_allin = None
+                newinstance.__is_allin__ = None
             else:
-                newinstance.is_allin = [self.is_allin[i] for i in range(len(self.is_allin))]
+                newinstance.__is_allin__ = [self.is_allin[i] for i in range(len(self.is_allin))]
 
-            newinstance.num_needed_to_action = self.num_needed_to_action
+            newinstance.__num_needed_to_action__     = self.__num_needed_to_action__
             if self.is_needed_to_action is None:
-                newinstance.is_needed_to_action = None
+                newinstance.__is_needed_to_action__ = None
             else:
-                newinstance.is_needed_to_action = [self.is_needed_to_action[i] for i in
+                newinstance.__is_needed_to_action__ = [self.is_needed_to_action[i] for i in
                                                     range(len(self.is_needed_to_action))]
 
             # chips is array which contains the chips of all players
             if self.chips is None:
-                newinstance.chips = None
+                newinstance.__chips__ = None
             else:
-                newinstance.chips = [self.chips[i] for i in range(len(self.chips))]
+                newinstance.__chips__ = [self.chips[i] for i in range(len(self.chips))]
 
             # bets is array which contains the bets from all players
             if self.bets is None:
-                newinstance.bets = None
+                newinstance.__bets__ = None
             else:
-                newinstance.bets = [self.bets[i] for i in range(len(self.bets))]
+                newinstance.__bets__ = [self.bets[i] for i in range(len(self.bets))]
 
-            newinstance.max_bet_sofar = self.max_bet_sofar
-            newinstance.raise_account = self.raise_account
-            newinstance.turn = self.turn
-
-            newinstance.previous_id = self.previous_id
-            if self.previous_action is None:
-                newinstance.previous_action = None
-            else:
-                newinstance.previous_action = self.previous_action.__deepcopy__()
+            newinstance.__max_bet_sofar__ = self.max_bet_sofar
+            newinstance.__raise_account__ = self.raise_account
+            newinstance.__turn__ = self.turn
 
             ### isterminal, scores
-            newinstance.is_terminal = self.is_terminal
+            newinstance.__is_terminal__ = self.is_terminal
             if self.scores is None:
-                newinstance.scores = None
+                newinstance.__scores__ = None
             else:
-                newinstance.scores = [self.scores[i] for i in range(len(self.scores))]
+                newinstance.__scores__ = [self.scores[i] for i in range(len(self.scores))]
 
             return newinstance

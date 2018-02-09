@@ -16,5 +16,6 @@ class BridgePersonState(roomai.common.AbstractPersonState):
     def __deepcopy__(self, memodict={}, newinstance = None):
         if newinstance is None:
             newinstance = BridgePersonState()
+        newinstance = super(BridgePersonState,self).__deepcopy__(newinstance=newinstance)
         newinstance.__hand_cards_dict__ = dict(self.__hand_cards_dict__)
         return newinstance

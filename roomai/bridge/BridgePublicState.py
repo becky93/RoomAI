@@ -27,6 +27,29 @@ class BridgePublicState(roomai.common.AbstractPublicState):
         self.__playing_card_turn__ = -1
         self.__playing_win_tricks_sofar__ = [0 for i in range(4)]
 
+    def __deepcopy__(self, memodict={}, newinstance = None):
+        if newinstance is None:
+            newinstance = BridgePublicState()
+        newinstance = super(BridgePublicState, self).__deepcopy__(newinstance=newinstance)
+
+        newinstance.__stage__ = self.__stage__
+
+        if self.__bidding_candidate_contract_card__ is not None:
+            newinstance.__bidding_candidate_contract_card__ = self.__bidding_candidate_contract_card__.__deepcopy__()
+        newinstance.__bidding_magnification__ = self.__bidding_magnification__
+        newinstance.__bidding_last_bidder__   = self.__bidding_last_bidder__
+
+        newinstance.__playing_is_vulnerable__ = [f for f in self.__playing_is_vulnerable__]
+        if self.__playing_contract_card__ is not None:
+            newinstance.__playing_contract_card__ = self.__playing_contract_card__.__deepcopy__()
+        newinstance.__playing_magnification__    = self.__playing_magnification__
+        newinstance.__playing_dealerid__         = self.__playing_dealerid__
+        newinstance.__playing_cards_on_table__   = [c.__deepcopy__() for c in self.__playing_cards_on_table__]
+        newinstance.__playing_card_turn__        = self.__playing_card_turn__
+        newinstance.__playing_win_tricks_sofar__ = [trick for trick in self.__playing_win_tricks_sofar__]
+
+        return newinstance
+
     def __get_stage__(self):    return self.__stage__
 
     stage = property(__get_stage__, doc=" There are two stages: \"bidding\" and \"playing\"")
@@ -45,7 +68,7 @@ class BridgePublicState(roomai.common.AbstractPublicState):
     def __get_bidding_last_bidder__(self):   return self.__bidding_last_bidder__
 
     bidding_last_bidder = property(__get_bidding_last_bidder__,
-                                   doc="In the bidding stage, the last playerid who lastly takes the \"bid\" action. The bidding_last_bidder is one of [roomai.bridge.Direction.north,roomai.bridge.Direction.east, roomai.bridge.Direction.south,roomai.bridge.Direction.west]. \n"
+                                   doc="In the bidding stage, the last playerid who lastly takes the \"bid\" action. The bidding_last_bidder is one of roomai.bridge.Direction.north, roomai.bridge.Direction.east, roomai.bridge.Direction.south and roomai.bridge.Direction.west. \n"
                                        "For example, the bidding_last_bidder = roomai.bridge.Direction.west")
 
     ########################## playing stage ####################

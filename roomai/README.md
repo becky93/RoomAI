@@ -184,6 +184,13 @@ class AbstractEnv:
         '''
         raise NotImplementedError("The init function hasn't been implemented")
 
+
+    def forward(self, action):
+        '''
+        :return:infos, public_state, person_states, private_state
+        '''
+        raise NotImplementedError("The forward function hasn't been implemented")
+
     def backward(self):
         '''
         The game goes back to the previous states.
@@ -193,12 +200,23 @@ class AbstractEnv:
         '''
         The backward function has been implemented in this abstract Env.
 
-        
-    def forward(self, action):
+
+    def forward_able(self):
         '''
-        :return:infos, public_state, person_states, private_state 
+        The function returns a boolean variable, which denotes whether we can call the forward function. At the end of the game, we can't call the forward function any more.
+
+        :return: A boolean variable denotes whether we can call the forward function.
         '''
-        raise NotImplementedError("The forward function hasn't been implemented")
+        The forward_able function has been implemented in this abstract Env.
+
+
+    def backward_able(self):
+        '''
+        The function returns a boolean variable denotes whether we can call the backward function. If the game environment goes back to the initialization, we can't call the backward function any more.
+
+        :return: A boolean variable denotes whether we can call the backward function.
+        '''
+        The backward_able function has been implemented in this abstract Env.
 
 
     #########  Some Utils Function

@@ -56,6 +56,17 @@ class AbstractEnv(object):
 
         raise ("The init function hasn't been implemented")
 
+    def forward_able(self):
+        '''
+        The function returns a boolean variable, which denotes whether we can call the forward function. At the end of the game, we can't call the forward function any more.
+        
+        :return: A boolean variable denotes whether we can call the forward function.
+        '''
+        if self.public_state.is_terminal == True:
+            return False
+        else:
+            return True
+
     def forward(self, action):
         """
         The game environment steps with the action taken by the current player
@@ -65,12 +76,28 @@ class AbstractEnv(object):
         """
         raise NotImplementedError("The forward hasn't been implemented")
 
+    def backward_able(self):
+        '''
+        The function returns a boolean variable denotes whether we can call the backward function. If the game environment goes back to the initialization, we can't call the backward function any more.
+        
+        :return: A boolean variable denotes whether we can call the backward function.
+        '''
+
+        if "backward_enable" not in self.__params__ or self.__params__["backward_enable"] == False:
+            raise ValueError(
+                "Env can't backward when params[\"backward_enable\"] = False. If you want to use this backward function, please env.init({\"backward_enable\":true,...})")
+
+        if len(self.__public_state_history__) <= 1:
+            return False
+        else:
+            return True
+
     def backward(self):
         '''
         The game goes back to the previous states
 
         :returns:infos, public_state, person_states, private_state
-        :raise:Env has reached the initialization state and can't go back further.
+        :raise: The game environment has reached the initialization state and can't go back further.
         '''
 
         if "backward_enable" not in self.__params__ or self.__params__["backward_enable"] == False:
