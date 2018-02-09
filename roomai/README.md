@@ -1,7 +1,7 @@
 
 #  RoomAI Tutorials
 
-There are some basic concepts in RoomAI: Player, Environment, Information and Action. The basic procedure of a competition is shown as follows. All players receive information from env, the current player takes a action, and the env forwards with this action.
+There are some basic concepts in RoomAI: Player, Environment, Information and Action. The basic procedure of a competition is shown as follows. All players receive information from env, the current player takes a action, and the environment forwards with this action.
 
 <pre>
 def compete(env, players):
@@ -40,13 +40,13 @@ We define these basic concepts as classes in the [common package](https://github
 
 #### 1. Information
 
-Information is sent by the game environment to the players, and is the only way for the normal and chance players to access the states of the game environment. Info is consisted of the public state and the person state. 
+Information is sent by the game environment to the players, and is the only way for the normal and chance players to access the states of the game environment. The information is in the class Info, and the class Info is consisted of the public state and the person state. 
 
 1. The public state is available for all players.
 
 2. A person state is corresponding to a player. The person state is available for the corresponding player and hidden from other players. 
 
-3. Outside of Info, the private state is hidden from all players.
+3. The private state is not in Info, and hidden from all players.
 
 <pre>
 
@@ -61,6 +61,7 @@ class AbstractPublicState:
 
     action_history   = []
     ## The action_history records all actions taken by all players so far.
+    ## The format of record item in action_history is (player_id, action) 
     ## For example, action_history = [(0, roomai.kuhn.KuhnAction.lookup("check"),\
                                       (1,roomai.kuhn.KuhnAction.lookup("bet")]
     ## default action_history is []
@@ -68,8 +69,7 @@ class AbstractPublicState:
     
     self.is_terminal = False
     self.scores      = None
-    ## is_terminal = true means the game is over. At this time, scores is not None
-    ## when is_terminal = true,  scores = [float0, float1, ..., float_n].
+    ## when is_terminal = true,  scores = [float0, float1, ..., float_n] are scores for player0, player1,.., player_n.
     ## when is_terminal = false, scores = None
     ## default is_terminal is False.
 
