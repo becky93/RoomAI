@@ -20,10 +20,26 @@ roomai\.texas\.TexasHoldemEnv module
     :undoc-members:
     :show-inheritance:
 
-roomai\.texas\.TexasHoldemInfo module
--------------------------------------
+roomai\.texas\.TexasHoldemPersonState module
+--------------------------------------------
 
-.. automodule:: roomai.texas.TexasHoldemInfo
+.. automodule:: roomai.texas.TexasHoldemPersonState
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+roomai\.texas\.TexasHoldemPrivateState module
+---------------------------------------------
+
+.. automodule:: roomai.texas.TexasHoldemPrivateState
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+roomai\.texas\.TexasHoldemPublicState module
+--------------------------------------------
+
+.. automodule:: roomai.texas.TexasHoldemPublicState
     :members:
     :undoc-members:
     :show-inheritance:
