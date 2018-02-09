@@ -5,6 +5,13 @@
 [![PyPI version](https://badge.fury.io/py/roomai.svg)](https://pypi.python.org/pypi/roomai)
 [![Join the chat at https://gitter.im/roomai](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/roomai?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+<p><a href="/dmlc/tvm/blob/master/docs/how_to/install.md">Installation</a> |
+<a href="http://docs.tvmlang.org" rel="nofollow">Documentation</a> |
+<a href="http://tutorials.tvmlang.org" rel="nofollow">Tutorials</a> |
+<a href="/dmlc/tvm/blob/master/topi">Operator Inventory</a> |
+<a href="/dmlc/tvm/blob/master/docs/faq.md">FAQ</a> |
+<a href="/dmlc/tvm/blob/master/CONTRIBUTORS.md">Contributors</a> |
+<a href="/dmlc/tvm/blob/master/NEWS.md">Release Notes</a></p>
 
 RoomAI is a toolkit for developing and comparing AI-bots of imperfect information games.
 
@@ -53,8 +60,6 @@ if __name__ == "__main__":
 # For More Information
 
  - [RoomAI Tutorials](https://github.com/roomai/RoomAI/blob/master/roomai/README.md)
- 
- - [Usage Guides and Example]()
  
  - [API Docs](http://roomai.readthedocs.io/en/latest/?badge=latest)
  
