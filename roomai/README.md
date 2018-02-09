@@ -1,10 +1,7 @@
 
 #  RoomAI Tutorials
 
-## Summary
-
-
-There are some basic concepts in RoomAI: Player, Environment, Information and Action. The basic procedure of a competition is shown as follows. All players receive information from env, the current player takes a action, and the env forwards with this action.
+There are some basic concepts in RoomAI: Player, Environment, Information and Action. The basic procedure of a competition is shown as follows. All players receive information from env, the current player takes a action, and the environment forwards with this action.
 
 <pre>
 def compete(env, players):
@@ -38,18 +35,18 @@ def compete(env, players):
 
 ![the basic procedure of roomai](https://github.com/roomai/RoomAI/blob/master/roomai/game.png)
 
-We define these basic concepts as classes in [roomai/common/common.py](https://github.com/roomai/RoomAI/blob/master/roomai/common/common.py), and all corresponding classes must extend them.  
+We define these basic concepts as classes in the [common package](https://github.com/roomai/RoomAI/blob/master/roomai/common), and all corresponding classes of specific games, i.e. the action class in the Bridge game, must extend them.  
 
 
 #### 1. Information
 
-Information is sent by the game environment to the players, and is the only way for the normal and chance players to access the states of the game environment. Info is consisted of the public state and the person state. 
+Information is sent by the game environment to the players, and is the only way for the normal and chance players to access the states of the game environment. The information is in the class Info, and the class Info is consisted of the public state and the person state. 
 
 1. The public state is available for all players.
 
 2. A person state is corresponding to a player. The person state is available for the corresponding player and hidden from other players. 
 
-3. Outside of Info, the private state is hidden from all players.
+3. The private state is not in Info, and hidden from all players.
 
 <pre>
 
@@ -64,14 +61,15 @@ class AbstractPublicState:
 
     action_history   = []
     ## The action_history records all actions taken by all players so far.
-    ## For example, action_history = [(0, roomai.kuhn.KuhnAction.lookup(\"check\"),(1,roomai.kuhn.KuhnAction.lookup(\"bet\")]
+    ## The format of record item in action_history is (player_id, action) 
+    ## For example, action_history = [(0, roomai.kuhn.KuhnAction.lookup("check"),\
+                                      (1,roomai.kuhn.KuhnAction.lookup("bet")]
     ## default action_history is []
     
     
     self.is_terminal = False
     self.scores      = None
-    ## is_terminal = true means the game is over. At this time, scores is not None
-    ## when is_terminal = true,  scores = [float0, float1, ..., float_n].
+    ## when is_terminal = true,  scores = [float0, ..., float_n] are scores for player0,..., player_n.
     ## when is_terminal = false, scores = None
     ## default is_terminal is False.
 
@@ -244,10 +242,8 @@ class AbstractEnv:
 
 
 
-
-## Details of different games
-
 If you want to develop an AI-bot for a particular game, you need to know the details of this game.
 For example,  if you want to deveop an AI for TexasHoldem, you need to know where to find your hand cards.
 You can find the in [API doc](http://roomai.readthedocs.io/en/latest/?badge=latest).
+
 

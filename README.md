@@ -10,7 +10,7 @@ RoomAI is a toolkit for developing and comparing AI-bots of imperfect informatio
 
 
 
-# Installation and Your First Try
+# Installation and The First Try
 
 You can install roomai with pip
 
@@ -45,9 +45,8 @@ if __name__ == "__main__":
         //RandomChancePlayer is the chance player with the uniform distribution over every output
         env = KuhnPokerEnv()
         scores = KuhnPokerEnv.compete(env, players)
-        print scores
+        print (scores)
 </pre>
-
 
 
 
@@ -55,9 +54,9 @@ if __name__ == "__main__":
 
  - [RoomAI Tutorials](https://github.com/roomai/RoomAI/blob/master/roomai/README.md)
  
- - [RoomAI API Docs](http://roomai.readthedocs.io/en/latest/?badge=latest)
+ - [API Docs](http://roomai.readthedocs.io/en/latest/?badge=latest)
  
- - [RoomAI Model Zoo](https://github.com/roomai/RoomAI/blob/master/models/README.md)
+ - [Model Zoo](https://github.com/roomai/RoomAI/blob/master/models/README.md)
 
 
 # Contributors
