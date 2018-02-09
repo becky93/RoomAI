@@ -1,6 +1,8 @@
 #!/bin/python
+cp -r docs/document document
 rm -r docs
 sphinx-apidoc -F -o ./docs ./roomai
+mv document docs/document
 
 cd docs
 cat conf.py > tmp
