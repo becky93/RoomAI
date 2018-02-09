@@ -32,19 +32,17 @@ class FiveCardStudPublicState(roomai.common.AbstractPublicState):
     floor_bet              = None
     max_bet_sofar          = None
 
-    turn                   = None
+
     round                  = None
     num_normal_players            = None
 
-    previous_id            = None
-    previous_action        = None
     previous_round         = None
 
-    is_terminal            = None
-    scores                 = None
 
-    def __deepcopy__(self,memodict={}):
-        copyinstance = FiveCardStudPublicState()
+    def __deepcopy__(self,memodict={},newinstance = None):
+        if newinstance is None:
+            newinstance = FiveCardStudPublicState()
+        copyinstance = super(FiveCardStudPublicState,self).__deepcopy__(newinstance=newinstance)
 
         if self.first_hand_cards is None:
             copyinstance.first_hand_cards = None
@@ -106,22 +104,9 @@ class FiveCardStudPublicState(roomai.common.AbstractPublicState):
         copyinstance.floor_bet     = self.floor_bet
         copyinstance.max_bet_sofar = self.max_bet_sofar
 
-        copyinstance.turn          = self.turn
         copyinstance.round         = self.round
         copyinstance.num_normal_players   = self.num_normal_players
 
-        copyinstance.previous_id     = self.previous_id
-        if self.previous_action is None:
-            copyinstance.previous_action = None
-        else:
-            copyinstance.previous_action = self.previous_action.__deepcopy__()
         copyinstance.previous_round  = self.previous_round
-
-        copyinstance.is_terminal = self.is_terminal
-
-        if self.scores is None:
-            copyinstance.scores = None
-        else:
-            copyinstance.scores = [self.scores[i] for i in range(len(self.scores))]
 
         return copyinstance

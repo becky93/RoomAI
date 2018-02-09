@@ -14,4 +14,7 @@ class KuhnPokerPersonState(roomai.common.AbstractPersonState):
     def __deepcopy__(self, memodict={}, newinstance = None):
         if newinstance is None:
            newinstance = KuhnPokerPersonState()
-        return super(KuhnPokerPersonState, self).__deepcopy__(newinstance)
+        newinstance =  super(KuhnPokerPersonState, self).__deepcopy__(newinstance = newinstance)
+
+        newinstance.__number__ = self.__number__
+        return newinstance

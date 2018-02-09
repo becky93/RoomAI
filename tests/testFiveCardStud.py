@@ -31,7 +31,7 @@ class FiveCardStudTester(unittest.TestCase):
         """
         env = FiveCardStudEnv();
         chips = [1000,1000,1000]
-        infos, pu, pes, pr = env.init({"chips":chips, "num_normal_players":3})
+        infos, pu, pes, pr = env.init({"chips":chips, "num_normal_players":3, "backward_enable":True})
 
         turn = pu.turn
         assert(pes[turn].available_actions is not None)

@@ -1,3 +1,4 @@
+'''
 import unittest
 from models.dqn.dqnalgorithm import DqnAlgorithm
 import random
@@ -60,3 +61,4 @@ class DQNTester(unittest.TestCase):
         scores = algo.eval(players = [player] + opponents + [roomai.common.RandomPlayerChance()], env=env)
         print(scores)
 
+'''

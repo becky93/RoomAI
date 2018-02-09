@@ -22,6 +22,7 @@ class KuhnPokerPublicState(roomai.common.AbstractPublicState):
         if newinstance is None:
             newinstance = KuhnPokerPublicState()
         newinstance = super(KuhnPokerPublicState, self).__deepcopy__(newinstance=newinstance)
+
         newinstance.__first__ = self.first
         newinstance.__epoch__ = self.epoch
         return newinstance

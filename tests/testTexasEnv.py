@@ -20,7 +20,7 @@ class TexasEnvTester(unittest.TestCase):
         dealer_id     = 0
         chips         = [100,100,100]
         big_blind_bet = 20
-        params  = {"num_normal_players":num_normal_players, "dealer_id":dealer_id, "chips":chips, "big_blind_bet":big_blind_bet}
+        params  = {"num_normal_players":num_normal_players, "dealer_id":dealer_id, "chips":chips, "big_blind_bet":big_blind_bet, "backward_enable":True}
         players =  [RandomPlayer() for i in range(3)]
 
 

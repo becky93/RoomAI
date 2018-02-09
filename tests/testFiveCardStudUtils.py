@@ -16,7 +16,7 @@ class FiveCardStudUtils(unittest.TestCase):
                                          roomai.fivecardstud.FiveCardStudPokerCard("3_Spade"), \
                                          roomai.fivecardstud.FiveCardStudPokerCard("A_Spade")]
         public_state.is_quit          = [False for i in range(public_state.num_normal_players)]
-        turn = roomai.fivecardstud.FiveCardStudEnv.choose_player_at_begining_of_round(public_state)
+        turn = roomai.fivecardstud.FiveCardStudEnv.__choose_player_at_begining_of_round__(public_state)
         print (turn)
         assert(turn == 2)
 

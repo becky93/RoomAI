@@ -7,16 +7,17 @@ class FiveCardStudPrivateState(roomai.common.AbstractPrivateState):
     """
     all_hand_cards    = None
 
-    def __deepcopy__(self, memodict={}):
-        """
+    def __deepcopy__(self, memodict={}, newinstance = None):
+        '''
+        
+        :param memodict: 
+        :return: 
+        '''
 
-        Args:
-            memodict:
+        if newinstance is None:
+            newinstance = FiveCardStudPrivateState()
+        copyinstance = super(FiveCardStudPrivateState, self).__deepcopy__(newinstance = newinstance)
 
-        Returns:
-
-        """
-        copyinstance = FiveCardStudPrivateState()
         if self.all_hand_cards is None:
             copyinstance.all_hand_cards = None
         else:

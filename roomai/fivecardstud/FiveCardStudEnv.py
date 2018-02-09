@@ -97,19 +97,19 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
         self.public_state.num_raise            = 0
 
         self.public_state.round                = 1
-        self.public_state.turn                 = FiveCardStudEnv.choose_player_at_begining_of_round(self.public_state)
-        self.public_state.is_terminal          = False
-        self.public_state.scores               = None
+        self.public_state.__turn__                 = FiveCardStudEnv.__choose_player_at_begining_of_round__(self.public_state)
+        self.public_state.__is_terminal__          = False
+        self.public_state.__scores__               = None
 
         ## person_state
         for i in range(self.__params__["num_normal_players"]):
-            self.person_states[i].id = i
+            self.person_states[i].__id__ = i
             self.person_states[i].first_hand_card  = self.private_state.all_hand_cards[i]
             self.person_states[i].second_hand_card = self.private_state.all_hand_cards[self.__params__["num_normal_players"]+i]
-        self.person_states[self.__params__["num_normal_players"]] .id= self.__params__["num_normal_players"]
+        self.person_states[self.__params__["num_normal_players"]] .__id__= self.__params__["num_normal_players"]
 
         turn = self.public_state.turn
-        self.person_states[turn].available_actions = FiveCardStudEnv.available_actions(self.public_state, self.person_states[turn])
+        self.person_states[turn].__available_actions__ = FiveCardStudEnv.available_actions(self.public_state, self.person_states[turn])
 
         self.__gen_history__()
         infos = self.__gen_infos__()
@@ -119,13 +119,12 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
 
     #@override
     def forward(self, action):
-        """
-        Args:
-            action: 
-
-        Raises:
-            None: throw ValueError when the action is invalid at this time
-        """
+        '''
+        The environment steps foward with the action
+        
+        :param action: 
+        :return: 
+        '''
         turn = self.public_state.turn
         if not FiveCardStudEnv.is_action_valid(action,self.public_state, self.person_states[turn]):
             self.logger.critical("action=%s is invalid" % (action.key()))
@@ -157,7 +156,7 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
         pu.previous_round  = pu.round
 
         # computing_score
-        if FiveCardStudEnv.is_compute_scores(self.public_state):
+        if FiveCardStudEnv.__is_compute_scores__(self.public_state):
             num_normal_players          = pu.num_normal_players
             pu.hand_cards        = []
             pu.first_hand_cards  = pr.all_hand_cards[0:                1 * num_normal_players]
@@ -168,8 +167,8 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
             pu.round             = 4
 
 
-            pu.is_terminal = True
-            pu.scores      = self.compute_scores(pu)
+            pu.__is_terminal__ = True
+            pu.__scores__      = self.__compute_scores__(pu)
 
             for i in range(num_normal_players):
                 pu.chips[i] += pu.bets[i] + pu.scores[i]
@@ -181,7 +180,7 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
                 pe[i].fourth_hand_card = pr.all_hand_cards[3 * num_normal_players + i]
                 pe[i].fifth_hand_card  = pr.all_hand_cards[4 * num_normal_players + i]
 
-            pu.turn                              = 0
+            pu.__turn__                              = 0
 
         # enter into the next stage
         elif FiveCardStudEnv.is_nextround(self.public_state):
@@ -202,7 +201,7 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
 
 
             pu.round                = pu.round + 1
-            pu.turn                 = FiveCardStudEnv.choose_player_at_begining_of_round(pu)
+            pu.__turn__             = FiveCardStudEnv.__choose_player_at_begining_of_round__(pu)
 
             pu.num_needed_to_action = 0
             for i in range(self.__params__["num_normal_players"]):
@@ -212,11 +211,11 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
                 pu.is_raise[i]            = False
             pu.num_raise = 0
 
-            pe[pu.turn].available_actions        = FiveCardStudEnv.available_actions(pu, pe[pu.turn])
+            pe[pu.turn].__available_actions__        = FiveCardStudEnv.available_actions(pu, pe[pu.turn])
 
         else:
-            pu.turn                              = self.next_player(pu)
-            pe[pu.turn].available_actions        = FiveCardStudEnv.available_actions(pu, pe[pu.turn])
+            pu.__turn__                              = self.__next_player__(pu)
+            pe[pu.turn].__available_actions__        = FiveCardStudEnv.available_actions(pu, pe[pu.turn])
 
 
         self.__gen_history__()
@@ -360,15 +359,13 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
         return True
 
     @classmethod
-    def is_compute_scores(cls, public_state):
-        """
+    def __is_compute_scores__(cls, public_state):
+        '''
+        
+        :param public_state: 
+        :return: 
+        '''
 
-        Args:
-            public_state:
-
-        Returns:
-
-        """
         pu = public_state
 
         if pu.num_quit == pu.num_normal_players - 1:
@@ -382,16 +379,12 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
         return False
 
     @classmethod
-    def compute_scores(cls, public_state):
-        """
-
-        Args:
-            public_state:
-
-        Returns:
-
-        """
-
+    def __compute_scores__(cls, public_state):
+        '''
+        
+        :param public_state: 
+        :return: 
+        '''
         if public_state.num_quit + 1 == public_state.num_normal_players:
             player_id = 0
             for i in range(public_state.num_normal_players):
@@ -434,15 +427,12 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
         return scores
 
     @classmethod
-    def choose_player_at_begining_of_round(cls, public_state):
-        """
-
-        Args:
-            public_state:
-
-        Returns:
-
-        """
+    def __choose_player_at_begining_of_round__(cls, public_state):
+        '''
+        
+        :param public_state: 
+        :return: 
+        '''
 
         round = public_state.round
         if round in [1,2,3]:
@@ -480,15 +470,7 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
             raise ValueError("pulic_state.round(%d) not in [1,2,3,4]"%(public_state.turn))
 
     @classmethod
-    def next_player(self, pu):
-        """
-
-        Args:
-            pu:
-
-        Returns:
-
-        """
+    def __next_player__(self, pu):
         i = pu.turn
         if pu.num_needed_to_action == 0:
             return -1
@@ -500,48 +482,31 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
 
     @classmethod
     def is_action_valid(cls, action, public_state, person_state):
-        """
+        '''
+        
+        :param action: 
+        :param public_state: 
+        :param person_state: 
+        :return: 
+        '''
 
-        Args:
-            action:
-            public_state:
-            person_state:
-
-        Returns:
-
-        """
         if action.key not in person_state.available_actions:
             return False
         return True
 
     @classmethod
     def available_actions(cls, public_state, person_state):
-        """
-
-        Args:
-            public_state:
-            person_state:
-
-        Returns:
-
-        """
+        '''
+        
+        :param public_state: the public state of the game 
+        :param person_state: the person state corresponding to the current player
+        :return: 
+        '''
         pu              = public_state
         round           = pu.round
         turn            = pu.turn
         Showhand_count  = pu.upper_bet - pu.bets[turn]
         Call_count      = pu.max_bet_sofar - pu.bets[turn]
-
-        '''
-        print ""
-        if pu.previous_action is not None:
-            print ("previous_action", pu.previous_action.key)
-        print ("turn=",turn, "round=", pu.round,"pu.bets[turn]",pu.bets[turn], "pu.bets", pu.bets,"pu.upper_bet",pu.upper_bet,"pu.max_bet_sofar",pu.max_bet_sofar)
-        print ("is_quit",pu.is_quit)
-        print ("is_need_action", pu.is_needed_to_action)
-        print ("Call_count = ", Call_count)
-        print ""
-        sys.stdout.flush()
-        '''
 
         actions = dict()
         if round  == 1 or round == 2 or round == 3:
@@ -552,14 +517,16 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
                 ## fold
                 actions["Fold_0"]                       = FiveCardStudAction.lookup("Fold_0")
                 ## showhand
-                actions["Showhand_%d"%(Showhand_count)] = FiveCardStudAction.lookup("Showhand_%d"%Showhand_count)
+                if Showhand_count > 0:
+                    actions["Showhand_%d"%(Showhand_count)] = FiveCardStudAction.lookup("Showhand_%d"%Showhand_count)
                 ## Check_
                 actions["Check_0"]                      = FiveCardStudAction.lookup("Check_0")
             else:
                 ## fold
                 actions["Fold_0"]                       = FiveCardStudAction.lookup("Fold_0")
                 ## showhand
-                actions["Showhand_%d"%Showhand_count]   = FiveCardStudAction.lookup("Showhand_%d"%(Showhand_count))
+                if Showhand_count > 0:
+                    actions["Showhand_%d"%Showhand_count]   = FiveCardStudAction.lookup("Showhand_%d"%(Showhand_count))
                 ## Call
                 if Call_count  < Showhand_count:
                     if Call_count == 0:
@@ -575,7 +542,8 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
         elif round == 4:
             if pu.previous_round == round - 1:
                 ## showhand
-                actions["Showhand_%d"%(Showhand_count)] = FiveCardStudAction.lookup("Showhand_%d"%(Showhand_count))
+                if Showhand_count > 0:
+                    actions["Showhand_%d"%(Showhand_count)] = FiveCardStudAction.lookup("Showhand_%d"%(Showhand_count))
                 ## bet
                 for i in range( Call_count + 1, int(pu.upper_bet) - int(pu.bets[turn])):
                     actions["Bet_%d"%i] = FiveCardStudAction.lookup("Bet_%d"%i)
@@ -586,7 +554,7 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
                 ## fold
                 actions["Fold_0"]     = FiveCardStudAction("Fold_0")
                 ## Call
-                if Call_count  == Showhand_count:
+                if Call_count  == Showhand_count and Showhand_count > 0:
                     actions["Showhand_%d"%(Call_count)]       = FiveCardStudAction.lookup("Showhand_%d"%(Call_count))
                 elif Call_count == 0:
                     actions["Check_0"]                        = FiveCardStudAction.lookup("Check_0")

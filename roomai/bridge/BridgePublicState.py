@@ -30,6 +30,8 @@ class BridgePublicState(roomai.common.AbstractPublicState):
     def __deepcopy__(self, memodict={}, newinstance = None):
         if newinstance is None:
             newinstance = BridgePublicState()
+        newinstance = super(BridgePublicState, self).__deepcopy__(newinstance=newinstance)
+
         newinstance.__stage__ = self.__stage__
 
         if self.__bidding_candidate_contract_card__ is not None:
@@ -45,6 +47,8 @@ class BridgePublicState(roomai.common.AbstractPublicState):
         newinstance.__playing_cards_on_table__   = [c.__deepcopy__() for c in self.__playing_cards_on_table__]
         newinstance.__playing_card_turn__        = self.__playing_card_turn__
         newinstance.__playing_win_tricks_sofar__ = [trick for trick in self.__playing_win_tricks_sofar__]
+
+        return newinstance
 
     def __get_stage__(self):    return self.__stage__
 
