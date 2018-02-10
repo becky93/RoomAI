@@ -203,7 +203,8 @@ class AbstractEnv:
 
     def forward_able(self):
         '''
-        The function returns a boolean variable, which denotes whether we can call the forward function. At the end of the game, we can't call the forward function any more.
+        The function returns a boolean variable, which denotes whether we can call the forward function. 
+        At the end of the game, we can't call the forward function any more.
 
         :return: A boolean variable denotes whether we can call the forward function.
         '''
@@ -212,7 +213,8 @@ class AbstractEnv:
 
     def backward_able(self):
         '''
-        The function returns a boolean variable denotes whether we can call the backward function. If the game environment goes back to the initialization, we can't call the backward function any more.
+        The function returns a boolean variable denotes whether we can call the backward function. 
+        If the game environment goes back to the initialization, we can't call the backward function any more.
 
         :return: A boolean variable denotes whether we can call the backward function.
         '''
