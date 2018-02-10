@@ -1,4 +1,6 @@
 #!/bin/python
+from roomai.bridge.BridgeUtils   import BridgeBiddingPokerCard
+from roomai.bridge.BridgeUtils   import BridgePlayingPokerCard
 from roomai.bridge.BridgeUtils   import AllBridgePlayingPokerCards
 from roomai.bridge.BridgeUtils   import AllBridgeBiddingPokerCards
 from roomai.bridge.BridgeUtils   import Direction
