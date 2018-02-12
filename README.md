@@ -27,22 +27,20 @@ from roomai.kuhn import *;
 import random
 
 class KuhnPokerExamplePlayer(roomai.common.AbstractPlayer):
-    #@override
     def receive_info(self, info):
         if info.person_state.available_actions is not None:
             self.available_actions = info.person_state.available_actions
             
-    #@override
     def take_action(self):
-        return list(self.available_actions.values())[int(random.random() * len(self.available_actions))]
+        values = self.available_actions.values()
+        return list(values)[int(random.random() * len(values))]
         
-    #@overide
     def reset(self):
         pass
 
 if __name__ == "__main__":
         players = [KuhnPokerExamplePlayer() for i in range(2)] + [roomai.common.RandomPlayerChance()]
-        //RandomChancePlayer is the chance player with the uniform distribution over every output
+        #RandomChancePlayer is the chance player with the uniform distribution over every output
         env = KuhnPokerEnv()
         scores = KuhnPokerEnv.compete(env, players)
         print (scores)
@@ -54,7 +52,10 @@ if __name__ == "__main__":
 
  - [RoomAI Tutorials](docs/document/tutorials.md)
  
- - [Guides for AI developers](docs/document/guides.md)
+ 
+ - [Guides for AI Developers](docs/document/guides_ai.md)
+ 
+ - [Guides for Game Developers](docs/document/guides_game.md)
  
  - [API Docs](http://roomai.readthedocs.io/en/latest/?badge=latest)
  
