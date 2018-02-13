@@ -52,7 +52,6 @@ if __name__ == "__main__":
 
  - [RoomAI Tutorials](docs/document/tutorials.md)
  
- 
  - [Guides for AI Developers](docs/document/guides_ai.md)
  
  - [Guides for Game Developers](docs/document/guides_game.md)
