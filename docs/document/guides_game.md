@@ -46,7 +46,7 @@ To make the game into othe extensive form game, is to add a chance player. In Ku
 To implement a game, you should define some class about the environment, the player, the chance player, the action, the chance action,
 the public state, the person state and the private state. In the [tutorials](tutorials.md), we have showed the roles of these classes.  Now we take Kuhn Poker as example to show how to implement the game.
 
-######KuhnPokerPublicState 
+###### KuhnPokerPublicState 
 
 Firstly, we define the KuhnPokerPublicState class. The KuhnPokerPublicState extends roomai.common.AbstractPublicState. Besides the "turn", "is_terminal", "scores" and "action_history" properties from AbstractPublicState,
   we need add "first" property to KuhnPokerPublicState, which indicates which normal player is first to take an action. The code for KuhnPokerPublicState is shown as follows.
@@ -90,7 +90,8 @@ Firstly, we define the KuhnPokerPublicState class. The KuhnPokerPublicState exte
     def __get_number__(self):   return self.__number__
     number = property(__get_number__)
     '''
-    The number given by the game enviroment. The value of this number is in {0,1,2}. The larger number, the higher win rate
+    The number given by the game enviroment. 
+    The value of this number is in {0,1,2}. The larger number, the higher win rate.
     '''
 
     def __deepcopy__(self, memodict={}, newinstance = None):
