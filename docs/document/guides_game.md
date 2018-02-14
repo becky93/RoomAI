@@ -119,6 +119,7 @@ class KuhnPokerPrivateState(roomai.common.AbstractPrivateState):
     
     def __deepcopy__(self, memodict={}, newinstance = None):
         return AKuhnPokerPrivateState
+    # The private_state object may be copy.deepcopy, and needs __deepcopy__ to accelerate. 
 AKuhnPokerPrivateState = KuhnPokerPrivateState()
 </pre>
 
