@@ -148,7 +148,7 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
             pes[i].__hand_cards__ = self.__params__["allcards"][i*2:(i+1)*2]
         pes[pu.turn].__available_actions__ = self.available_actions(pu, pes[pu.turn])
 
-        self.__gen_history__()
+        self.__gen_state_history_list__()
         infos = self.__gen_infos__()
 
         if self.logger.level <= logging.DEBUG:
@@ -243,7 +243,7 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
                 self.public_state.stage\
             ))
 
-        self.__gen_history__()
+        self.__gen_state_history_list__()
         infos = self.__gen_infos__()
         return infos, self.public_state, self.person_states, self.private_state
 

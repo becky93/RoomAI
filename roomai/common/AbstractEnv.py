@@ -37,7 +37,7 @@ class AbstractEnv(object):
 
         return tuple(__infos__)
 
-    def __gen_history__(self):
+    def __gen_state_history_list__(self):
 
         if "backward_enable" not in self.__params__ or self.__params__["backward_enable"] == False:
             return
@@ -148,17 +148,7 @@ class AbstractEnv(object):
         '''
         raise NotImplementedError("The round function hasn't been implemented")
 
-    @classmethod
-    def is_action_valid(cls, action, public_state, person_state):
-        '''
-        Is the action valid given the public state and the person state
 
-        :param action: 
-        :param public_state: 
-        :param person_state: 
-        :return: A boolean variable indicating whether is the action valid 
-        '''
-        raise NotImplementedError("The is_action_valid function hasn't been implemented")
 
     @classmethod
     def available_actions(self, public_state, person_state):

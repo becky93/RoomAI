@@ -14,7 +14,7 @@ class SevenKingPrivateState(roomai.common.AbstractPrivateState):
         return tuple(self.__keep_cards__)
     keep_cards = property(__get_keep_cards__, doc="The keep cards")
 
-    def __deepcopy__(self, newinstance = None, memodict={}):
+    def __deepcopy__(self, memodict={}, newinstance = None):
         if newinstance is None:
             newinstance = SevenKingPrivateState()
         newinstance                = super(SevenKingPrivateState,self).__deepcopy__(newinstance = newinstance)

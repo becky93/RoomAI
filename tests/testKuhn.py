@@ -31,17 +31,20 @@ class KuhnTester(unittest.TestCase):
     def testKuhnEnvBackward(self):
         env = roomai.kuhn.KuhnPokerEnv()
         env.init({"backward_enable":True})
-        infos, public_state, person_states, private_state = env.forward(roomai.kuhn.KuhnPokerAction("bet"))
-        print (public_state.action_history,person_states[public_state.turn].id)
-        assert(len(public_state.action_history) == 1)
+        env.forward(roomai.kuhn.KuhnPokerActionChance.lookup("0,2"))
 
-        infos, public_state, person_states, private_state = env.forward(roomai.kuhn.KuhnPokerAction("bet"))
+        action = roomai.kuhn.KuhnPokerAction("bet")
+        infos, public_state, person_states, private_state = env.forward(action)
         print (public_state.action_history,person_states[public_state.turn].id)
         assert(len(public_state.action_history) == 2)
 
+        infos, public_state, person_states, private_state = env.forward(roomai.kuhn.KuhnPokerAction("bet"))
+        print (public_state.action_history,person_states[public_state.turn].id)
+        assert(len(public_state.action_history) == 3)
+
         infos, public_state, person_states, private_state = env.backward()
         print (public_state.action_history,person_states[public_state.turn].id)
-        assert(len(public_state.action_history) == 1)
+        assert(len(public_state.action_history) == 2)
 
     def testCompete(self):
         players = [roomai.kuhn.Example_KuhnPokerAlwaysBetPlayer() for i in range(2)]

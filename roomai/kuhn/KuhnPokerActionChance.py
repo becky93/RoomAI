@@ -3,7 +3,7 @@ import roomai.common
 import copy
 
 
-class KuhnPokerChanceAction(roomai.common.AbstractAction):
+class KuhnPokerActionChance(roomai.common.AbstractAction):
     '''
     The KuhnPoker action used by the chance player. Example of usages:\n
     >> import roomai.kuhn\n
@@ -17,7 +17,7 @@ class KuhnPokerChanceAction(roomai.common.AbstractAction):
     '''
 
     def __init__(self, key):
-        super(KuhnPokerChanceAction, self).__init__(key)
+        super(KuhnPokerActionChance, self).__init__(key)
         self.__key__ = key
         n1_n2        = key.split(",")
         self.__number_for_player0 = int(n1_n2[0])
@@ -40,13 +40,13 @@ class KuhnPokerChanceAction(roomai.common.AbstractAction):
         return AllKuhnChanceActions[key]
 
     def __deepcopy__(self, memodict={}, newinstance=None):
-        return KuhnPokerChanceAction.lookup(self.key)
+        return KuhnPokerActionChance.lookup(self.key)
 
-AllKuhnChanceActions = {"0,1": KuhnPokerChanceAction("0,1"), \
-                        "1,0": KuhnPokerChanceAction("1,0"),\
-                        "0,2": KuhnPokerChanceAction("0,2"), \
-                        "2,0": KuhnPokerChanceAction("2,0"), \
-                        "1,2": KuhnPokerChanceAction("1,2"), \
-                        "2,1": KuhnPokerChanceAction("2,1"),}
+AllKuhnChanceActions = {"0,1": KuhnPokerActionChance("0,1"), \
+                        "1,0": KuhnPokerActionChance("1,0"),\
+                        "0,2": KuhnPokerActionChance("0,2"), \
+                        "2,0": KuhnPokerActionChance("2,0"), \
+                        "1,2": KuhnPokerActionChance("1,2"), \
+                        "2,1": KuhnPokerActionChance("2,1"), }
 
 

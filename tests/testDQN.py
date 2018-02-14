@@ -56,8 +56,8 @@ class DQNTester(unittest.TestCase):
         player = SevenKingModel_ThreePlayers()
         algo = DqnAlgorithm()
         opponents = [roomai.common.RandomPlayer() for i in range(2)]
-        algo.train(env=env, players = [player] + opponents + [roomai.common.RandomPlayerChance()], params={"num_normal_players": 3, "num_iters":5})
+        algo.train(env=env, players = [player] + opponents + [roomai.common.RandomPlayerChance()], params={"num_normal_players": 3, "num_iters":1})
         opponents = [roomai.common.RandomPlayer() for i in range(2)]
-        scores = algo.eval(players = [player] + opponents + [roomai.common.RandomPlayerChance()], env=env)
-        print(scores)
+        #scores = algo.eval(players = [player] + opponents + [roomai.common.RandomPlayerChance()], env=env)
+        #print(scores)
 

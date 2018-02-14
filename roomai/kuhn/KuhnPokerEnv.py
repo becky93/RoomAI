@@ -2,15 +2,17 @@
 import random
 import math
 import copy
-import roomai.kuhn.KuhnPokerChanceAction
+import roomai.kuhn.KuhnPokerActionChance
+import roomai.kuhn.KuhnPokerAction
 import roomai.common
 logger = roomai.get_logger()
+
+
 
 class KuhnPokerEnv(roomai.common.AbstractEnv):
     '''
     The KuhnPoker game environment
     '''
-
 
     #@override
     def init(self, params=dict()):
@@ -37,9 +39,6 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
             logger.warning("KuhnPoker is a game of two players and the number of players always be 2. Ingores the \"num_normal_players\" option")
         self.__params__["num_normal_players"] = 2
 
-        self.all_available_action = dict()
-        self.all_available_action[roomai.kuhn.KuhnPokerAction("check").key] = roomai.kuhn.KuhnPokerAction.lookup("check")
-        self.all_available_action[roomai.kuhn.KuhnPokerAction("bet").key]   = roomai.kuhn.KuhnPokerAction.lookup("bet")
 
         self.private_state = roomai.kuhn.KuhnPokerPrivateState()
         self.public_state  = roomai.kuhn.KuhnPokerPublicState()
@@ -61,7 +60,7 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
 
         self.person_states[self.public_state.turn].__available_actions__ = roomai.kuhn.AllKuhnChanceActions
 
-        self.__gen_history__()
+        self.__gen_state_history_list__()
         infos = self.__gen_infos__()
 
         
@@ -77,61 +76,63 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
         """
 
         ####### forward with the chance action ##########
-        if isinstance(action, roomai.kuhn.KuhnPokerChanceAction) == True:
+        if isinstance(action, roomai.kuhn.KuhnPokerActionChance) == True:
             self.public_state.__action_history__.append((2,action))
             self.person_states[0].__number__ = action.number_for_player0
             self.person_states[1].__number__ = action.number_for_player1
             self.person_states[self.public_state.turn].__available_actions__ = dict()
             self.public_state.__turn__ = self.__params__["start_turn"]
             self.person_states[self.public_state.turn].__available_actions__ = self.available_actions(self.public_state, self.person_states[self.public_state.turn])
-            self.__gen_history__()
+            self.__gen_state_history_list__()
             return self.__gen_infos__(), self.public_state, self.person_states, self.private_state
 
 
 
         self.person_states[self.public_state.turn].__available_actions__ = dict()
         self.public_state.__action_history__.append((self.public_state.turn,action))
-        self.public_state.__epoch__                                     += 1
+        #self.public_state.__epoch__                                     += 1
         self.public_state.__turn__                                       = (self.public_state.turn+1)%2
 
 
-        if self.public_state.epoch == 1:
+        if len(self.public_state.action_history) == 1: #1 chance
+            pass
+        elif len(self.public_state.action_history) == 1+1: #1 normal + 1 chance
             self.public_state.__is_terminal__ = False
             self.public_state.__scores__      = []
-            self.person_states[self.public_state.turn].__available_actions__ = self.all_available_action
+            self.person_states[self.public_state.turn].__available_actions__ = roomai.kuhn.AllKuhnActions
 
-            self.__gen_history__()
+            self.__gen_state_history_list__()
             infos = self.__gen_infos__()
             return infos, self.public_state, self.person_states, self.private_state
 
-        elif self.public_state.epoch == 2:
+        elif len(self.public_state.action_history) == 2+1: # 2 normal + 1 chance
             scores = self.__evalute_two_round__()
             if scores is not None:
                 self.public_state.__is_terminal__ = True
                 self.public_state.__scores__      = scores
 
-                self.__gen_history__()
+                self.__gen_state_history_list__()
                 infos = self.__gen_infos__()
                 return infos,self.public_state, self.person_states, self.private_state
             else:
                 self.public_state.__is_terminal__ = False
                 self.public_state.__scores__      = []
-                self.person_states[self.public_state.turn].__available_actions__ = self.all_available_action
+                self.person_states[self.public_state.turn].__available_actions__ = roomai.kuhn.AllKuhnActions
 
-                self.__gen_history__()
+                self.__gen_state_history_list__()
                 infos   = self.__gen_infos__()
                 return infos,self.public_state, self.person_states, self.private_state
 
-        elif self.public_state.epoch == 3:
+        elif len(self.public_state.action_history) == 3 + 1: # 3 normal action + 1 chance
             self.public_state.__is_terminal__ = True
             self.public_state.__scores__     = self.__evalute_three_round__()
 
-            self.__gen_history__()
+            self.__gen_state_history_list__()
             infos = self.__gen_infos__()
             return infos,self.public_state, self.person_states, self.private_state
 
         else:
-            raise Exception("KuhnPoker has 3 turns at most")
+            raise Exception("KuhnPoker has 4 items in action_history (3 normal actions + 1 chance action)")
 
 
     #@Overide

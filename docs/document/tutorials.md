@@ -4,6 +4,23 @@
 There are some basic concepts in RoomAI: Player, Environment, Information and Action. The basic procedure of a competition is shown as follows. All players receive information from env, the current player takes a action, and the environment forwards with this action.
 
 <pre>
+
+#!/bin/python
+from roomai.kuhn import *;
+import random
+
+class KuhnPokerExamplePlayer(roomai.common.AbstractPlayer):
+    def receive_info(self, info):
+        if info.person_state.available_actions is not None:
+            self.available_actions = info.person_state.available_actions
+            
+    def take_action(self):
+        values = self.available_actions.values()
+        return list(values)[int(random.random() * len(values))]
+        
+    def reset(self):
+        pass
+        
 def compete(env, players):
    '''
    :param env: the game environments
@@ -28,12 +45,22 @@ def compete(env, players):
         for i in range(len(players)):
             players[i].receive_info(infos[i])
 
-   return public_state.scores                
+   return public_state.scores 
+
+if __name__ == "__main__":
+        players = [KuhnPokerExamplePlayer() for i in range(2)] + [roomai.common.RandomPlayerChance()]
+        #RandomChancePlayer is the chance player with the uniform distribution over every output
+        env = KuhnPokerEnv()
+        scores = compete(env, players) 
+        ### The environment class has the static compete function. The above line is "KuhnPokerEnv.compete(env,players)"
+        ### Here, we defines the compete function to make the details clear to readers.
+        print (scores)            
 </pre>
 
 
 
-![the basic procedure of roomai](https://github.com/roomai/RoomAI/blob/master/roomai/game.png)
+
+![the basic procedure of roomai](game.png)
 
 We define these basic concepts as classes in the [common package](https://github.com/roomai/RoomAI/blob/master/roomai/common), and all corresponding classes of specific games, i.e. the action class in the Bridge game, must extend them.  
 
@@ -221,7 +248,7 @@ class AbstractEnv:
         The backward_able function has been implemented in this abstract Env.
 
 
-    #########  Some Utils Function
+    #########  Some Utils Function #########
     @classmethod
     def compete(cls, env, players):
         '''
@@ -236,9 +263,6 @@ class AbstractEnv:
         '''
         raise NotImplementedError("The available_actions function hasn't been implemented")
 
-    @classmethod
-    def is_action_valid(cls,action, public_state, person_state):
-        raise NotImplementedError("The is_action_valid function hasn't been implemented")
 
 </pre>
 

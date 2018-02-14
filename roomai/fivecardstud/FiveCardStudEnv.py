@@ -111,7 +111,7 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
         turn = self.public_state.turn
         self.person_states[turn].__available_actions__ = FiveCardStudEnv.available_actions(self.public_state, self.person_states[turn])
 
-        self.__gen_history__()
+        self.__gen_state_history_list__()
         infos = self.__gen_infos__()
 
         return infos, self.public_state, self.person_states, self.private_state
@@ -218,7 +218,7 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
             pe[pu.turn].__available_actions__        = FiveCardStudEnv.available_actions(pu, pe[pu.turn])
 
 
-        self.__gen_history__()
+        self.__gen_state_history_list__()
         infos  = self.__gen_infos__()
 
 

@@ -1,9 +1,11 @@
 # Guides for AI Developers
 
+Before read this, please read the [tutorials](tutorials.md)
+
 This is some guides for the people, who want to develop some AI bots. To develop an AI bot is
  to implement a player class with your strategy. There are some common steps of developing AI bots.
  
-##### Step 1: Work out a Strategy
+#### Step 1: Work out a Strategy
 
 The first step of developing an AI bot is to work out a strategy. 
 
@@ -13,10 +15,10 @@ There are two stages: the preparing and play stages. In the preparing stage, eac
 
 
 
-##### Step 2: Access the State of the Game
+#### Step 2: Access the State of the Game
 
 
-##### Step 3: Write the Code
+#### Step 3: Write the Code
 
 <pre>
 class ExamplePlayer(roomai.common.AbstractPlayer):

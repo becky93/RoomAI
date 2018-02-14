@@ -67,7 +67,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
 
         self.private_state = roomai.bridge.BridgePrivateState()
 
-        self.__gen_history__()
+        self.__gen_state_history_list__()
         return self.__gen_infos__(), self.public_state, self.person_states, self.private_state
 
     def forward(self, action):
@@ -94,7 +94,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
                 if flag == True:
                     pu.__is_terminal__ = True
                     pu.__scores__      = [0,0,0,0]
-                    self.__gen_history__()
+                    self.__gen_state_history_list__()
                     return self.__gen_infos__(), self.public_state, self.person_states, self.private_state
 
             if action.bidding_option == "pass":
@@ -149,7 +149,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
             raise ValueError("The public_state.stage = %d is invalid"%(self.public_state.stage))
 
 
-        self.__gen_history__()
+        self.__gen_state_history_list__()
         return self.__gen_infos__(), self.public_state,self.person_states, self.private_state
 
     def __remove_card_from_hand_cards__(self, person_state, card):
