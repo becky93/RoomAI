@@ -2,6 +2,11 @@
 Before read this, please read the [tutorials](tutorials.md).
 
 This is some guides for developers, who want to add some games into RoomAI. There are some common steps.
+- [Step 1: Choose the Game](#step-1-choose-the-game)
+- [Step 2: Make the Game into the Extensive Form Game](#step-2-make-the-game-into-the-extensive-form-game)
+- [Step 3: Implement the Game](#step-3-implement-the-game)
+- [Step 4: Test](#step-4-test)
+- [Step 5: Documents](#step-5-documents)
 
 #### Step 1: Choose the Game
 
@@ -204,7 +209,7 @@ AllKuhnChanceActions = {"0,1": KuhnPokerActionChance("0,1"), \
    
    return infos,self.public_state, self.person_states, self.private_state
    </pre>
-   The init function code for Kuhn Poker is shown [here]((https://github.com/roomai/RoomAI/blob/master/roomai/kuhn/KuhnPokerEnv.py#L16))
+   The init function code for Kuhn Poker is shown [here](https://github.com/roomai/RoomAI/blob/master/roomai/kuhn/KuhnPokerEnv.py#L16).
  
   - forward
   
