@@ -1,5 +1,5 @@
 # Guides for Game Developers
-Before read this, please read the [tutorials](tutorials.md).
+Before read this, please read the [tutorial](tutorials.md).
 
 This is some guides for developers, who want to add some games into RoomAI. There are some common steps.
 - [Step 1: Choose the Game](#step-1-choose-the-game)

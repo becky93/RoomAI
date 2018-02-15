@@ -1,6 +1,6 @@
 # Guides for AI Developers
 
-Before read this, please read the [tutorials](tutorials.md)
+Before read this, please read the [tutorial](tutorials.md).
 
 This is some guides for the people, who want to develop some AI bots. To develop an AI bot is
  to implement a player class with your strategy. There are some common steps of developing AI bots.
