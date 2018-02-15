@@ -18,6 +18,7 @@ if __name__ == "__main__":
         allcards = list(roomai.bridge.AllBridgePlayingPokerCards.values())
         allcards.sort(key = cmp_to_key(roomai.common.PokerCard.compare))
         infos, public_state, person_states, private_state = env.init({ "start_turn":0})
+        env.__deepcopy__()
 
         #### bidding stage
         action = roomai.bridge.BridgeAction.lookup("bidding_bid_A_Heart")

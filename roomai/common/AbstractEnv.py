@@ -126,6 +126,9 @@ class AbstractEnv(object):
         newinstance.public_state = self.public_state.__deepcopy__()
         newinstance.person_states = [pe.__deepcopy__() for pe in self.person_states]
 
+        if "backward_enable" not in self.__params__ or self.__params__["backward_enable"] == False:
+            return newinstance
+
         newinstance.__private_state_history__ = [pr.__deepcopy__() for pr in self.__private_state_history__]
         newinstance.__public_state_history__ = [pu.__deepcopy__() for pu in self.__public_state_history__]
         newinstance.__person_states_history__ = []
