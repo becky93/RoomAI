@@ -7,7 +7,7 @@ This is some guides for the people, who want to develop some AI bots. To develop
  
  - [step 1: Choose a Game and Work out a Strategy](step-1-choose-a-game-work-out-a-strategy)
  - [step 2: Access the State of the Game](step-2-access-the-state-of-the-game)
- - [step 3: Write the Code](step-3-write-the-code)
+ - [step 3: Implement the AI Player](step-3-write-the-code)
  
 #### Step 1: Choose a Game and Work out a Strategy
 
@@ -40,20 +40,60 @@ In the API doc, the descriptions of the KuhnPokerPersonState is shown as follows
 
 ![](kuhnperstate.png)
 
-#### Step 3: Write the Code
+So, we can get the number using the property info.person_state.number. 
+
+#### Step 3: Implement the AI Player
+
+We implement an AI player with the above strategy. The AI player must extends roomai.common.AbstractPlayer, and implement three functions: receive_info, take_action and reset.
 
 <pre>
 class ExamplePlayer(roomai.common.AbstractPlayer):
     def receive_info(self, info):
-        self.available_actions = info.person_state.available_actions
+        self.number = info.person_state.number 
+        ### info.person_state.number is the number dealt to the player. 
+        ### We know this by the step 2
             
     def take_action(self):
-        values = self.available_actions.values()
-        return list()[int(random.random() * len(values))]
+        if self.number >= 1:
+            return roomai.kuhn.KuhnPokerAction.lookup("bet")
+        else:
+            return roomai.kuhn.KuhnPokerAction.lookup("check")
         
     def reset(self):
         pass
+        
 </pre>
+
+We can test this AI player with the random player.
+
+<pre>
+players        = [AggressiveKuhnPlayer()] + [roomai.common.RandomPlayer()] + [roomai.common.RandomPlayerChance()]
+players_random = [roomai.common.RandomPlayer() for i in range(2)] + [roomai.common.RandomPlayerChance()]
+env = roomai.kuhn.KuhnPokerEnv()
+
+total_scores = [0,0]
+total_scores_random = [0,0]
+for i in range(10000):
+    scores = roomai.kuhn.KuhnPokerEnv.compete(env, players)
+    total_scores[0] += scores[0]
+    total_scores[1] += scores[1]
+
+    scores = roomai.kuhn.KuhnPokerEnv.compete(env, players_random)
+    total_scores_random[0] += scores[0]
+    total_scores_random[1] += scores[1]
+
+total_scores = [s/10000 for s in total_scores]
+total_scores_random = [s/10000 for s in total_scores_random]
+print ("aggressive vs random",total_scores)
+print ("random_vs_random",total_scores_random)
+</pre>
+
+Run the above code, we get 
+<pre>
+aggressive_vs_random [0.2666, -0.2666]
+random_vs_random [-0.0055, 0.0055]
+</pre>
+This means the aggressive strategy is a litte better than the random strategy. The code of this example is shown [here](../../example/aggressive_kuhn.py).
 
 
 
