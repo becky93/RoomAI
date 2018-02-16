@@ -52,7 +52,8 @@ if __name__ == "__main__":
         #RandomChancePlayer is the chance player with the uniform distribution over every output
         env = KuhnPokerEnv()
         scores = compete(env, players) 
-        ### The environment class has the static compete function. The above line is "KuhnPokerEnv.compete(env,players)"
+        ### The environment class has the static compete function. 
+        ### The above code can be changed with "KuhnPokerEnv.compete(env,players)"
         ### Here, we defines the compete function to make the details clear to readers.
         print (scores)            
 </pre>
