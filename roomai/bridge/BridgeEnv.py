@@ -426,3 +426,8 @@ class BridgeEnv(roomai.common.AbstractEnv):
             raise ValueError("The public_state.stage = %s is invalid. The public_state.stage must be one of [\"bidding\",\"playing\"]"%(public_state.stage))
 
 
+    def __deepcopy__(self, memodict={}, newinstance = None):
+        if newinstance is None:
+            newinstance = BridgeEnv()
+        newinstance = super(BridgeEnv, self).__deepcopy__(newinstance=newinstance)
+        return newinstance

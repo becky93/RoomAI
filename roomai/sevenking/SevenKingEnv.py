@@ -377,3 +377,8 @@ class SevenKingEnv(roomai.common.AbstractEnv):
 
         return available_actions
 
+    def __deepcopy__(self, memodict={}, newinstance = None):
+        if newinstance is None:
+            newinstance = SevenKingEnv()
+        newinstance = super(SevenKingEnv, self).__deepcopy__(newinstance=newinstance)
+        return newinstance

@@ -811,3 +811,9 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
 
         ##1_1_1_1_1
         return roomai.fivecardstud.FiveCardStudAllCardsPattern["1_1_1_1_1"]
+
+    def __deepcopy__(self, memodict={}, newinstance = None):
+        if newinstance is None:
+            newinstance = FiveCardStudEnv()
+        newinstance = super(FiveCardStudEnv, self).__deepcopy__(newinstance=newinstance)
+        return newinstance

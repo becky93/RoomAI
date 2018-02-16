@@ -780,3 +780,8 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
         '''
         return action.key in person_state.available_actions
 
+    def __deepcopy__(self, memodict={}, newinstance = None):
+        if newinstance is None:
+            newinstance = TexasHoldemEnv()
+        newinstance = super(TexasHoldemEnv, self).__deepcopy__(newinstance=newinstance)
+        return newinstance

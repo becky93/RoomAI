@@ -218,3 +218,8 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
             scores[1-win] = -2
         return scores;
        
+    def __deepcopy__(self, memodict={}, newinstance = None):
+        if newinstance is None:
+            newinstance = KuhnPokerEnv()
+        newinstance = super(KuhnPokerEnv, self).__deepcopy__(newinstance=newinstance)
+        return newinstance

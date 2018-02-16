@@ -7,6 +7,9 @@ class EnvCopyTester(unittest.TestCase):
 
     def testEnvCopy(self):
         env =roomai.kuhn.KuhnPokerEnv()
-        env.__deepcopy__()
-        env.init()
-        env.__deepcopy__()
+        newenv = env.__deepcopy__()
+        newenv.init()
+        newnewenv = newenv.__deepcopy__()
+        newnewenv.forward(roomai.kuhn.KuhnPokerAction.lookup("bet"))
+        print ("fuck")
+

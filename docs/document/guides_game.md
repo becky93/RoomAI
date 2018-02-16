@@ -193,16 +193,16 @@ AllKuhnChanceActions = {"0,1": KuhnPokerActionChance("0,1"), \
   Defining the KuhnPokerPublicState, KuhnPokerPersonState, KuhnPokerPrivateState, KuhnPokerAction and KuhnPokerActionChance classes is to prepare for defining KuhnPokerEnv.
   
   
-  The KuhnPokerEnv class extends roomai.common.AbstractEnv, and has the \__params\__, public_state, person_states, private_state, public_state_history_list, person_states_history_list, private_state_history_list properties. The public_state_history, person_states_history and private_state_history properties are maintained by the AbstractEnv class, and you don't need to be concerned with them. You need to be concerned with the \__params\__, public_state, person_states and private_state properties. Beyond these properties, we strongly require you not to add new property.
+  The KuhnPokerEnv class extends roomai.common.AbstractEnv, and has the \__params\__, public_state, person_states, private_state and other internal properties. You only need to be concerned with the \__params\__, public_state, person_states and private_state properties, and are required not to add new property.
   
-  The KuhnPokerEnv has some unimplemented functions:init, forward, compete (static function), available_actions(static function).
+  The KuhnPokerEnv has five un-implemented functions:init, forward, \__deepcopy\__, compete (static function), available_actions(static function).
   
   - init
   
   The init function is to initialize the environment for a new game, which sets the initialized values in the \__param\__, public_state, person_states and private_state properties.. You should use the following code to end the init function.
    <pre>
    self.__gen_state_history_list__() 
-   # maintain the public_state_history_list, 
+   # maintain the internal properties
    #  person_states_history_list and private_state_history_list
     
    infos   = self.__gen_infos__()
@@ -217,7 +217,7 @@ AllKuhnChanceActions = {"0,1": KuhnPokerActionChance("0,1"), \
   The forward function makes the environment to step foward with the given action. The forward function generates the available actions for the next turn player is generated using the available_actions function. You should use the following code to end the forward function.
   <pre>
    self.__gen_state_history_list__() 
-   # maintain the public_state_history_list, 
+   # maintain the internal properties 
    #   person_states_history_list and private_state_history_list 
    
    infos   = self.__gen_infos__()
@@ -227,6 +227,16 @@ AllKuhnChanceActions = {"0,1": KuhnPokerActionChance("0,1"), \
    </pre>
    The foward function code for Kuhn Poker is shown [here](https://github.com/roomai/RoomAI/blob/master/roomai/kuhn/KuhnPokerEnv.py#L71). 
   
+  - \__deepcopy\__
+  
+  The \__deepcopy\__ is used for accelerating copy.deepcopy. Just copy the following code.
+<pre> 
+def __deepcopy__(self, memodict={}, newinstance = None):
+   if newinstance is None:
+      newinstance = KuhnPokerEnv()
+   newinstance = super(KuhnPokerEnv, self).__deepcopy__(newinstance=newinstance)
+   return newinstance
+</pre>
   
   - compete. 
   
