@@ -233,8 +233,8 @@ AllKuhnChanceActions = {"0,1": KuhnPokerActionChance("0,1"), \
 <pre> 
 def __deepcopy__(self, memodict={}, newinstance = None):
    if newinstance is None:
-      newinstance = KuhnPokerEnv()
-   newinstance = super(KuhnPokerEnv, self).__deepcopy__(newinstance=newinstance)
+      newinstance = XXXEnv ## chang it to your game name.
+   newinstance = super(XXXEnv, self).__deepcopy__(newinstance=newinstance)
    return newinstance
 </pre>
   
