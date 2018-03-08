@@ -25,6 +25,8 @@ Try your first RoomAI program
 #!/bin/python
 from roomai.kuhn import *;
 import random
+import roomai
+import roomai.common
 
 class KuhnPokerExamplePlayer(roomai.common.AbstractPlayer):
     def receive_info(self, info):

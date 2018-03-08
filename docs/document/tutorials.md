@@ -6,8 +6,11 @@ There are some basic concepts in RoomAI: Player, Environment, Information and Ac
 <pre>
 
 #!/bin/python
+#coding:utf-8
 from roomai.kuhn import *;
 import random
+import roomai
+import roomai.common
 
 class KuhnPokerExamplePlayer(roomai.common.AbstractPlayer):
     def receive_info(self, info):
@@ -16,7 +19,7 @@ class KuhnPokerExamplePlayer(roomai.common.AbstractPlayer):
             
     def take_action(self):
         values = self.available_actions.values()
-        return list(values)[int(random.random() * len(values))]
+        return list(values)[int(random.random() * len(values))]
         
     def reset(self):
         pass
@@ -27,8 +30,9 @@ def compete(env, players):
    :param players: the array of players, the last player is a chance player.
    :return: the final scores of this competition
    '''
+   
    for player in players:
-        players.reset()
+        player.reset()
    params = dict()
    params["num_normal_players"] = len(players) - 1
    #len(players)-1 normal players and 1 chance player

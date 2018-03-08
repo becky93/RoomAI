@@ -12,10 +12,10 @@ roomai\.kuhn\.KuhnPokerAction module
     :undoc-members:
     :show-inheritance:
 
-roomai\.kuhn\.KuhnPokerChanceAction module
+roomai\.kuhn\.KuhnPokerActionChance module
 ------------------------------------------
 
-.. automodule:: roomai.kuhn.KuhnPokerChanceAction
+.. automodule:: roomai.kuhn.KuhnPokerActionChance
     :members:
     :undoc-members:
     :show-inheritance:
