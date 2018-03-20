@@ -17,7 +17,6 @@ class SevenKingPlayer(CRMPlayer):
 
     def __init__(self):
 
-        self.state = []
         self.regrets = dict()
         self.strategies = dict()
         self.exploration = 0.3

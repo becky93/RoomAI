@@ -1,24 +1,18 @@
 import tensorflow as tf
+from tensorflow.contrib import rnn
 import numpy as np
 import random
 import pdb
 import math
 import sys
+
 sys.path.append("E:/roomAI/RoomAI")
 
 import crash_on_ipy
 from models.crm.algorithms.crm import CRMPlayer
 from roomai.sevenking import SevenKingEnv
 from roomai.sevenking import SevenKingUtils
-
-BATCH_START = 0
-BATCH_SIZE = 60
-TIME_STEPS = 1
-INPUT_SIZE = 54
-OUTPUT_SIZE = 1
-CELL_SIZE = 1
-LR = 0.0001
-
+from roomai.sevenking import SevenKingAction
 
 '''
 class LSTMRNN(object):
@@ -101,14 +95,85 @@ class LSTMRNN(object):
         return tf.get_variable(name=name, shape=shape, initializer=initializer)
 '''
 
+class RNNModel():
+    def __init__(self, BATCH_START=0, BATCH_SIZE=60, TIME_STEPS=1, INPUT_SIZE=54, OUTPUT_SIZE=1, CELL_SIZE=1, LR=0.0001):
+        self.BATCH_START = BATCH_START
+        self.BATCH_SIZE = BATCH_SIZE
+        self.TIME_STEPS = TIME_STEPS
+        self.INPUT_SIZE = INPUT_SIZE
+        self.OUTPUT_SIZE = OUTPUT_SIZE
+        self.CELL_SIZE = CELL_SIZE
+        self.LR = LR
+
+        self.xs = tf.placeholder(tf.float32, [None, self.TIME_STEPS, self.INPUT_SIZE])
+        self.ys = tf.placeholder(tf.float32, [None, self.TIME_STEPS, self.OUTPUT_SIZE])
+
+        self.weights = {
+            'in': tf.Variable(tf.random_normal([self.INPUT_SIZE, self.CELL_SIZE], 0, 0.01)),
+            'out': tf.Variable(tf.random_normal([self.CELL_SIZE, self.OUTPUT_SIZE], 0, 0.01))
+        }
+
+        self.biases = {
+            'in': tf.Variable(tf.constant(0.1, shape=[self.CELL_SIZE])),
+            'out': tf.Variable(tf.constant(0.1, shape=[self.OUTPUT_SIZE]))
+        }
+
+        self.sess = tf.Session()
+        self.sess.run(tf.global_variables_initializer())
+
+    def RNN(self, x, weights, biases):
+        x = tf.unstack(x, self.TIME_STEPS, 1)
+        lstm_cell = rnn.BasicLSTMCell(self.CELL_SIZE, forget_bias=1.0)
+        outputs, states = rnn.static_rnn(lstm_cell, x, dtype=tf.float32)
+        return tf.matmul(outputs[-1], weights['out']) + biases['out']
+
+    def model(self):
+        self.output = self.RNN(self.xs, self.weights, self.biases)
+        self.output_reshape = tf.reshape(self.output, [-1, self.TIME_STEPS, self.OUTPUT_SIZE])
+        self.cost = tf.losses.mean_squared_error(labels=self.ys, predictions=self.output_reshape)
+        self.train = tf.train.AdamOptimizer(self.LR).minimize(self.cost)
+        self.check = tf.add_check_numerics_ops()
+
+    def train(self, seq, res):
+        k = 0
+        while (k + self.BATCH_SIZE) < len(res):
+
+            batch_x = seq[k:k + self.BATCH_SIZE]
+            batch_y = res[k:k + self.BATCH_SIZE]
+
+            batch_x = batch_x.reshape(-1, self.TIME_STEPS, self.INPUT_SIZE)
+            batch_y = batch_y.reshape(-1, self.TIME_STEPS, self.OUTPUT_SIZE)
+            k = k + self.BATCH_SIZE
+
+            _, _, pred, costs, w_t, b_t = sess.run([self.train, self.check, self.output_reshape, self.cost, self.weights['out'], self.biases['out']],
+                                                   feed_dict={self.xs: batch_x, self.ys: batch_y})
+
+            if math.isnan(costs):
+                pdb.set_trace()
+
+            if i % 100 == 0:
+                print('cost: ', round(costs, 4))
+
+        outputs = self.sess.run(self.output, feed_dict={self.xs: seq.reshape(-1, self.TIME_STEPS, self.INPUT_SIZE),
+                                                   self.ys: res.reshape(-1, self.TIME_STEPS, self.OUTPUT_SIZE)})
+
+    def save_model(self, path):
+        saver = tf.train.Saver()
+        save_path = saver.save(self.sess, path)
+
+
 class SevenKingPlayer(CRMPlayer):
 
     def __init__(self):
 
-        self.state = []
         self.regrets = dict()
         self.strategies = dict()
         self.exploration = 0.3
+        self.action_history = None
+        self.available_actions = None
+
+        # about RNN
+        self.rnn_model = RNNModel()
 
     def gen_state(self, info):
         hand_cards = info.person_state.hand_cards
@@ -168,6 +233,51 @@ class SevenKingPlayer(CRMPlayer):
                 max_key = key
 
         return max_key, max_prob
+
+    def receive_info(self, info):
+        self.action_history = info.public_state.action_list
+        self.available_actions = info.person_state.available_actions
+
+    def take_action(self):
+        action_list = []
+        regret_list = []
+
+        for action in self.action_history:
+            action_list.append(input_trans(action))
+
+        for action in self.available_actions:
+            this_action = action_list
+            this_action.append(input_trans(action))
+            result = self.rnn_model.sess.run(regret_list[action], feed_dict={self.rnn_model.xs: this_action})
+
+        cur_strategies = dict()
+        normalizing_sum = 0
+        for key in regret_list:
+            normalizing_sum += max(regret_list[key], 0)
+        for key in regret_list:
+            if normalizing_sum > 0:
+                cur_strategies[key] = max(regret_list[key], 0) / normalizing_sum
+            else:
+                cur_strategies[key] = 1.0 / len(self.available_actions)
+
+        val = random.random()
+        total = 0
+
+        new_state = ''
+
+        for key in cur_strategies:
+            total += cur_strategies[key]
+            if total > 0 and val < total:
+                new_state = key
+
+        if new_state != '':
+            return SevenKingAction.lookup(new_state)
+        else:
+            idx = int(random.random() * len(self.available_actions))
+            return list(self.available_actions.values())[idx]
+
+    def reset(self):
+        pass
 
 
 def input_trans(key_list):
@@ -257,7 +367,9 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
             if j != this_turn:
                 temp_prob *= probs[j]
 
-        strategy_util = cur_strategies[new_key] * temp_prob * util / sampleProb
+        # strategy_util = cur_strategies[new_key] * temp_prob * util / sampleProb
+        # strategy_util = temp_prob * util
+        strategy_util = util / cur_strategies[new_key]
         # strategy_util = available_actions[action_key] * temp_prob * util
 
         strategies = player.get_strategies(state, available_actions)
@@ -303,41 +415,8 @@ def Train(player, env, params = dict()):
     return np.array(action_list), np.array(regret_list)
 
 
-xs = tf.placeholder(tf.float32, [None, TIME_STEPS, INPUT_SIZE])
-ys = tf.placeholder(tf.float32, [None, TIME_STEPS, OUTPUT_SIZE])
-
-weights = {
-    'in': tf.Variable(tf.random_normal([INPUT_SIZE, CELL_SIZE], 0, 0.01)),
-    'out': tf.Variable(tf.random_normal([CELL_SIZE, OUTPUT_SIZE], 0, 0.01))
-}
-
-biases = {
-    'in': tf.Variable(tf.constant(0.1, shape=[CELL_SIZE])),
-    'out': tf.Variable(tf.constant(0.1, shape=[OUTPUT_SIZE]))
-}
-
-
-from tensorflow.contrib import rnn
-
-
-def RNN(x,weights,biases):
-    x = tf.unstack(x,TIME_STEPS,1)
-    lstm_cell = rnn.BasicLSTMCell(CELL_SIZE,forget_bias=1.0)
-    outputs,states = rnn.static_rnn(lstm_cell,x,dtype=tf.float32)
-    return tf.matmul(outputs[-1],weights['out'])+biases['out']
-
-
-output = RNN(xs, weights, biases)
-output_reshape = tf.reshape(output, [-1, TIME_STEPS, OUTPUT_SIZE])
-cost = tf.losses.mean_squared_error(labels=ys, predictions=output_reshape)
-train = tf.train.AdamOptimizer(LR).minimize(cost)
-check = tf.add_check_numerics_ops()
-
 if __name__ == '__main__':
     # model = LSTMRNN(TIME_STEPS, INPUT_SIZE, OUTPUT_SIZE, CELL_SIZE, BATCH_SIZE)
-    sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
-
     env = SevenKingEnv()
     player = SevenKingPlayer()
     for i in range(200000):
@@ -345,26 +424,8 @@ if __name__ == '__main__':
         seq, res = Train(player, env)
         # pdb.set_trace()
 
-        k = 0
-        while (k + BATCH_SIZE) < len(res):
+        player.rnn_model.train(seq, res)
 
-            batch_x = seq[k:k + BATCH_SIZE]
-            batch_y = res[k:k + BATCH_SIZE]
-
-            batch_x = batch_x.reshape(-1, TIME_STEPS, INPUT_SIZE)
-            batch_y = batch_y.reshape(-1, TIME_STEPS, OUTPUT_SIZE)
-            k = k + BATCH_SIZE
-
-            _, _, pred, costs, w_t, b_t = sess.run([train, check, output_reshape, cost, weights['out'], biases['out']], feed_dict={xs: batch_x, ys: batch_y})
-
-            if math.isnan(costs):
-                pdb.set_trace()
-
-            if i % 100 == 0:
-                print('cost: ', round(costs, 4))
-
-        outputs = sess.run(output, feed_dict={xs: seq.reshape(-1, TIME_STEPS, INPUT_SIZE),
-                                              ys: res.reshape(-1, TIME_STEPS, OUTPUT_SIZE)})
 
 
         '''
