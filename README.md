@@ -3,14 +3,14 @@
 [![Build Status](https://travis-ci.org/roomai/RoomAI.svg?branch=master)](https://travis-ci.org/roomai/RoomAI.svg?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/roomai/badge/?version=latest)](http://roomai.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/roomai.svg)](https://pypi.python.org/pypi/roomai)
-[![Join the chat at https://gitter.im/roomai](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/roomai?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 
 
 RoomAI is a toolkit for developing and comparing AI-bots of imperfect information games.
 
 
 
-# Installation and Your First Try
+# Installation and The First Try
 
 You can install roomai with pip
 
@@ -25,38 +25,45 @@ Try your first RoomAI program
 #!/bin/python
 from roomai.kuhn import *;
 import random
+import roomai
+import roomai.common
 
 class KuhnPokerExamplePlayer(roomai.common.AbstractPlayer):
-    #@override
     def receive_info(self, info):
         if info.person_state.available_actions is not None:
             self.available_actions = info.person_state.available_actions
             
-    #@override
     def take_action(self):
-        return self.available_actions.values()[int(random.random() * len(self.available_actions))]
+        values = self.available_actions.values()
+        return list(values)[int(random.random() * len(values))]
         
-    #@overide
     def reset(self):
         pass
 
 if __name__ == "__main__":
-        players = [KuhnPokerExamplePlayer() for i in range(2)]
+        players = [KuhnPokerExamplePlayer() for i in range(2)] + [roomai.common.RandomPlayerChance()]
+        #RandomChancePlayer is the chance player with the uniform distribution over every output
         env = KuhnPokerEnv()
         scores = KuhnPokerEnv.compete(env, players)
-        print scores
+        print (scores)
 </pre>
-
 
 
 
 # For More Information
 
- - [RoomAI Tutorials](https://github.com/roomai/RoomAI/blob/master/roomai/README.md)
+ - [RoomAI Tutorials](docs/document/tutorials.md)
  
- - [RoomAI API Docs](http://roomai.readthedocs.io/en/latest/?badge=latest)
+ - [Guides for AI Developers](docs/document/guides_ai.md)
  
- - [RoomAI Model Zoo](https://github.com/roomai/RoomAI/blob/master/models/README.md)
+ - [Guides for Game Developers](docs/document/guides_game.md)
+ 
+ - [API Docs](http://roomai.readthedocs.io/en/latest/?badge=latest)
+ 
+ - [Model Zoo](docs/document/model_zoo.md)
+ 
+ - [FQA](docs/document/fqa.md)
+ 
 
 
 # Contributors

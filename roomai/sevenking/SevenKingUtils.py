@@ -1,6 +1,7 @@
 #!/bin/python
 import roomai.common
 
+
 AllSevenKingPatterns = dict()
 ###
 ###numCards
@@ -32,25 +33,25 @@ class SevenKingPokerCard(roomai.common.PokerCard):
     '''
 
     def __init__(self, point, suit = None):
-        point1 = 0
-        suit1  = 0
+        real_point_int = 0
+        real_suit_int  = 0
         if suit is None:
             kv = point.split("_")
-            point1 = point_str_to_rank[kv[0]]
-            suit1  = suit_str_to_rank[kv[1]]
+            real_point_int = point_str_to_rank[kv[0]]
+            real_suit_int  = suit_str_to_rank[kv[1]]
         else:
-            point1 = point
+            real_point_int = point
             if isinstance(point, str):
-                point1 = point_str_to_rank[point]
-            suit1  = suit
+                real_point_int = point_str_to_rank[point]
+            real_suit_int  = suit
             if isinstance(suit, str):
-                suit1 = suit_str_to_rank[suit]
+                real_suit_int = suit_str_to_rank[suit]
 
-        self.__point_str__  = point_rank_to_str[point1]
-        self.__suit_str__   = suit_rank_to_str[suit1]
-        self.__point_rank__ = point1
-        self.__suit_rank__  = suit1
-        self.__key__        = "%s_%s" % (self.__point_str__, self.__suit_str__)
+        self.__point__      = point_rank_to_str[real_point_int]
+        self.__suit__       = suit_rank_to_str[real_suit_int]
+        self.__point_rank__ = real_point_int
+        self.__suit_rank__  = real_suit_int
+        self.__key__        = "%s_%s" % (self.__point__, self.__suit__)
 
 
     def __deepcopy__(self, memodict={}, newinstance = None):
@@ -62,9 +63,9 @@ class SevenKingPokerCard(roomai.common.PokerCard):
 
 
 AllSevenKingPokerCards = dict()
-for point_str in roomai.common.common.point_str_to_rank:
+for point_str in roomai.common.CommonUtils.point_str_to_rank:
     if point_str != 'r' and point_str != "R":
-        for suit_str in roomai.common.common.suit_str_to_rank:
+        for suit_str in roomai.common.CommonUtils.suit_str_to_rank:
             if suit_str != "ForKing":
                 AllSevenKingPokerCards["%s_%s" % (point_str, suit_str)] = SevenKingPokerCard("%s_%s" % (point_str, suit_str))
 AllSevenKingPokerCards["r_ForKing"] = SevenKingPokerCard("r_ForKing")

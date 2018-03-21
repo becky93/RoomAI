@@ -1,8 +1,10 @@
 #!/bin/python
-rm -r doc
-sphinx-apidoc -F -o ./doc ./roomai
+cp -r docs/document document
+rm -r docs
+sphinx-apidoc -F -o ./docs ./roomai
+mv document docs/document
 
-cd doc
+cd docs
 cat conf.py > tmp
 echo "import os" > conf.py
 echo "import sys" >> conf.py
