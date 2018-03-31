@@ -37,12 +37,11 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
         '''
         Initialize the TexasHoldem game environment with the initialization params.\n
         The initialization is a dict with some options\n
-        1) allcards: the order of all poker cards appearing\n
-        2) backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False\n
-        3) num_normal_players: how many players are in the game, default 3\n
-        4) dealer_id: the player id of the dealer, default random\n
-        5) chips: the initialization chips, default [1000,1000,...]\n
-        6) big_blind_bet: the number of chips for the big blind bet, default 10\n
+        1) backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False\n
+        2) num_normal_players: how many bot players are in the game, default 3\n
+        3) dealer_id: the player id of the dealer, default random\n
+        4) chips: the initialization chips, default [1000,1000,...]\n
+        5) big_blind_bet: the number of chips for the big blind bet, default 10\n
         An example of the initialization param is {"num_normal_players":2,"backward_enable":True}
 
         :param params: the initialization params
@@ -71,11 +70,9 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
         else:
             self.__params__["big_blind_bet"] = 10
 
-        if "allcards" in params:
-            self.__params__["allcards"] = [c.__deepcopy__() for c in params["allcards"]]
-        else:
-            self.__params__["allcards"] = list(roomai.common.AllPokerCards_Without_King.values())
-            random.shuffle(self.__params__["allcards"])
+
+        self.__params__["allcards"] = list(roomai.common.AllPokerCards_Without_King.values())
+        random.shuffle(self.__params__["allcards"])
 
         if "backward_enable" in params:
             self.__params__["backward_enable"] = params["backward_enable"]
@@ -141,7 +138,7 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
         pr.__keep_cards__      = self.__params__["allcards"][self.__params__["num_normal_players"]*2:self.__params__["num_normal_players"]*2+5]
 
         ## person info
-        self.person_states    = [TexasHoldemPersonState() for i in range(self.__params__["num_normal_players"])]
+        self.person_states    = [TexasHoldemPersonState() for i in range(self.__params__["num_normal_players"]+1) ]
         pes                   = self.person_states
         for i in range(self.__params__["num_normal_players"]):
             pes[i].__id__ = i
@@ -372,8 +369,6 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
         for p in range(pu.num_normal_players):
             pu.__chips__[p] += scores[p]
             scores[p]   -= pu.bets[p]
-        for p in range(pu.num_normal_players):
-            scores[p]   /= pu.big_blind_bet * 1.0
         return scores
 
 

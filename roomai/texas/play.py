@@ -33,7 +33,7 @@ if __name__ == "__main__":
     num_normal_players = len(players)
     infos, public_state, person_states, private_state = env.init({"num_normal_players": num_normal_players})
     show_public(public_state)
-    for i in range(env.num_normal_players):
+    for i in range(num_normal_players):
         players[i].receive_info(infos[i])
         show_info(infos[i])
     print ("\n")
