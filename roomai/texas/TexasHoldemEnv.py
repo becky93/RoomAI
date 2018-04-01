@@ -25,7 +25,7 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
     @classmethod
     def __check_initialization_configuration__(cls, env):
         if len(env.__params__["chips"]) != env.__params__["num_normal_players"]:
-            raise ValueError("len(env.chips)%d != env.num_normal_players%d" % (len(env.chips), env.num_normal_players))
+            raise ValueError("len(chips)%d != num_normal_players%d" % (len(env.chips), env.num_normal_players))
 
         if env.__params__["num_normal_players"] > 6:
             raise ValueError("The maximum of the number of players is 6. Now, the number of players = %d" % (env.num_normal_players))
@@ -42,6 +42,7 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
         3) dealer_id: the player id of the dealer, default random\n
         4) chips: the initialization chips, default [1000,1000,...]\n
         5) big_blind_bet: the number of chips for the big blind bet, default 10\n
+        
         An example of the initialization param is {"num_normal_players":2,"backward_enable":True}
 
         :param params: the initialization params
@@ -720,59 +721,6 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
 
     @classmethod
     def is_action_valid(cls, action, public_state, person_state):
-
-        """
-
-        Args:
-            action:
-            public_state:
-            person_state:
-
-        Returns:
-
-        """
-
-        '''
-        pu = public_state
-
-        if (not isinstance(public_state, TexasHoldemPublicState)) or (not isinstance(action, TexasHoldemAction)):
-            return False
-
-        if pu.is_allin[pu.turn] == True or pu.is_fold[pu.turn] == True:
-            return False
-        if pu.chips[pu.turn] == 0:
-            return False
-
-        if action.option == TexasHoldemAction.Fold:
-            return True
-
-        elif action.option == TexasHoldemAction.Check:
-            if pu.bets[pu.turn] == pu.max_bet_sofar:
-                return True
-            else:
-                return False
-
-        elif action.option == TexasHoldemAction.Call:
-            if action.price == pu.max_bet_sofar - pu.bets[pu.turn]:
-                return True
-            else:
-                return False
-
-        elif action.option == TexasHoldemAction.Raise:
-            raise_account = action.price - (pu.max_bet_sofar - pu.bets[pu.turn])
-            if raise_account == 0:    return False
-            if raise_account % pu.raise_account == 0:
-                return True
-            else:
-                return False
-        elif action.option == TexasHoldemAction.AllIn:
-            if action.price == pu.chips[pu.turn]:
-                return True
-            else:
-                return False
-        else:
-            raise Exception("Invalid action.option" + action.option)
-        '''
         return action.key in person_state.available_actions
 
     def __deepcopy__(self, memodict={}, newinstance = None):

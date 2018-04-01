@@ -8,13 +8,17 @@ import random
 from roomai.common import RandomPlayer
 
 class TexasEnvTester(unittest.TestCase):
-    """
-    """
+
+    def test_continuous_check(self):
+        env = roomai.texas.TexasHoldemEnv()
+        env.init({"num_normal_players":3, "big_blind_bet":10})
+
+        env.forward(TexasHoldemAction.lookup("Call_10"))
+        env.forward(TexasHoldemAction.lookup("Call_5"))
+
 
     def testEnv3players(self):
-        """
 
-        """
         env = TexasHoldemEnv()
         num_normal_players   = 3
         dealer_id     = 0
@@ -80,9 +84,9 @@ class TexasEnvTester(unittest.TestCase):
         print (env.public_state.chips)
         print (env.public_state.turn)
         self.assertTrue(public_state.is_terminal)
-        self.assertEqual(public_state.scores[0], 30.0/public_state.big_blind_bet)
-        self.assertEqual(public_state.scores[1], -10.0/public_state.big_blind_bet)
-        self.assertEqual(public_state.scores[2], -20.0/public_state.big_blind_bet)
+        self.assertEqual(public_state.scores[0], 30.0)
+        self.assertEqual(public_state.scores[1], -10.0)
+        self.assertEqual(public_state.scores[2], -20.0)
 
     def testEnv3Players2(self):
         """
@@ -215,9 +219,9 @@ class TexasEnvTester(unittest.TestCase):
         # chips:0,     0,    500
         # bets :100,   500,  500
         # 0 > 1 = 2
-        self.assertEqual(public_state.scores[0],200.0/public_state.big_blind_bet)
-        self.assertEqual(public_state.scores[1],-100.0/public_state.big_blind_bet)
-        self.assertEqual(public_state.scores[2],-100.0/public_state.big_blind_bet)
+        self.assertEqual(public_state.scores[0],200.0)
+        self.assertEqual(public_state.scores[1],-100.0)
+        self.assertEqual(public_state.scores[2],-100.0)
 
 
 
@@ -283,4 +287,5 @@ class TexasEnvTester(unittest.TestCase):
 
         scores = TexasHoldemEnv.compete(env, players)
         print (scores)
+
 

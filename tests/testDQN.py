@@ -5,7 +5,7 @@ import random
 import roomai
 import roomai.sevenking
 from models.dqn.dqnalgorithm import DqnPlayer
-from models.dqn.sevenking import SevenKingModel_ThreePlayers
+from models.dqn.sevenking import DQN_SevenKing_ThreePlayers
 
 class ExamplePlayer(DqnPlayer):
     def terminal_info_feat(self):
@@ -53,7 +53,7 @@ class DQNTester(unittest.TestCase):
         import logging
         roomai.set_loglevel(logging.DEBUG)
         env = roomai.sevenking.SevenKingEnv()
-        player = SevenKingModel_ThreePlayers()
+        player = DQN_SevenKing_ThreePlayers()
         algo = DqnAlgorithm()
         opponents = [roomai.common.RandomPlayer() for i in range(2)]
         algo.train(env=env, players = [player] + opponents + [roomai.common.RandomPlayerChance()], params={"num_normal_players": 3, "num_iters":1})
