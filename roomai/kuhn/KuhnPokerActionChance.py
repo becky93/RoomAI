@@ -3,7 +3,7 @@ import roomai.common
 import copy
 
 
-class KuhnPokerActionChance(roomai.common.AbstractAction):
+class KuhnPokerActionChance(roomai.common.AbstractActionChance):
     '''
     The KuhnPoker action used by the chance player. Example of usages:\n
     >> import roomai.kuhn\n
