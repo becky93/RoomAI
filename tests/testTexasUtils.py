@@ -2,8 +2,8 @@
 import unittest
 
 import roomai.common
-from roomai.texas import TexasHoldemAction
-from roomai.texas import TexasHoldemEnv
+from roomai.texasholdem import TexasHoldemAction
+from roomai.texasholdem import TexasHoldemEnv
 
 
 class TexasUtilsTester(unittest.TestCase):

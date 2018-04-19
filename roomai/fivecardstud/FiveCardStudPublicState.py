@@ -32,12 +32,22 @@ class FiveCardStudPublicState(roomai.common.AbstractPublicState):
     floor_bet              = None
     max_bet_sofar          = None
 
-
     round                  = None
-    num_normal_players            = None
-
     previous_round         = None
 
+
+    __param_initialization_chips__ = None
+    def get_param_initialization_chips(self):
+        return tuple(self.__param_initialization_chips__)
+    param_initialization_chips = property(get_param_initialization_chips, doc="For example, param_initialization_chips=[100,100,100]. Notice: len(param_initialization_chips) must equal param_num_normal_players")
+
+    __param_floor_bet__ = 10
+    def get_param_floor_bet(self):  return self.__param_floor_bet__
+    param_floor_bet = property(get_param_floor_bet, doc="The floor bet of this game. Default param_floor_bet = 10")
+
+    __param_big_blind_bet__ = 10
+    def get_param_big_blind_bet(self):  return self.__param_big_blind_bet__
+    param_big_blind_bet = property(get_param_big_blind_bet, doc="The big blind's bet of this game. Default param_big_blind_bet = 10")
 
     def __deepcopy__(self,memodict={},newinstance = None):
         if newinstance is None:
@@ -93,6 +103,10 @@ class FiveCardStudPublicState(roomai.common.AbstractPublicState):
         else:
             copyinstance.chips = [self.chips[i] for i in range(len(self.chips))]
 
+        if self.param_initialization_chips:
+            copyinstance.__param_initialization_chips__ = None
+        else:
+            copyinstance.__param_initialization_chips__ = [self.__param_initialization_chips__[i] for i in range(len(self.__param_initialization_chips__))]
 
         # bets is array which contains the bets from all players
         if self.bets is None:
@@ -105,7 +119,6 @@ class FiveCardStudPublicState(roomai.common.AbstractPublicState):
         copyinstance.max_bet_sofar = self.max_bet_sofar
 
         copyinstance.round         = self.round
-        copyinstance.num_normal_players   = self.num_normal_players
 
         copyinstance.previous_round  = self.previous_round
 

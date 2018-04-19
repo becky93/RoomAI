@@ -1,5 +1,5 @@
 import unittest
-import roomai.kuhn
+import roomai.kuhnpoker
 import roomai.common
 
 class KuhnTester(unittest.TestCase):
@@ -10,8 +10,8 @@ class KuhnTester(unittest.TestCase):
 
         """
         for i in range(1000):
-            players = [roomai.kuhn.Example_KuhnPokerAlwaysBetPlayer() for i in range(2)] + [roomai.kuhn.KuhnPokerChancePlayer()]
-            env     = roomai.kuhn.KuhnPokerEnv()
+            players = [roomai.kuhnpoker.Example_KuhnPokerAlwaysBetPlayer() for i in range(2)] + [roomai.kuhnpoker.KuhnPokerChancePlayer()]
+            env     = roomai.kuhnpoker.KuhnPokerEnv()
             infos,public_state,_,_ = env.init()
 
 
@@ -29,16 +29,16 @@ class KuhnTester(unittest.TestCase):
             print (env.public_state.scores)
 
     def testKuhnEnvBackward(self):
-        env = roomai.kuhn.KuhnPokerEnv()
-        env.init({"backward_enable":True})
-        env.forward(roomai.kuhn.KuhnPokerActionChance.lookup("0,2"))
+        env = roomai.kuhnpoker.KuhnPokerEnv()
+        env.init({"param_backward_enable":True})
+        env.forward(roomai.kuhnpoker.KuhnPokerActionChance.lookup("0,2"))
 
-        action = roomai.kuhn.KuhnPokerAction("bet")
+        action = roomai.kuhnpoker.KuhnPokerAction("bet")
         infos, public_state, person_states, private_state = env.forward(action)
         print (public_state.action_history,person_states[public_state.turn].id)
         assert(len(public_state.action_history) == 2)
 
-        infos, public_state, person_states, private_state = env.forward(roomai.kuhn.KuhnPokerAction("bet"))
+        infos, public_state, person_states, private_state = env.forward(roomai.kuhnpoker.KuhnPokerAction("bet"))
         print (public_state.action_history,person_states[public_state.turn].id)
         assert(len(public_state.action_history) == 3)
 
@@ -47,8 +47,8 @@ class KuhnTester(unittest.TestCase):
         assert(len(public_state.action_history) == 2)
 
     def testCompete(self):
-        players = [roomai.kuhn.Example_KuhnPokerAlwaysBetPlayer() for i in range(2)]
-        env = roomai.kuhn.KuhnPokerEnv()
+        players = [roomai.kuhnpoker.Example_KuhnPokerAlwaysBetPlayer() for i in range(2)]
+        env = roomai.kuhnpoker.KuhnPokerEnv()
 
 
         env.compete(env, players + [roomai.common.RandomPlayerChance()])

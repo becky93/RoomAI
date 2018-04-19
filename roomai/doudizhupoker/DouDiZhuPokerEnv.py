@@ -53,30 +53,32 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
         '''
         Initialize the DouDiZhuPoker game environment with the initialization params.\n
         The initialization is a dict with some options\n
-        2) backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False\n
-        3) start_turn: players[start_turn] is first to take an action\n
-        An example of the initialization param is {"start_turn":2,"backward_enable":True}\n
+        1. param_backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False\n
+        2. param_start_turn: players[start_turn] is first to take an action\n
+        An example of the initialization param is {"param_start_turn":2,"param_backward_enable":True}\n
 
         :param params: the initialization params
         :return: infos, public_state, person_states, private_state
         '''
 
-        self.__params__ = dict()
+        logger = roomai.get_logger()
 
-        if "backward_enable" in params:
-            self.__params__["backward_enable"] = params["backward_enable"]
+        if "param_backward_enable" in params:
+            self.public_state.__param_backward_enable__ = params["param_backward_enable"]
         else:
-            self.__params__["backward_enable"] = False
+            self.public_state.__param_backward_enable__ = False
+        logger.info("param_backward_enable = "+str(self.public_state.param_backward_enable))
 
-        if "start_turn" in params:
-            self.__params__["start_turn"] = params["start_turn"]
+        if "param_start_turn" in params:
+            self.public_state.__param_start_turn__ = params["param_start_turn"]
         else:
-            self.__params__["start_turn"] = int(random.random() * 3)
+            self.public_state.__param_start_turn__ = int(random.random() * 3)
+        logger.info("param_start_turn = %d"%(self.public_state.param_start_turn))
 
-        if "num_normal_players" in params:
-            logger = roomai.get_logger()
+        if "param_num_normal_players" in params:
             logger.warning("DouDiZhu is a game of 3 normal players (1 chance player). Ingores the \"num_normal_players\" option")
-        self.__params__["num_normal_players"] = 3
+        self.public_state.__param_num_normal_players__ = 3
+        logger.info("param_num_normal_players = 3")
 
         allcards = []
         for i in range(13):
@@ -99,7 +101,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
         keep_cards = DouDiZhuPokerHandCards([allcards[-1], allcards[-2], allcards[-3]])
         self.private_state.__keep_cards__ =  keep_cards;
 
-        self.public_state.__turn__                = self.__params__["start_turn"]
+        self.public_state.__turn__                = self.public_state.param_start_turn
         self.public_state.__phase__               = 0
         self.public_state.__epoch__               = 0
         self.public_state.__landlord_id           = -1

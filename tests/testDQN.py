@@ -46,8 +46,8 @@ class DQNTester(unittest.TestCase):
         player = ExamplePlayer()
         dqn   = DqnAlgorithm()
         opponents = [roomai.common.RandomPlayer() for i in range(2)]
-        dqn.train(env=env, players = [player] + opponents + [roomai.common.RandomPlayerChance()], params={})
-        dqn.eval(env=env, players = [player] + opponents + [roomai.common.RandomPlayerChance()], params={})
+        dqn.train(env=env, players = [player] + opponents + [roomai.common.RandomPlayerChance()], params={ "num_iters":1})
+        dqn.eval(env=env, players = [player] + opponents + [roomai.common.RandomPlayerChance()], params={ "num_iters":1})
 
     def test_sevenking_dqn(self):
         import logging
@@ -56,7 +56,7 @@ class DQNTester(unittest.TestCase):
         player = SevenKingModel_ThreePlayers()
         algo = DqnAlgorithm()
         opponents = [roomai.common.RandomPlayer() for i in range(2)]
-        algo.train(env=env, players = [player] + opponents + [roomai.common.RandomPlayerChance()], params={"num_normal_players": 3, "num_iters":1})
+        algo.train(env=env, players = [player] + opponents + [roomai.common.RandomPlayerChance()], params={"param_num_normal_players": 3, "num_iters":1})
         opponents = [roomai.common.RandomPlayer() for i in range(2)]
         #scores = algo.eval(players = [player] + opponents + [roomai.common.RandomPlayerChance()], env=env)
         #print(scores)

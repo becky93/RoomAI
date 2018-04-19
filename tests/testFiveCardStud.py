@@ -31,7 +31,7 @@ class FiveCardStudTester(unittest.TestCase):
         """
         env = FiveCardStudEnv();
         chips = [1000,1000,1000]
-        infos, pu, pes, pr = env.init({"chips":chips, "num_normal_players":3, "backward_enable":True})
+        infos, pu, pes, pr = env.init({"param_initialization_chips":chips, "param_num_normal_players":3, "param_backward_enable":True})
 
         turn = pu.turn
         assert(pes[turn].available_actions is not None)
@@ -69,7 +69,7 @@ class FiveCardStudTester(unittest.TestCase):
             num_normal_players = 3
             chips       = [1000,1000,1000]
 
-            infos,public_state,_,_ = env.init({"num_normal_players":num_normal_players,"chips":chips})
+            infos,public_state,_,_ = env.init({"param_num_normal_players":num_normal_players,"chips":chips})
             for i in range(len(players)):
                 players[i].receive_info(infos[i])
 
@@ -88,7 +88,7 @@ class FiveCardStudTester(unittest.TestCase):
             num_normal_players = 2
             chips       = [1000,1000]
 
-            infos,public_state,_,_ = env.init({"num_normal_players":num_normal_players, "chips":chips})
+            infos,public_state,_,_ = env.init({"param_num_normal_players":num_normal_players, "chips":chips})
             for i in range(len(players)):
                 players[i].receive_info(infos[i])
 

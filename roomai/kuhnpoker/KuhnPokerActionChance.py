@@ -6,8 +6,8 @@ import copy
 class KuhnPokerActionChance(roomai.common.AbstractActionChance):
     '''
     The KuhnPoker action used by the chance player. Example of usages:\n
-    >> import roomai.kuhn\n
-    >> action = roomai.kuhn.KuhnPokerChanceAction("0,1")\n
+    >> import roomai.kuhnpoker\n
+    >> action = roomai.kuhnpoker.KuhnPokerChanceAction.lookup("0,1")\n
     >> action.key \n
     "0,1"\n
     >> action.number_for_player0\n

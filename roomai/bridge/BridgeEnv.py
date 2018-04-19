@@ -15,41 +15,76 @@ class BridgeEnv(roomai.common.AbstractEnv):
 
 
     def init(self, params = dict()):
-
-        if "start_turn" in params:
-            self.__params__["start_turn"] = params["start_turn"]
-        else:
-            self.__params__["start_turn"] = int(random.random() * 4)
-
-        if self.__params__["start_turn"] not in [roomai.bridge.Direction.north,roomai.bridge.Direction.east, roomai.bridge.Direction.south,roomai.bridge.Direction.west]:
-            raise ValueError("start_turn is %s, not one of [roomai.bridge.Direction.north,roomai.bridge.Direction.east, roomai.bridge.Direction.south,roomai.bridge.Direction.west]"%(str(self.__params__["start_turn"])))
-
-
-        if "vulnerable" in params:
-            self.__params__["vulnerable"] = list(params["vulnerable"])
-        else:
-            self.__params__["vulnerable"] = [False for i in range(4)]
-
-        if len(self.__params__["vulnerable"]) != 4:
-            raise ValueError("len(self.__params__[\"vulnerable\"]) != 4")
-
-        if self.__params__["vulnerable"][roomai.bridge.Direction.south] != self.__params__["vulnerable"][roomai.bridge.Direction.north]:
-            raise ValueError("The north and south players have different vulnerable states. (north vulnerable: %s, south vulnerable: %s)"%(str(self.__params__["vulnerable"][roomai.bridge.Direction.north]),str(self.__params__["vulnerable"][roomai.bridge.Direction.south])))
-
-        if self.__params__["vulnerable"][roomai.bridge.Direction.west]  != self.__params__["vulnerable"][roomai.bridge.Direction.east]:
-            raise ValueError("The east and west players have different vulnerable states. (north vulnerable: %s, south vulnerable: %s)"%(str(self.__params__["vulnerable"][roomai.bridge.Direction.north]),str(self.__params__["vulnerable"][roomai.bridge.Direction.south])))
-
-        if "num_normal_players" in params:
-            logger = roomai.get_logger()
-            logger.warning("Bridge is a game of 4 normal players. Ingores the \"num_normal_players\" option")
-        self.__params__["num_normal_players"] = 4
-
-        self.public_state                        = roomai.bridge.BridgePublicState()
-        self.public_state.__stage__              = "bidding"
-        self.public_state.__turn__               = self.__params__["start_turn"]
-        self.public_state.__playing_is_vulnerable__ = list(self.__params__["vulnerable"])
-
+        '''
+        Initialize the Bridge game environment.The params is the initialization params with the following params:\n
+        1. param_backward_enable: If you need call the backward function of the enviroment, please set it to True. Default False.
+        2. param_start_turn: The param_start_turn is the id of a normal player, who is the first to take an action. In KuhnPoker, param_start_turn must be 0 or 1.
+        3. param_vulnerable: An array of boolean variables denotes whether is the corresponding player vulnerable. param_vulnerable[0] must equal param_vulnerable[2], param_vulnerable[1] must equal param_vulnerable[3]. 
+        For example, param_vulnerable=[false,true,false,true]
+        
+        
+        :param params: the initialization params, for example, params={"param_backward_enable":true, "param_vulnerable":[false,false,false,false]} 
+        :return: 
+        '''
+        self.public_state = roomai.bridge.BridgePublicState()
         self.person_states = [roomai.bridge.BridgePersonState() for i in range(5)]
+        self.private_state = roomai.bridge.BridgePrivateState()
+
+        if "param_start_turn" in params:
+            self.public_state.__param_start_turn__ = params["param_start_turn"]
+        else:
+            self.public_state.__param_start_turn__ = int(random.random() * 4)
+
+        if self.public_state.__param_start_turn__ not in [roomai.bridge.Direction.north, roomai.bridge.Direction.east,
+                                                          roomai.bridge.Direction.south, roomai.bridge.Direction.west]:
+            raise ValueError(
+                "param_start_turn is %s, not one of [0(roomai.bridge.Direction.north), 1(roomai.bridge.Direction.east), 2(roomai.bridge.Direction.south),3(roomai.bridge.Direction.west)]" % (
+                str(self.__params__["start_turn"])))
+
+        if "param_backward_enable" in params:
+            self.public_state.__param_backward_enable__ = params["param_backward_enable"]
+        else:
+            self.public_state.__param_backward_enable__ = False
+
+        if "param_num_normal_players" in params:
+            logger = roomai.get_logger()
+            logger.warning("Bridge is a game of 4 normal players. Ingores the \"param_num_normal_players\" option")
+        self.public_state.__param_num_normal_players__ = 4
+
+
+
+
+        if "param_vulnerable" in params:
+            self.public_state.__playing_is_vulnerable__ = list(params["vulnerable"])
+
+            if params["param_vulnerable"][roomai.bridge.Direction.south] != params["param_vulnerable"][
+                roomai.bridge.Direction.north]:
+                raise ValueError(
+                    "The north and south players have different vulnerable states. (north vulnerable: %s, south vulnerable: %s)" % (
+                    str(params["param_vulnerable"][roomai.bridge.Direction.north]),
+                    str(params["param_vulnerable"][roomai.bridge.Direction.south])))
+
+            if params["param_vulnerable"][roomai.bridge.Direction.west] != params["param_vulnerable"][
+                roomai.bridge.Direction.east]:
+                raise ValueError(
+                    "The east and west players have different vulnerable states. (north vulnerable: %s, south vulnerable: %s)" % (
+                    str(params["param_vulnerable"][roomai.bridge.Direction.north]),
+                    str(params["param_vulnerable"][roomai.bridge.Direction.south])))
+
+        else:
+            self.public_state.__playing_is_vulnerable__ = [False for i in range(4)]
+
+        if len(self.public_state.playing_is_vulnerable) != 4:
+            raise ValueError("len(self.__params__[\"param_vulnerable\"]) != 4")
+
+
+
+
+
+        self.public_state.__stage__                 = "bidding"
+        self.public_state.__turn__                  = self.public_state.param_start_turn
+
+
         for i in range(5):
             self.person_states[i].__id__ = i
         num = int(len(roomai.bridge.AllBridgePlayingPokerCards) / 4)
@@ -65,7 +100,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
             = self.available_actions(self.public_state, self.person_states[self.public_state.turn])
 
 
-        self.private_state = roomai.bridge.BridgePrivateState()
+
 
         self.__gen_state_history_list__()
         return self.__gen_infos__(), self.public_state, self.person_states, self.private_state
@@ -337,7 +372,7 @@ class BridgeEnv(roomai.common.AbstractEnv):
         pu.__playing_contract_card__  = pu.bidding_candidate_contract_card
         pu.__playing_magnification__  = pu.bidding_magnification
 
-        start_turn  = self.__params__["start_turn"]
+        start_turn  = pu.param_start_turn
         last_bidder = pu.bidding_last_bidder
         for i in range(len(pu.action_history)):
             if (i+start_turn)%4 == last_bidder or (i + start_turn + 2) % 4 == last_bidder:

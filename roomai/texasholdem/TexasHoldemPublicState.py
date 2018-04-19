@@ -10,10 +10,7 @@ class TexasHoldemPublicState(roomai.common.AbstractPublicState):
     def __init__(self):
         super(TexasHoldemPublicState,self).__init__()
         self.__stage__              = None
-        self.__num_normal_players__        = None
-        self.__dealer_id__          = None
         self.__public_cards__       = None
-        self.__big_blind_bet__      = None
 
         #state of players
         self.__is_fold__                        = None
@@ -35,8 +32,6 @@ class TexasHoldemPublicState(roomai.common.AbstractPublicState):
         #the raise acount
         self.__raise_account__      = None
 
-    def __get_num_normal_players__(self):  return self.__num_normal_players__
-    num_normal_players = property(__get_num_normal_players__, doc = "The number of players in this game")
 
     def __get_max_bet_sofar__(self):    return self.__max_bet_sofar__
     max_bet_sofar = property(__get_max_bet_sofar__, doc="The max bet used by one player so far")
@@ -58,8 +53,7 @@ class TexasHoldemPublicState(roomai.common.AbstractPublicState):
             return tuple(self.__bets__)
     bets = property(__get_bets__, doc = "bets is an array which contains the bets from all players. For example, bets=[50,25,25]")
 
-    def __get_big_blind_bet__(self):    return self.__big_blind_bet__
-    big_blind_bet = property(__get_big_blind_bet__, doc="The big blind bet")
+
 
     def __get_is_fold__(self):
         if self.__is_fold__ is None:    return None
@@ -101,8 +95,20 @@ class TexasHoldemPublicState(roomai.common.AbstractPublicState):
     stage = property(__get_stage__, doc="The stage of the TexasHoldem game. The stage must be one of 1,2,3 or 4.")
 
 
-    def __get_dealer_id__(self):    return self.__dealer_id__
-    dealer_id = property(__get_dealer_id__, doc="The player id of the dealer. The next player after the dealer is the small blind. The next player after the small blind is the big blind.")
+
+    ######################### initialization param ##################
+    __param_dealer_id__ = 0
+    def __get_param_dealer_id__(self):    return self.__param_dealer_id__
+    param_dealer_id = property(__get_param_dealer_id__, doc="The player id of the dealer. The next player after the dealer is the small blind. The next player after the small blind is the big blind.For example, param_dealer_id = 2")
+
+    __param_initialization_chips__ = None
+    def __get_param_initialization_chips__(self):   return self.__param_initialization_chips__
+    param_initialization_chips = property(__get_param_initialization_chips__, doc="The initialization chips of this game. For example, param_initialization_chips = [10,5,6]")
+
+    __param_big_blind_bet__ = 10
+    def __get_param_big_blind_bet__(self): return self.__param_big_blind_bet__
+    param_big_blind_bet = property(__get_param_big_blind_bet__, doc="The big blind bet")
+
 
     def __deepcopy__(self, memodict={}, newinstance = None):
             if newinstance is None:

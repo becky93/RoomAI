@@ -53,7 +53,7 @@ the public state, the person state and the private state. In the [tutorials](tut
 
 ###### KuhnPokerPublicState 
 
-Firstly, we define the KuhnPokerPublicState class. The KuhnPokerPublicState extends roomai.common.AbstractPublicState. Besides the "turn", "is_terminal", "scores" and "action_history" properties from AbstractPublicState,
+Firstly, we define the KuhnPokerPublicState class. The KuhnPokerPublicState extends roomai.common.AbstractPublicState. Besides the "turn", "is_terminal", "scores", "action_history", "param_start_turn", "param_number_normal_players" and "param_backward_enable" properties from AbstractPublicState,
   we need add "first" property to KuhnPokerPublicState, which indicates which normal player is first to take an action. The code for KuhnPokerPublicState is shown as follows.
   
   <pre>
