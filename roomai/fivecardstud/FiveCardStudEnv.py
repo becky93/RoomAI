@@ -13,6 +13,7 @@ from roomai.fivecardstud   import FiveCardStudPublicState
 from roomai.fivecardstud   import FiveCardStudPersonState
 from roomai.fivecardstud   import FiveCardStudPrivateState
 from roomai.fivecardstud   import FiveCardStudAction
+from roomai.common import AbstractPlayerChance
 
 class FiveCardStudEnv(roomai.common.AbstractEnv):
     '''
@@ -244,6 +245,11 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
         :param players: the list of players. The n-1 player is AI bot and the last player is the chance player
         :return: scores
         '''
+
+        if isinstance(players[-1], AbstractPlayerChance) == False:
+            raise ValueError(
+                "The last player must be the chance player (The class of players[4] must extend roomai.common.AbstractPlayerChance)")
+
         num_normal_players = len(players) - 1
 
         total_scores   = [0 for i in range(num_normal_players)]

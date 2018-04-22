@@ -102,7 +102,7 @@ class AbstractEnv(object):
 
         if self.public_state.param_backward_enable == False:
             raise ValueError(
-                "The environment can't backward when params[\"param_backward_enable\"] = False. If you want to use this backward function, please env.init({\"param_backward_enable\":true,...})")
+                "The environmcan't backward when params[\"param_backward_enable\"] = False. If you want to use this backward function, please env.init({\"param_backward_enable\":true,...})")
 
         if len(self.__public_state_history__) == 1:
             raise ValueError("Env has reached the initialization state and can't go back further. ")
