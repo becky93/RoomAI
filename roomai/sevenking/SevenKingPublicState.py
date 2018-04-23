@@ -19,8 +19,6 @@ class SevenKingPublicState(roomai.common.AbstractPublicState):
                                         "In the second stage (stage=1), the player doesn't get the supplement. The player who firstly throws all his hand cards is the winner. ")
 
 
-    def __get_num_normal_players__(self): return self.__num_normal_players__
-    num_normal_players = property(__get_num_normal_players__, doc="The number of players in this game")
 
 
     def __get_showed_cards__(self):
@@ -62,8 +60,6 @@ class SevenKingPublicState(roomai.common.AbstractPublicState):
             newinstance = SevenKingPublicState()
         newinstance   = super(SevenKingPublicState,self).__deepcopy__(newinstance = newinstance)
 
-        newinstance.__stage__ = self.stage
-        newinstance.__num_normal_players__ = self.num_normal_players
 
         if self.showed_cards is None:
             newinstance.__showed_cards = None

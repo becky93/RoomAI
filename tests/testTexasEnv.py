@@ -2,7 +2,7 @@
 import unittest
 import logging
 
-from roomai.texas import *
+from roomai.texasholdem import *
 import roomai
 import random
 from roomai.common import RandomPlayer
@@ -10,7 +10,7 @@ from roomai.common import RandomPlayer
 class TexasEnvTester(unittest.TestCase):
 
     def test_continuous_check(self):
-        env = roomai.texas.TexasHoldemEnv()
+        env = roomai.texasholdem.TexasHoldemEnv()
         env.init({"num_normal_players":3, "big_blind_bet":10})
 
         env.forward(TexasHoldemAction.lookup("Call_10"))
@@ -24,7 +24,7 @@ class TexasEnvTester(unittest.TestCase):
         dealer_id     = 0
         chips         = [100,100,100]
         big_blind_bet = 20
-        params  = {"num_normal_players":num_normal_players, "dealer_id":dealer_id, "chips":chips, "big_blind_bet":big_blind_bet, "backward_enable":True}
+        params  = {"param_num_normal_players":num_normal_players, "param_dealer_id":dealer_id, "param_initialization_chips":chips, "param_big_blind_bet":big_blind_bet, "backward_enable":True}
         players =  [RandomPlayer() for i in range(3)]
 
 
@@ -84,9 +84,11 @@ class TexasEnvTester(unittest.TestCase):
         print (env.public_state.chips)
         print (env.public_state.turn)
         self.assertTrue(public_state.is_terminal)
-        self.assertEqual(public_state.scores[0], 30.0)
-        self.assertEqual(public_state.scores[1], -10.0)
-        self.assertEqual(public_state.scores[2], -20.0)
+
+        self.assertEqual(public_state.scores[0], 30.0/public_state.param_big_blind_bet)
+        self.assertEqual(public_state.scores[1], -10.0/public_state.param_big_blind_bet)
+        self.assertEqual(public_state.scores[2], -20.0/public_state.param_big_blind_bet)
+
 
     def testEnv3Players2(self):
         """
@@ -98,7 +100,7 @@ class TexasEnvTester(unittest.TestCase):
         dealer_id     = 0
         chips         = [100, 500,1000]
         big_blind_bet = 20
-        params  = {"num_normal_players":num_normal_players, "dealer_id":dealer_id, "chips":chips, "big_blind_bet":big_blind_bet}
+        params  = {"param_num_normal_players":num_normal_players, "param_dealer_id":dealer_id, "param_initialization_chips":chips, "param_big_blind_bet":big_blind_bet}
         players =  [RandomPlayer() for i in range(3)]
 
 
@@ -147,7 +149,7 @@ class TexasEnvTester(unittest.TestCase):
         print (public_state.stage)
         print (public_state.chips)
         print (public_state.bets)
-        print (public_state.dealer_id)
+        print (public_state.param_dealer_id)
         # dealer_id = 0
         # turn  = 2
         # stage = 1
@@ -161,7 +163,7 @@ class TexasEnvTester(unittest.TestCase):
         infos,public_state, person_states, private_state  = env.forward(action)
         print ("\n\n")
         print ("stage",public_state.stage)
-        print ("dealer_id+1", (public_state.dealer_id+1)%public_state.num_normal_players)
+        print ("dealer_id+1", (public_state.param_dealer_id+1)%public_state.param_num_normal_players)
         print ("is_needed_to_action", public_state.is_needed_to_action)
         self.assertEqual(infos[0].public_state.stage,StageSpace.secondStage)
         self.assertEqual(env.public_state.chips[1],440)
@@ -219,9 +221,10 @@ class TexasEnvTester(unittest.TestCase):
         # chips:0,     0,    500
         # bets :100,   500,  500
         # 0 > 1 = 2
-        self.assertEqual(public_state.scores[0],200.0)
-        self.assertEqual(public_state.scores[1],-100.0)
-        self.assertEqual(public_state.scores[2],-100.0)
+
+        self.assertEqual(public_state.scores[0],200.0/public_state.param_big_blind_bet)
+        self.assertEqual(public_state.scores[1],-100.0/public_state.param_big_blind_bet)
+        self.assertEqual(public_state.scores[2],-100.0/public_state.param_big_blind_bet)
 
 
 
@@ -245,7 +248,7 @@ class TexasEnvTester(unittest.TestCase):
             env = TexasHoldemEnv()
             num_normal_players = 3
             chips       = [1000 for i in range(num_normal_players)]
-            params = {"num_normal_players": num_normal_players,  "chips": chips}
+            params = {"param_num_normal_players": num_normal_players,  "chips": chips}
             infos, public_state, person_states, private_state = env.init(params)
 
             while public_state.is_terminal != True:
@@ -265,7 +268,7 @@ class TexasEnvTester(unittest.TestCase):
             num_normal_players = 2
             chips     = [1000 for i in range(num_normal_players)]
             dealer_id = i%2
-            params = {"num_normal_players": num_normal_players, "dealer_id": dealer_id, "chips": chips}
+            params = {"param_num_normal_players": num_normal_players, "dealer_id": dealer_id, "chips": chips}
             infos, public_state, person_states, private_state = env.init(params)
 
             while public_state.is_terminal != True:

@@ -7,6 +7,7 @@ from roomai.common.AbstractPublicState  import AbstractPublicState
 from roomai.common.AbstractPersonState  import AbstractPersonState
 from roomai.common.AbstractPrivateState import AbstractPrivateState
 from roomai.common.AbstractAction import AbstractAction
+from roomai.common.AbstractActionChance import AbstractActionChance
 from roomai.common.Info import Info
 from roomai.common.AbstractPlayer import AbstractPlayer
 from roomai.common.AbstractPlayerChance import AbstractPlayerChance

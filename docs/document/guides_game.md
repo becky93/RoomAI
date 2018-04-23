@@ -53,7 +53,7 @@ the public state, the person state and the private state. In the [tutorials](tut
 
 ###### KuhnPokerPublicState 
 
-Firstly, we define the KuhnPokerPublicState class. The KuhnPokerPublicState extends roomai.common.AbstractPublicState. Besides the "turn", "is_terminal", "scores" and "action_history" properties from AbstractPublicState,
+Firstly, we define the KuhnPokerPublicState class. The KuhnPokerPublicState extends roomai.common.AbstractPublicState. Besides the "turn", "is_terminal", "scores", "action_history", "param_start_turn", "param_number_normal_players" and "param_backward_enable" properties from AbstractPublicState,
   we need add "first" property to KuhnPokerPublicState, which indicates which normal player is first to take an action. The code for KuhnPokerPublicState is shown as follows.
   
   <pre>
@@ -199,34 +199,142 @@ AllKuhnChanceActions = {"0,1": KuhnPokerActionChance("0,1"), \
   
   - init
   
-  The init function is to initialize the environment for a new game, which sets the initialized values in the \__param\__, public_state, person_states and private_state properties.. You should use the following code to end the init function.
+  The init function is to initialize the environment for a new game, which sets the initialized values in the public_state, person_states and private_state properties using the params. The init function code for Kuhn Poker is shown
    <pre>
-   self.__gen_state_history_list__() 
-   # maintain the internal properties
-   #  person_states_history_list and private_state_history_list
-    
-   infos   = self.__gen_infos__()
-   # generate the infos, which are dealt to the corresponding players.
-   
-   return infos,self.public_state, self.person_states, self.private_state
+   def init(self, params=dict()):
+        '''
+        Initialize the KuhnPoker game environment.The params is the initialization params with the following params:\n
+        1. param_backward_enable: If you need call the backward function of the enviroment, please set it to True. Default False.
+        2. param_start_turn: The param_start_turn is the id of a normal player, who is the first to take an action. In KuhnPoker, param_start_turn must be 0 or 1.
+        #### For this init function, we should show the params
+        
+        :param params: the initialization params, for example, params={"param_start_turn":1}
+        :return: infos, public_state, person_states, private_state 
+        '''
+        #### You must use reStructureText Docstring format to write the comment.
+
+
+        self.private_state = roomai.kuhnpoker.KuhnPokerPrivateState()
+        self.public_state  = roomai.kuhnpoker.KuhnPokerPublicState()
+        self.person_states = [roomai.kuhnpoker.KuhnPokerPersonState() for i in range(3)]
+
+        if "param_backward_enable" in params:
+            self.public_state.__param_backward_enable__ = params["param_backward_enable"]
+        else:
+            self.public_state.__param_backward_enable__ = False
+
+        if "param_start_turn" in params:
+            self.public_state.__param_start_turn__ = params["start_turn"]
+        else:
+            self.public_state.__param_start_turn__ = int(random.random() * 2)
+        if self.public_state.__param_start_turn__ not in [0,1]:
+            raise ValueError("The param_start_turn (%d) must be in [0,1]"%(self.public_state.__param_start_turn__))
+
+        if "param_num_normal_players" in params:
+            logger.warning(
+                "KuhnPoker is a game of two players and the number of players always be 2. Ingores the \"num_normal_players\" option")
+        self.public_state.__param_num_normal_players__= 2
+
+        self.public_state.__turn__             = 2
+        self.public_state.__first__            = self.public_state.__param_start_turn__
+        self.public_state.__epoch__            = 0
+        self.public_state.__action_history__   = []
+        self.public_state.__is_terminal__      = False
+        self.public_state.__scores__           = None
+        self.person_states[0].__id__           = 0
+        self.person_states[0].__number__       = -1
+        self.person_states[1].__id__           = 1
+        self.person_states[1].__number__       = -1
+        self.person_states[2].__id__           = 2
+        self.person_states[2].__number__       = -1
+
+        self.person_states[self.public_state.turn].__available_actions__ = roomai.kuhnpoker.AllKuhnChanceActions
+
+       
+        self.__gen_state_history_list__()  
+        ### Call self.__gen_state_history_list__() before return statement
+        return  self.__gen_infos__(), self.public_state, self.person_states, self.private_state
    </pre>
-   The init function code for Kuhn Poker is shown [here](https://github.com/roomai/RoomAI/blob/master/roomai/kuhn/KuhnPokerEnv.py#L16).
- 
+   
   - forward
   
-  The forward function makes the environment to step foward with the given action. The forward function generates the available actions for the next turn player is generated using the available_actions function. You should use the following code to end the forward function.
-  <pre>
-   self.__gen_state_history_list__() 
-   # maintain the internal properties 
-   #   person_states_history_list and private_state_history_list 
-   
-   infos   = self.__gen_infos__()
-   # generate the infos, which are dealt to the corresponding players.
-   
-   return infos,self.public_state, self.person_states, self.private_state
-   </pre>
-   The foward function code for Kuhn Poker is shown [here](https://github.com/roomai/RoomAI/blob/master/roomai/kuhn/KuhnPokerEnv.py#L71). 
+  The forward function makes the environment to step foward with the given action. The forward function generates the available actions for the next turn player using the available_actions function.  
   
+  <pre>
+      def forward(self, action):
+        """
+        The KuhnPoker game environment steps with the action taken by the current player
+        :param action
+        :returns:infos, public_state, person_states, private_state
+        """
+        #### You must use reStructureText Docstring format to write the comment.
+        
+
+        ####### forward with the chance action ##########
+        if isinstance(action, roomai.kuhnpoker.KuhnPokerActionChance) == True:
+            self.public_state.__action_history__.append((2,action))
+            self.person_states[0].__number__ = action.number_for_player0
+            self.person_states[1].__number__ = action.number_for_player1
+            self.person_states[self.public_state.turn].__available_actions__ = dict()
+            self.public_state.__turn__ = self.public_state.__param_start_turn__
+            self.person_states[self.public_state.turn].__available_actions__ = self.available_actions(self.public_state, self.person_states[self.public_state.turn])
+            
+            self.__gen_state_history_list__()
+            ### Call self.__gen_state_history_list__() before return statement
+            
+            return self.__gen_infos__(), self.public_state, self.person_states, self.private_state
+
+
+
+        self.person_states[self.public_state.turn].__available_actions__ = dict()
+        self.public_state.__action_history__.append((self.public_state.turn,action))
+        #self.public_state.__epoch__                                     += 1
+        self.public_state.__turn__                                       = (self.public_state.turn+1)%2
+
+
+        if len(self.public_state.action_history) == 1: #1 chance
+            pass
+        elif len(self.public_state.action_history) == 1+1: #1 normal + 1 chance
+            self.public_state.__is_terminal__ = False
+            self.public_state.__scores__      = []
+            self.person_states[self.public_state.turn].__available_actions__ = roomai.kuhnpoker.AllKuhnActions
+
+            self.__gen_state_history_list__()
+            ### Call __gen_state_history_list__() before the return statement 
+            return self.__gen_infos__(), self.public_state, self.person_states, self.private_state
+
+        elif len(self.public_state.action_history) == 2+1: # 2 normal + 1 chance
+            scores = self.__evalute_two_round__()
+            if scores is not None:
+                self.public_state.__is_terminal__ = True
+                self.public_state.__scores__      = scores
+
+                self.__gen_state_history_list__()
+                ### Call __gen_state_history_list__() before the return statement 
+                return self.__gen_infos__(),self.public_state, self.person_states, self.private_state
+            else:
+                self.public_state.__is_terminal__ = False
+                self.public_state.__scores__      = []
+                self.person_states[self.public_state.turn].__available_actions__ = roomai.kuhnpoker.AllKuhnActions
+
+                self.__gen_state_history_list__()
+                __gen_state_history_list__()
+                ### Call __gen_state_history_list__() before the return statement 
+                return self.__gen_infos__(),self.public_state, self.person_states, self.private_state
+
+        elif len(self.public_state.action_history) == 3 + 1: # 3 normal action + 1 chance
+            self.public_state.__is_terminal__ = True
+            self.public_state.__scores__     = self.__evalute_three_round__()
+
+            self.__gen_state_history_list__()
+            ### Call __gen_state_history_list__() before the return statement 
+            return self.__gen_infos__(),self.public_state, self.person_states, self.private_state
+
+        else:
+            raise Exception("KuhnPoker has 4 items in action_history (3 normal actions + 1 chance action)")
+   </pre>
+   
+    
   - \__deepcopy\__
   
   The \__deepcopy\__ is used for accelerating copy.deepcopy. Just copy the following code.

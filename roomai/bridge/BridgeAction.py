@@ -20,9 +20,9 @@ class BridgeAction(roomai.common.AbstractAction):
     "bidding"\n
     >>action.bidding_option\n
     "bid"\n
-    >>action.bidding_contract_point \n
+    >>action.bidding_card.point \n
     "A"\n
-    >>action.bidding_contract_suit\n
+    >>action.bidding_card.suit\n
     "Heart"\n
     \n
     >>action = roomai.bridge.BridgeAction.lookup("bidding_pass")\n
@@ -92,7 +92,8 @@ class BridgeAction(roomai.common.AbstractAction):
     When stage = \"playing\", the bidding_option is always None.
    '''
 
-    def __get_bidding_card__(self): return self.__bidding_pokercard__
+    def __get_bidding_card__(self):
+        return self.__bidding_pokercard__
     bidding_card = property(__get_bidding_card__)
     '''
     The bidding_card is the card used for bidding in the bidding stage of Bridge.\n

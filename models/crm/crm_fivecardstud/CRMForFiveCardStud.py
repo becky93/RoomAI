@@ -119,10 +119,10 @@ class KuhnPokerCRMPlayer(algorithms.CRMPlayer):
 
         self.hand_cards = parseCards(pu, pe.id).reshape([1, 13, 4, 1])
         self.opponent_hand_cards = []
-        for i in range(pu.num_normal_players):
+        for i in range(pu.param_num_normal_players):
             if i != pe.id:
                 self.opponent_hand_cards.append(parseCards(pu, i))
-        self.opponent_hand_cards = np.asarray(self.opponent_hand_cards).reshape([1, 13, 4, pu.num_normal_players])
+        self.opponent_hand_cards = np.asarray(self.opponent_hand_cards).reshape([1, 13, 4, pu.param_num_normal_players])
 
     def __del__(self):
         """

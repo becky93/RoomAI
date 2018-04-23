@@ -13,8 +13,6 @@ class BridgePublicState(roomai.common.AbstractPublicState):
         super(BridgePublicState, self).__init__()
         self.__stage__ = "bidding"
 
-        #self.__bidding_candidate_contract_point__ = None
-        #self.__bidding_candidate_contract_suit__ = None
         self.__bidding_candidate_contract_card__ = None
         self.__bidding_magnification__ = 1
         self.__bidding_last_bidder__ = None

@@ -12,6 +12,14 @@ roomai\.bridge\.BridgeAction module
     :undoc-members:
     :show-inheritance:
 
+roomai\.bridge\.BridgeActionChance module
+-----------------------------------------
+
+.. automodule:: roomai.bridge.BridgeActionChance
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 roomai\.bridge\.BridgeEnv module
 --------------------------------
 
