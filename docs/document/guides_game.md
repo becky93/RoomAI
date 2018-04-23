@@ -348,8 +348,32 @@ def __deepcopy__(self, memodict={}, newinstance = None):
   
   - compete. 
   
-  The compete function is a static function. The compete function holds a compete for the players with an environment, and competes scores for players.
-  The compete function code for Kuhn Poker is shown [here](https://github.com/roomai/RoomAI/blob/master/roomai/kuhn/KuhnPokerEnv.py#L139).
+  The compete function is a static function. The compete function holds a compete for the players with an environment, and competes scores for players. The compete function code for Kuhn Poker is shown.
+  <pre>
+  @classmethod
+  def compete
+        '''
+        Use the game environment to hold a compete for the players
+        :param env: The game environment
+        :param players: The players
+        :return: scores for the players
+        '''
+
+        if len(players) != 3:
+            raise  ValueError("The len(players) in Kuhn is 3 (2 normal players and 1 chance player).")
+
+
+        infos, public_state, person_state, private_state = env.init()
+        for i in range(len(players)):
+            players[i].receive_info(infos[i])
+
+        while public_state.is_terminal == False:
+            turn = infos[-1].public_state.turn
+            action = players[turn].take_action()
+            infos,public_state, person_state, private_state = env.forward(action)
+            for i in range(len(players)):
+                players[i].receive_info(infos[i])
+ </pre>
   
   - available_actions
 
