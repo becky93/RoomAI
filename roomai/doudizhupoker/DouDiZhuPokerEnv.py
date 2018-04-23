@@ -48,7 +48,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
         Initialize the DouDiZhuPoker game environment with the initialization params.\n
         The initialization is a dict with some options\n
         1. param_backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False\n
-        2. param_start_turn: players[start_turn] is first to take an action\n
+        2. param_start_turn: players[start_turn] is first normal player to take an action\n
         An example of the initialization param is {"param_start_turn":2,"param_backward_enable":True}\n
 
         :param params: the initialization params

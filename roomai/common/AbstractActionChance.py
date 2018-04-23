@@ -13,6 +13,9 @@ class AbstractActionChance(object):
     '''
 
     def __init__(self, key):
+        if not isinstance(key,str):
+            raise TypeError("The key for ActionChance is an str, not %s"%(type(str)))
+
         self.__key__ = key
 
     def __get_key__(self):

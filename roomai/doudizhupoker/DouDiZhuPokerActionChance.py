@@ -20,7 +20,7 @@ class DouDiZhuPokerActionChance(roomai.common.AbstractActionChance):
 
 
     def __get_key__(self):  return self.__key__
-    key = property(__get_key__, doc="The key of DouDiZhuPoker action. For example, key = \"3\"")
+    key = property(__get_key__, doc="The key of the DouDiZhuPoker chance action. For example, key = \"3\"")
 
     @classmethod
     def lookup(cls, key):

@@ -23,6 +23,7 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         The initialization is a dict with some options\n
         1. param_backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False\n
         2. param_num_normal_players: how many players are in the game  \n
+        3. param_start_turn: players[start_turn] is first normal player to take an action
         An example of the initialization param is {"param_num_normal_players":2,"param_backward_enable":True}\n
 
         :param params: the initialization params
@@ -77,7 +78,7 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         ## public_state
         self.public_state.__turn__,_          = self.__choose_player_with_lowest_card__()
         self.public_state.__is_terminal__     = False
-        self.public_state.__scores__          = []
+        self.public_state.__scores__          = [0 for i in range(self.public_state.param_num_normal_players)]
         self.public_state.__license_action__  = SevenKingAction.lookup("")
         self.public_state.__stage__           = 0
 
