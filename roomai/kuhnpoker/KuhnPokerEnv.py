@@ -166,10 +166,13 @@ class KuhnPokerEnv(roomai.common.AbstractEnv):
 
     @classmethod
     def available_actions(self, public_state, person_state):
-        if len(public_state.action_history) == 0:
-            return roomai.kuhnpoker.AllKuhnChanceActions
-        else:
-            return roomai.kuhnpoker.AllKuhnActions
+        '''
+        :param public_state: the public state of this game 
+        :param person_state: the person state corresponding to the current player
+        :return: 
+        '''
+
+        return roomai.kuhnpoker.AllKuhnActions
 
     def __higher_number_player__(self):
         if self.person_states[0].number > self.person_states[1].number:
