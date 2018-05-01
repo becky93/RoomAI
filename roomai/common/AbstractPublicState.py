@@ -15,12 +15,15 @@ class AbstractPublicState(object):
     def __init__(self):
         self.__turn__            = None
         self.__action_history__  = []
-
+        self.__action_list__ = []
         self.__is_terminal__     = False
         self.__scores__          = None
 
     def __get_turn__(self): return self.__turn__
     turn = property(__get_turn__, doc = "The players[turn] is expected to take an action.")
+
+    def __get_action_list__(self): return self.__action_list__
+    action_list = property(__get_action_list__, doc="actions player have taken")
 
     def __get_action_history__(self):   return tuple(self.__action_history__)
     action_history = property(__get_action_history__, doc = "The action_history so far. For example, action_history = [(0, roomai.kuhn.KuhnAction.lookup(\"check\"),(1,roomai.kuhn.KuhnAction.lookup(\"bet\")].\n"

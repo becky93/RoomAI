@@ -13,6 +13,7 @@ from models.crm.algorithms.crm import CRMPlayer
 from roomai.sevenking import SevenKingEnv
 from roomai.sevenking import SevenKingUtils
 from roomai.sevenking import SevenKingAction
+from roomai.sevenking import SevenKingInfo
 
 '''
 class LSTMRNN(object):
@@ -134,7 +135,7 @@ class RNNModel():
         self.train = tf.train.AdamOptimizer(self.LR).minimize(self.cost)
         self.check = tf.add_check_numerics_ops()
 
-    def train(self, seq, res):
+    def train_func(self, seq, res):
         k = 0
         while (k + self.BATCH_SIZE) < len(res):
 
@@ -145,7 +146,7 @@ class RNNModel():
             batch_y = batch_y.reshape(-1, self.TIME_STEPS, self.OUTPUT_SIZE)
             k = k + self.BATCH_SIZE
 
-            _, _, pred, costs, w_t, b_t = sess.run([self.train, self.check, self.output_reshape, self.cost, self.weights['out'], self.biases['out']],
+            _, _, pred, costs, w_t, b_t = self.sess.run([self.train, self.check, self.output_reshape, self.cost, self.weights['out'], self.biases['out']],
                                                    feed_dict={self.xs: batch_x, self.ys: batch_y})
 
             if math.isnan(costs):
@@ -395,15 +396,8 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
     return utility, terminal_state
 
 
-def Train(player, env, params = dict()):
+def Train(player, env, num_players):
     # initialization
-
-    num_players = 0
-
-    if "num_players" in params:
-        num_players = params["num_players"]
-    else:
-        num_players = 2
 
     probs = [1.0 for i in range(num_players)]
     action_list = []
@@ -417,16 +411,15 @@ def Train(player, env, params = dict()):
 
 if __name__ == '__main__':
     # model = LSTMRNN(TIME_STEPS, INPUT_SIZE, OUTPUT_SIZE, CELL_SIZE, BATCH_SIZE)
-    env = SevenKingEnv()
+    num_players = 2
+    env = SevenKingEnv({'num_normal_players': num_players, 'backward_enable':True})
     player = SevenKingPlayer()
     for i in range(200000):
 
-        seq, res = Train(player, env)
+        seq, res = Train(player, env, num_players)
         # pdb.set_trace()
 
-        player.rnn_model.train(seq, res)
-
-
+        player.rnn_model.train_func(seq, res)
 
         '''
             if k == BATCH_SIZE:

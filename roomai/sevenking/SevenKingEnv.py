@@ -7,6 +7,7 @@ from roomai.sevenking import SevenKingAction
 from roomai.sevenking import SevenKingPokerCard
 from roomai.sevenking import AllSevenKingPatterns
 from roomai.sevenking import AllSevenKingPokerCards
+from roomai.sevenking import SevenKingInfo
 import random
 
 import roomai.sevenking
