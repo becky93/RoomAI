@@ -312,7 +312,7 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
 
     # initialization
     if depth == 0:
-        infos, public_state, person_states, private_state = env.init({"record_history": True, "num_players": num_players})
+        infos, public_state, person_states, private_state = env.init({"record_history": True, 'num_normal_players': num_players, 'backward_enable':True})
     else:
         infos, public_state, person_states, private_state = env.forward(action)
 
@@ -417,7 +417,6 @@ if __name__ == '__main__':
     for i in range(200000):
 
         seq, res = Train(player, env, num_players)
-        # pdb.set_trace()
 
         player.rnn_model.train_func(seq, res)
 

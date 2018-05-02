@@ -35,6 +35,10 @@ class SevenKingPublicState(roomai.common.AbstractPublicState):
         return self.__num_showed_cards__
     num_showed_cards = property(__get_num_showed_cards__, doc="The number of showed poker cards")
 
+    def __get_num_keep_cards__(self):
+        return self.__num_keep_cards__
+    num_keep_cards = property(__get_num_keep_cards__, doc="The number of showed poker cards")
+
     def __get_num_hand_cards__(self):
         if self.__num_hand_cards__ is None:
             return None
@@ -81,6 +85,6 @@ class SevenKingPublicState(roomai.common.AbstractPublicState):
         if self.license_action is None:
             newinstance.__license_action = None
         else:
-            newinstance.self.__license_action__  = self.license_action
+            newinstance.__license_action__  = self.license_action
 
         return newinstance
