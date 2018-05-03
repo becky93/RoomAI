@@ -120,7 +120,7 @@ class RNNModel():
         }
 
         self.sess = tf.Session()
-        self.sess.run(tf.global_variables_initializer())
+        # self.sess.run(tf.global_variables_initializer())
 
     def RNN(self, x, weights, biases):
         x = tf.unstack(x, self.TIME_STEPS, 1)
@@ -128,14 +128,22 @@ class RNNModel():
         outputs, states = rnn.static_rnn(lstm_cell, x, dtype=tf.float32)
         return tf.matmul(outputs[-1], weights['out']) + biases['out']
 
-    def model(self):
+    # def model(self):
+    #     self.output = self.RNN(self.xs, self.weights, self.biases)
+    #     self.output_reshape = tf.reshape(self.output, [-1, self.TIME_STEPS, self.OUTPUT_SIZE])
+    #     self.cost = tf.losses.mean_squared_error(labels=self.ys, predictions=self.output_reshape)
+    #     self.train = tf.train.AdamOptimizer(self.LR).minimize(self.cost)
+    #     self.check = tf.add_check_numerics_ops()
+
+    def train_func(self, seq, res):
+
         self.output = self.RNN(self.xs, self.weights, self.biases)
         self.output_reshape = tf.reshape(self.output, [-1, self.TIME_STEPS, self.OUTPUT_SIZE])
         self.cost = tf.losses.mean_squared_error(labels=self.ys, predictions=self.output_reshape)
         self.train = tf.train.AdamOptimizer(self.LR).minimize(self.cost)
         self.check = tf.add_check_numerics_ops()
 
-    def train_func(self, seq, res):
+        self.sess.run(tf.global_variables_initializer())
         k = 0
         while (k + self.BATCH_SIZE) < len(res):
 
@@ -146,6 +154,7 @@ class RNNModel():
             batch_y = batch_y.reshape(-1, self.TIME_STEPS, self.OUTPUT_SIZE)
             k = k + self.BATCH_SIZE
 
+            # pdb.set_trace()
             _, _, pred, costs, w_t, b_t = self.sess.run([self.train, self.check, self.output_reshape, self.cost, self.weights['out'], self.biases['out']],
                                                    feed_dict={self.xs: batch_x, self.ys: batch_y})
 
