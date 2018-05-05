@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
 
     num_normal_players = len(players)
-    infos, public_state, person_states, private_state = env.init({"num_normal_players": num_normal_players,"allcards":allcards})
+    infos, public_state, person_states, private_state = env.init({"param_num_normal_players": num_normal_players,"allcards":allcards})
     for i in range(env.num_normal_players):
         players[i].receive_info(infos[i])
         show(infos[i])

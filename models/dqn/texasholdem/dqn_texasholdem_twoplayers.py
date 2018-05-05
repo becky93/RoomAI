@@ -1,16 +1,10 @@
 import models.dqn.dqnalgorithm
-import roomai
-import roomai.sevenking
-import roomai.common
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
+import roomai
 
-import shutil
 
-def remove_path(path):
-    shutil.rmtree(path)
-
-class SevenKingModel_ThreePlayers(models.dqn.dqnalgorithm.DqnPlayer):
+class DQN_TexasHoldem_TwoPlayers(models.dqn.dqnalgorithm.DqnPlayer):
     def __init__(self, model_address = None, params = dict()):
         self.num_point  = 15
         self.num_suit   = 5 ## small king and three king
@@ -118,32 +112,12 @@ class SevenKingModel_ThreePlayers(models.dqn.dqnalgorithm.DqnPlayer):
 
 
     def __variable_on_cpu__(self,name, shape, initializer):
-        """Helper to create a Variable stored on CPU memory.
-        Args:
-        name: name of the variable
-        shape: list of ints
-        initializer: initializer for Variable
-        Returns:
-        Variable Tensor
-        """
         with tf.device('/cpu:0'):
             dtype = tf.float32
             var = tf.get_variable(name, shape, initializer=initializer, dtype=dtype)
         return var
 
     def __variable_with_weight_decay__(self,name, shape,  wd, stddev = 0.01,):
-        """Helper to create an initialized Variable with weight decay.
-          Note that the Variable is initialized with a truncated normal distribution.
-        A weight decay is added only if one is specified.
-        Args:
-            name: name of the variable
-            shape: list of ints
-            stddev: standard deviation of a truncated Gaussian
-            wd: add L2Loss weight decay multiplied by this float. If None, weight
-            decay is not added for this Variable.
-        Returns:
-         Variable Tensor
-        """
         dtype = tf.float32
         var = self.__variable_on_cpu__(
             name,

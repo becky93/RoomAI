@@ -1,5 +1,5 @@
 #!/bin/python
-import roomai.kuhn
+import roomai.kuhnpoker
 import roomai.common
 import random
 class HumanInputPlayer(roomai.common.AbstractPlayer):
@@ -20,7 +20,7 @@ class HumanInputPlayer(roomai.common.AbstractPlayer):
         """
         action = raw_input("choosed_acton:")
         #action = ""
-        return roomai.kuhn.KuhnPokerAction.lookup(action)
+        return roomai.kuhnpoker.KuhnPokerAction.lookup(action)
     def reset(self):
         """
 
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     crm_player = crm_kuhn.KuhnPokerCRMPlayer()
     import algorithms
     algo       = algorithms.CRMAlgorithm()
-    env        = roomai.kuhn.KuhnPokerEnv()
+    env        = roomai.kuhnpoker.KuhnPokerEnv()
     for i in range(10000):
         algo.dfs(env = env, player=crm_player, p0 = 1, p1 = 1, deep = 0)
 
@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
 
     num_normal_players = len(players)
-    infos, public_state, person_states, private_state = env.init({"num_normal_players":2,"backward_enable":False})
+    infos, public_state, person_states, private_state = env.init({"param_num_normal_players":2,"backward_enable":False})
     for i in range(num_normal_players):
         players[i].receive_info(infos[i])
         show_person(infos[i].person_state)

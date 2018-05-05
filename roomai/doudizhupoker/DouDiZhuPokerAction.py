@@ -23,7 +23,7 @@ class DouDiZhuPokerAction(roomai.common.AbstractAction):
     '''
      The DouDiZhuPoker action. The action contains two parts the license and the dipper. Examples of usages:\n
     >> import roomai.doudizhupoker\n
-    >> action = roomai.doudizhupoker.SevenKingAction.lookup("55333444") \n
+    >> action = roomai.doudizhupoker.DouDiZhuPokerAction.lookup("55333444") \n
     >> ## We strongly recommend you to get an action with the lookup function.\n
     >> ## The lookup function inputs a string as the key. The key string needn't be sorted\n
     >> action.key \n
@@ -35,7 +35,6 @@ class DouDiZhuPokerAction(roomai.common.AbstractAction):
     >> action.pattern[0]\n
     p_6_2_1_2_0_1 
     '''
-    def __init__(self):        pass
 
     def __init__(self, masterCards, slaveCards):
 

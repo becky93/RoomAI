@@ -20,7 +20,7 @@ def version():
 
     :return: The version of RoomAI 
     '''
-    version = "0.1.1"
+    version = "0.1.16"
     print("roomai-%s" % version)
     return ("roomai-%s" % version)
 

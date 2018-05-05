@@ -1,12 +1,13 @@
 #!/bin/python
 #coding:utf-8
 import roomai.common
+import re
 
 class TexasHoldemAction(roomai.common.AbstractAction):
     '''
     The TexasHoldemAction. The action consists of two parts, namely option and price.\n
     The option is one of "Fold","Check","Call","Raise","AllIn", and the price is the chips used by this action.\n
-    When the option is Fold, the price must be 0.\n
+    When the option is Fold or Check, the price must be 0.\n
     The TexasHoldemAction has a key "%s_%d"%(option, price) as its identification. Examples of usages:\n
     >> import roomai.TexasHoldem\n
     >> a = roomai.TexasHoldem.TexasHoldemAction.lookup("Fold_0")\n
@@ -29,6 +30,10 @@ class TexasHoldemAction(roomai.common.AbstractAction):
     # all in
     AllIn       = "Allin"
     def __init__(self, key):
+        if re.match("^Allin_[1-9]\d*|Raise_[1-9]\d*|Call_[1-9]\d*|Fold_0|Check_0$", key) is None:
+            raise ValueError("%s is invalid key for TexasHoldemAction. The TexasHoldemAction has a key option_price, Fold_0 for example. When the option is Fold or Check, the price must be 0. The check regrex is ^Allin_[1-9]\d*|Raise_[1-9]\d*|Call_[1-9]\d*|Fold_0|Check_0$"%(key))
+
+
         opt_price = key.strip().split("_")
         self.__option__ = opt_price[0]
         self.__price__  = int(opt_price[1])

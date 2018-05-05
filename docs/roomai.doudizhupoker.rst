@@ -12,6 +12,14 @@ roomai\.doudizhupoker\.DouDiZhuPokerAction module
     :undoc-members:
     :show-inheritance:
 
+roomai\.doudizhupoker\.DouDiZhuPokerActionChance module
+-------------------------------------------------------
+
+.. automodule:: roomai.doudizhupoker.DouDiZhuPokerActionChance
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 roomai\.doudizhupoker\.DouDiZhuPokerEnv module
 ----------------------------------------------
 

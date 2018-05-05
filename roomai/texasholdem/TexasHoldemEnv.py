@@ -9,11 +9,11 @@ import logging
 
 from roomai.common import Info
 
-from roomai.texas.TexasHoldemUtil import *
-from roomai.texas.TexasHoldemAction import *
-from roomai.texas.TexasHoldemPersonState import *
-from roomai.texas.TexasHoldemPublicState import *
-from roomai.texas.TexasHoldemPrivateState import *
+from roomai.texasholdem.TexasHoldemUtil import *
+from roomai.texasholdem.TexasHoldemAction import *
+from roomai.texasholdem.TexasHoldemPersonState import *
+from roomai.texasholdem.TexasHoldemPublicState import *
+from roomai.texasholdem.TexasHoldemPrivateState import *
 from functools                    import cmp_to_key
 
 
@@ -24,10 +24,10 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
 
     @classmethod
     def __check_initialization_configuration__(cls, env):
-        if len(env.__params__["chips"]) != env.__params__["num_normal_players"]:
-            raise ValueError("len(env.chips)%d != env.num_normal_players%d" % (len(env.chips), env.num_normal_players))
+        if len(env.public_state.param_initialization_chips) != env.public_state.param_num_normal_players:
+            raise ValueError("len(env.param_initialization_chips) %d != param_num_normal_players %d" % (len(env.param_initialization_chips), env.num_normal_players))
 
-        if env.__params__["num_normal_players"] > 6:
+        if env.public_state.param_num_normal_players > 6:
             raise ValueError("The maximum of the number of players is 6. Now, the number of players = %d" % (env.num_normal_players))
 
         return True
@@ -37,95 +37,97 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
         '''
         Initialize the TexasHoldem game environment with the initialization params.\n
         The initialization is a dict with some options\n
-        1) allcards: the order of all poker cards appearing\n
-        2) backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False\n
-        3) num_normal_players: how many players are in the game, default 3\n
-        4) dealer_id: the player id of the dealer, default random\n
-        5) chips: the initialization chips, default [1000,1000,...]\n
-        6) big_blind_bet: the number of chips for the big blind bet, default 10\n
-        An example of the initialization param is {"num_normal_players":2,"backward_enable":True}
-
+    
+        1. param_backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False\n
+        2. param_num_normal_players: how many players are in the game, default 3\n
+        3. param_dealer_id: the player id of the dealer, default random\n
+        4. param_initialization_chips: the initialization chips, default [1000,1000,...]\n
+        5. param_big_blind_bet: the number of chips for the big blind bet, default 10\n
+        An example of the initialization param is {"param_num_normal_players":2,"backward_enable":True}
+        
         :param params: the initialization params
         :return: infos, public_state, person_states, private_state
         '''
 
         self.logger         = roomai.get_logger()
+        self.public_state   = TexasHoldemPublicState()
 
-        if "num_normal_players" in params:
-            self.__params__["num_normal_players"] = params["num_normal_players"]
+        if "param_num_normal_players" in params:
+            self.public_state.__param_num_normal_players__ = params["param_num_normal_players"]
         else:
-            self.__params__["num_normal_players"] = 3
+            self.public_state.__param_num_normal_players__ = 3
 
-        if "dealer_id" in params:
-            self.__params__["dealer_id"] = params["dealer_id"]
+        if "param_backward_enable" in params:
+            self.public_state.__param_backward_enable__ = params["param_backward_enable"]
         else:
-            self.__params__["dealer_id"] = int(random.random() * self.__params__["num_normal_players"])
+            self.public_state.__param_backward_enable__ = False
 
-        if "chips" in params:
-            self.__params__["chips"]     = params["chips"]
+        if "param_start_turn" in params:
+            self.public_state.__param_start_turn__ = params["param_start_turn"]
         else:
-            self.__params__["chips"]     = [1000 for i in range(self.__params__["num_normal_players"])]
+            self.public_state.__param_start_turn__ = int(random.random() * self.public_state.param_num_normal_players)
 
-        if "big_blind_bet" in params:
-            self.__params__["big_blind_bet"] = params["big_blind_bet"]
+        if "param_dealer_id" in params:
+            self.public_state.__param_dealer_id__ = params["param_dealer_id"]
         else:
-            self.__params__["big_blind_bet"] = 10
+            self.public_state.__param_dealer_id__ = int(random.random() * self.public_state.param_num_normal_players)
 
-        if "allcards" in params:
-            self.__params__["allcards"] = [c.__deepcopy__() for c in params["allcards"]]
-        else:
-            self.__params__["allcards"] = list(roomai.common.AllPokerCards_Without_King.values())
-            random.shuffle(self.__params__["allcards"])
 
-        if "backward_enable" in params:
-            self.__params__["backward_enable"] = params["backward_enable"]
+        if "param_initialization_chips" in params:
+            self.public_state.__param_initialization_chips__     = params["param_initialization_chips"]
         else:
-            self.__params__["backward_enable"] = False
+            self.public_state.__param_initialization_chips__     = [1000 for i in range(self.public_state.param_num_normal_players)]
+
+        if "param_big_blind_bet" in params:
+            self.public_state.__param_big_blind_bet__ = params["param_big_blind_bet"]
+        else:
+            self.public_state.__param_big_blind_bet__ = 10
+
+
+        allcards = list(roomai.common.AllPokerCards_Without_King.values())
+        random.shuffle(allcards )
+
 
 
         self.__check_initialization_configuration__(self)
 
         ## public info
-        small = (self.__params__["dealer_id"] + 1) % self.__params__["num_normal_players"]
-        big   = (self.__params__["dealer_id"] + 2) % self.__params__["num_normal_players"]
+        small = (self.public_state.param_dealer_id + 1) % self.public_state.param_num_normal_players
+        big   = (self.public_state.param_dealer_id + 2) % self.public_state.param_num_normal_players
 
-        self.public_state            = TexasHoldemPublicState()
         pu                           = self.public_state
-        pu.__num_normal_players__           = self.__params__["num_normal_players"]
-        pu.__dealer_id__             = self.__params__["dealer_id"]
-        pu.__big_blind_bet__         = self.__params__["big_blind_bet"]
-        pu.__raise_account__         = self.__params__["big_blind_bet"]
 
-        pu.__is_fold__               = [False for i in range(self.__params__["num_normal_players"])]
+
+        pu.__is_fold__               = [False for i in range(self.public_state.param_num_normal_players)]
         pu.__num_fold__              = 0
-        pu.__is_allin__              = [False for i in range(self.__params__["num_normal_players"])]
+        pu.__is_allin__              = [False for i in range(self.public_state.param_num_normal_players)]
         pu.__num_allin__             = 0
-        pu.__is_needed_to_action__   = [True for i in range(self.__params__["num_normal_players"])]
-        pu.__num_needed_to_action__  = pu.num_normal_players
+        pu.__is_needed_to_action__   = [True for i in range(self.public_state.param_num_normal_players)]
+        pu.__num_needed_to_action__  = pu.param_num_normal_players
 
-        pu.__bets__                  = [0 for i in range(self.__params__["num_normal_players"])]
-        pu.__chips__                 = self.__params__["chips"]
+        pu.__bets__                  = [0 for i in range(self.public_state.param_num_normal_players)]
+        pu.__chips__                 = list(self.public_state.param_initialization_chips)
         pu.__stage__                 = StageSpace.firstStage
-        pu.__turn__                  = (big+1)%pu.num_normal_players
+        pu.__turn__                  = (big+1)%pu.param_num_normal_players
         pu.__public_cards__          = []
 
         pu.__previous_id__           = None
         pu.__previous_action__       = None
 
-        if pu.chips[big] > self.__params__["big_blind_bet"]:
-            pu.__chips__[big] -= self.__params__["big_blind_bet"]
-            pu.__bets__[big]  += self.__params__["big_blind_bet"]
+        if pu.chips[big] > self.public_state.param_big_blind_bet:
+            pu.__chips__[big] -= self.public_state.param_big_blind_bet
+            pu.__bets__[big]  += self.public_state.param_big_blind_bet
         else:
             pu.__bets__[big]     = pu.chips[big]
             pu.__chips__[big]    = 0
             pu.__is_allin__[big] = True
             pu.__num_allin__    += 1
         pu.__max_bet_sofar__ = pu.bets[big]
-        pu.__raise_account__ = self.__params__["big_blind_bet"]
+        pu.__raise_account__ = self.public_state.param_big_blind_bet
 
-        if pu.chips[small] > self.__params__["big_blind_bet"] / 2:
-            pu.__chips__[small] -= self.__params__["big_blind_bet"] /2
-            pu.__bets__[small]  += self.__params__["big_blind_bet"] /2
+        if pu.chips[small] > self.public_state.param_big_blind_bet / 2:
+            pu.__chips__[small] -= self.public_state.param_big_blind_bet /2
+            pu.__bets__[small]  += self.public_state.param_big_blind_bet /2
         else:
             pu.__bets__[small]     = pu.chips[small]
             pu.__chips__[small]    = 0
@@ -133,30 +135,31 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
             pu.__num_allin__      += 1
 
         pu.__is_terminal__         = False
-        pu.__scores__              = [0 for i in range(self.__params__["num_normal_players"])]
+        pu.__scores__              = [0 for i in range(self.public_state.param_num_normal_players)]
 
         # private info
         self.private_state     = TexasHoldemPrivateState()
         pr                     = self.private_state
-        pr.__keep_cards__      = self.__params__["allcards"][self.__params__["num_normal_players"]*2:self.__params__["num_normal_players"]*2+5]
+        pr.__keep_cards__      =allcards[self.public_state.param_num_normal_players*2:self.public_state.param_num_normal_players*2+5]
 
         ## person info
-        self.person_states    = [TexasHoldemPersonState() for i in range(self.__params__["num_normal_players"])]
+
+        self.person_states    = [TexasHoldemPersonState() for i in range(self.public_state.param_num_normal_players)]
         pes                   = self.person_states
-        for i in range(self.__params__["num_normal_players"]):
+        for i in range(self.public_state.param_num_normal_players):
             pes[i].__id__ = i
-            pes[i].__hand_cards__ = self.__params__["allcards"][i*2:(i+1)*2]
+            pes[i].__hand_cards__ = allcards[i*2:(i+1)*2]
         pes[pu.turn].__available_actions__ = self.available_actions(pu, pes[pu.turn])
 
         self.__gen_state_history_list__()
         infos = self.__gen_infos__()
 
         if self.logger.level <= logging.DEBUG:
-            self.logger.debug("TexasHoldemEnv.init: num_normal_players = %d, dealer_id = %d, chip = %d, big_blind_bet = %d"%(\
-                pu.num_normal_players,\
-                pu.dealer_id,\
-                pu.chips[0],\
-                pu.big_blind_bet
+            self.logger.debug("TexasHoldemEnv.init: param_num_normal_players = %d, param_dealer_id = %d, param_initialization_chip = %d, param_big_blind_bet = %d"%(\
+                pu.param_num_normal_players,\
+                pu.param_dealer_id,\
+                pu.param_initialization_chips[0],\
+                pu.param_big_blind_bet
             ))
 
         return infos, pu, pes, pr
@@ -197,7 +200,7 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
         pu.__previous_id__     = pu.turn
         pu.__previous_action__ = action
         pu.__is_terminal__     = False
-        pu.__scores__          = [0 for i in range(self.__params__["num_normal_players"])]
+        pu.__scores__          = [0 for i in range(self.public_state.param_num_normal_players)]
 
         # computing_score
         if TexasHoldemEnv.__is_compute_scores__(self.public_state):
@@ -218,13 +221,13 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
             pu.__stage__                      = pu.stage + 1
 
             pu.__num_needed_to_action__       = 0
-            pu.__is_needed_to_action__        = [False for i in range(pu.num_normal_players)]
-            for i in range(pu.num_normal_players):
+            pu.__is_needed_to_action__        = [False for i in range(pu.param_num_normal_players)]
+            for i in range(pu.param_num_normal_players):
                 if pu.__is_fold__[i] != True and pu.__is_allin__[i] != True:
                     pu.__is_needed_to_action__[i]      = True
                     pu.__num_needed_to_action__       += 1
 
-            pu.__turn__                                             = pu.dealer_id
+            pu.__turn__                                             = pu.param_dealer_id
             pu.__turn__                                             = self.__next_player__(pu)
             pe[self.public_state.turn].__available_actions__        = self.available_actions(self.public_state, self.person_states[self.public_state.turn])
 
@@ -270,7 +273,7 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
             big_blind_bet  = 50
 
             infos, public, persons, private = env.init({"chips":chips,
-                                                        "num_normal_players":num_normal_players,
+                                                        "param_num_normal_players":num_normal_players,
                                                         "dealer_id":dealer_id,
                                                         "big_blind_bet":big_blind_bet})
             for i in range(len(players)):
@@ -306,18 +309,18 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
         pr  = self.private_state
 
         ## compute score before showdown, the winner takes all
-        if pu.num_normal_players  ==  pu.num_fold + 1:
-            scores = [0 for i in range(pu.num_normal_players)]
-            for i in range(pu.num_normal_players):
+        if pu.param_num_normal_players  ==  pu.num_fold + 1:
+            scores = [0 for i in range(pu.param_num_normal_players)]
+            for i in range(pu.param_num_normal_players):
                 if pu.is_fold[i] == False:
                     scores[i] = sum(pu.bets)
                     break
 
         ## compute score after showdown
         else:
-            scores                = [0 for i in range(pu.num_normal_players)]
+            scores                = [0 for i in range(pu.param_num_normal_players)]
             playerid_pattern_bets = [] #for not_quit players
-            for i in range(pu.num_normal_players):
+            for i in range(pu.param_num_normal_players):
                 if pu.is_fold[i] == True: continue
                 hand_pattern_cards = self.__cards2pattern_cards__(pes[i].hand_cards, pr.keep_cards)
                 playerid_pattern_bets.append((i,hand_pattern_cards,pu.bets[i]))
@@ -344,11 +347,11 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
                         num1          = len(tmp_playerid_pattern_bets) - k
                         sum1          = 0
                         max_win_score = pu.bets[tmp_playerid_pattern_bets[k][0]]
-                        for p in range(pu.num_normal_players):
+                        for p in range(pu.param_num_normal_players):
                             sum1      += min(max(0, pu.bets[p] - pot_line), max_win_score)
                         for p in range(k, len(tmp_playerid_pattern_bets)):
                             scores[tmp_playerid_pattern_bets[p][0]] += sum1 / num1
-                        scores[pu.dealer_id] += sum1 % num1
+                        scores[pu.param_dealer_id] += sum1 % num1
                         if pot_line <= max_win_score:
                             pot_line = max_win_score
                     tmp_playerid_pattern_bets = []
@@ -362,18 +365,19 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
                     num1 = len(tmp_playerid_pattern_bets) - i
                     sum1 = 0
                     max_win_score = pu.bets[tmp_playerid_pattern_bets[i][0]]
-                    for p in range(pu.num_normal_players):
+                    for p in range(pu.param_num_normal_players):
                         sum1 += min(max(0, pu.bets[p] - pot_line), max_win_score)
                     for p in range(i, len(tmp_playerid_pattern_bets)):
                         scores[tmp_playerid_pattern_bets[p][0]] += sum1 / num1
-                    scores[pu.dealer_id] += sum1 % num1
+                    scores[pu.param_dealer_id] += sum1 % num1
                     if pot_line <= max_win_score: pot_line = max_win_score
 
-        for p in range(pu.num_normal_players):
+        for p in range(pu.param_num_normal_players):
             pu.__chips__[p] += scores[p]
             scores[p]   -= pu.bets[p]
-        for p in range(pu.num_normal_players):
-            scores[p]   /= pu.big_blind_bet * 1.0
+
+        for p in range(pu.param_num_normal_players):
+            scores[p]   /= pu.param_big_blind_bet * 1.0
         return scores
 
 
@@ -407,12 +411,12 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
 
         pu.__is_needed_to_action__[pu.turn] = False
         pu.__num_needed_to_action__        -= 1
-        p = (pu.turn + 1)%pu.num_normal_players
+        p = (pu.turn + 1)%pu.param_num_normal_players
         while p != pu.turn:
             if pu.is_allin[p] == False and pu.is_fold[p] == False and pu.is_needed_to_action[p] == False:
                 pu.__num_needed_to_action__   += 1
                 pu.__is_needed_to_action__[p]  = True
-            p = (p + 1) % pu.num_normal_players
+            p = (p + 1) % pu.param_num_normal_players
 
 
     def __action_allin__(self, action):
@@ -428,12 +432,12 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
         pu.__num_needed_to_action__        -= 1
         if pu.bets[pu.turn] > pu.max_bet_sofar:
             pu.__max_bet_sofar__ = pu.bets[pu.turn]
-            p = (pu.turn + 1) % pu.num_normal_players
+            p = (pu.turn + 1) % pu.param_num_normal_players
             while p != pu.turn:
                 if pu.is_allin[p] == False and pu.is_fold[p] == False and pu.is_needed_to_action[p] == False:
                     pu.__num_needed_to_action__  += 1
                     pu.__is_needed_to_action__[p] = True
-                p = (p + 1) % pu.num_normal_players
+                p = (p + 1) % pu.param_num_normal_players
 
             pu.__max_bet_sofar__ = pu.bets[pu.turn]
 
@@ -445,9 +449,9 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
         if pu.num_needed_to_action == 0:
             return -1
 
-        p = (i+1)%pu.num_normal_players
+        p = (i+1)%pu.param_num_normal_players
         while pu.is_needed_to_action[p] == False:
-            p = (p+1)%pu.num_normal_players
+            p = (p+1)%pu.param_num_normal_players
         return p
 
     @classmethod
@@ -456,12 +460,12 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
         :return: A boolean variable indicates whether is it time to compute scores
         '''
 
-        if pu.num_normal_players == pu.num_fold + 1:
+        if pu.param_num_normal_players == pu.num_fold + 1:
             return True
 
         # below need showdown
 
-        if pu.num_normal_players <=  pu.num_fold + pu.num_allin +1 and pu.num_needed_to_action == 0:
+        if pu.param_num_normal_players <=  pu.num_fold + pu.num_allin +1 and pu.num_needed_to_action == 0:
             return True
 
         if pu.stage == StageSpace.fourthStage and self.__is_nextround__(pu):
@@ -725,59 +729,6 @@ class TexasHoldemEnv(roomai.common.AbstractEnv):
 
     @classmethod
     def is_action_valid(cls, action, public_state, person_state):
-
-        """
-
-        Args:
-            action:
-            public_state:
-            person_state:
-
-        Returns:
-
-        """
-
-        '''
-        pu = public_state
-
-        if (not isinstance(public_state, TexasHoldemPublicState)) or (not isinstance(action, TexasHoldemAction)):
-            return False
-
-        if pu.is_allin[pu.turn] == True or pu.is_fold[pu.turn] == True:
-            return False
-        if pu.chips[pu.turn] == 0:
-            return False
-
-        if action.option == TexasHoldemAction.Fold:
-            return True
-
-        elif action.option == TexasHoldemAction.Check:
-            if pu.bets[pu.turn] == pu.max_bet_sofar:
-                return True
-            else:
-                return False
-
-        elif action.option == TexasHoldemAction.Call:
-            if action.price == pu.max_bet_sofar - pu.bets[pu.turn]:
-                return True
-            else:
-                return False
-
-        elif action.option == TexasHoldemAction.Raise:
-            raise_account = action.price - (pu.max_bet_sofar - pu.bets[pu.turn])
-            if raise_account == 0:    return False
-            if raise_account % pu.raise_account == 0:
-                return True
-            else:
-                return False
-        elif action.option == TexasHoldemAction.AllIn:
-            if action.price == pu.chips[pu.turn]:
-                return True
-            else:
-                return False
-        else:
-            raise Exception("Invalid action.option" + action.option)
-        '''
         return action.key in person_state.available_actions
 
     def __deepcopy__(self, memodict={}, newinstance = None):

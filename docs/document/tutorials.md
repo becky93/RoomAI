@@ -34,7 +34,7 @@ def compete(env, players):
    for player in players:
         player.reset()
    params = dict()
-   params["num_normal_players"] = len(players) - 1
+   params["param_num_normal_players"] = len(players) - 1
    #len(players)-1 normal players and 1 chance player
    
    infos, public_state, person_states, private_state = env.init(params)
@@ -97,6 +97,13 @@ class AbstractPublicState:
     ## For example, action_history = [(0, roomai.kuhn.KuhnAction.lookup("check"),\
                                       (1,roomai.kuhn.KuhnAction.lookup("bet")]
     ## default action_history is []
+    
+    
+    ## Parameters
+    ## The attributes with "param" prefix are parameters, which are set in the init function of the environment with the params dict
+    self.param_start_turn            = 0
+    self.param_num_normal_players    = 2
+    self.param_backward_enable       = False
     
     
     self.is_terminal = False
@@ -209,9 +216,9 @@ class AbstractEnv:
         Init the game environment
 
         :param: params for the game initialization. \n
-        1. "num_normal_players" denotes how many normal players are in this game. \n
+        1. "param_num_normal_players" denotes how many normal players are in this game. \n
         2. "backward_enable" enables users to use the backward function. Default False. \n
-        An example of params is {"num_normal_players":3, "backward_enable":True}
+        An example of params is {"param_num_normal_players":3, "backward_enable":True}
         :return: infos, public_state, person_states, private_state
         '''
         raise NotImplementedError("The init function hasn't been implemented")

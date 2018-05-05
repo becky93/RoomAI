@@ -3,7 +3,7 @@ import os
 import roomai.common
 from roomai.doudizhupoker.DouDiZhuPokerAction import DouDiZhuActionElement
 import copy
-
+from roomai.doudizhupoker.DouDiZhuPokerHandCards import DouDiZhuPokerHandCards
 
 
 class DouDiZhuPokerPersonState(roomai.common.AbstractPersonState):
@@ -11,12 +11,11 @@ class DouDiZhuPokerPersonState(roomai.common.AbstractPersonState):
     The person state of DouDiZhu game environment
     '''
     def __init__(self):
-        self.__hand_cards__        = None
+        self.__hand_cards__        = DouDiZhuPokerHandCards("")
 
     def __get_hand_cards__(self):
         return self.__hand_cards__
-
-    hand_cards = property(__get_hand_cards__, doc="The cards in the hand of the corresponding player. For example, hand_cards = [444555rR]")
+    hand_cards = property(__get_hand_cards__, doc="The cards in the hand of the corresponding player. For example, hand_cards = roomai.DouDiZhuPokerHandCards(\"444555rR\")")
 
     def __deepcopy__(self, memodict={}, newinstance = None):
         if newinstance is None:

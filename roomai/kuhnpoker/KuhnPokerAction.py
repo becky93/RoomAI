@@ -3,15 +3,17 @@ import roomai.common
 class KuhnPokerAction(roomai.common.AbstractAction):
     '''
     The KuhnPoker action used by the normal players. There are only two actions: bet and check. Examples of usages: \n
-    >> import roomai.kuhn\n
-    >> action = roomai.kuhn.KuhnPokerAction.lookup("bet")\n
+    >> import roomai.kuhnpoker\n
+    >> action = roomai.kuhnpoker.KuhnPokerAction.lookup("bet")\n
     >> action.key\n
     "bet"\n
-    >> action = roomai.kuhn.KuhnPokerAction.lookup("check")\n
+    >> action = roomai.kuhnpoker.KuhnPokerAction.lookup("check")\n
     >> action.key\n
     "check"\n
     '''
     def __init__(self, key):
+        if key not in ["check","bet"]:
+            raise ValueError("The key for KuhnPokerAction must be in [\"check\",\"bet\"]")
         super(KuhnPokerAction,self).__init__(key)
         self.__key__ = key
 
