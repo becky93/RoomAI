@@ -11,6 +11,7 @@ class DouDiZhuPokerPersonState(roomai.common.AbstractPersonState):
     The person state of DouDiZhu game environment
     '''
     def __init__(self):
+        super(DouDiZhuPokerPersonState,self).__init__()
         self.__hand_cards__        = DouDiZhuPokerHandCards("")
 
     def __get_hand_cards__(self):

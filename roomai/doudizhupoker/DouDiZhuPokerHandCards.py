@@ -20,7 +20,7 @@ class DouDiZhuPokerHandCards:
             if idx >= DouDiZhuActionElement.number_of_pokercards:
                 raise Exception("%s is invalid for a handcard" % (cardstr))
 
-        self.__num_card__ = sum(self.card_pointrank_count)
+        self.__num_cards__ = sum(self.card_pointrank_count)
         self.__count2num__ = [0 for i in range(5)]
         for count in self.__card_pointrank_count__:
             self.__count2num__[count] += 1
@@ -40,11 +40,11 @@ class DouDiZhuPokerHandCards:
                                         "cardpoint_to_rank  = {'3':0, '4':1, '5':2, '6':3, '7':4, '8':5, '9':6, 'T':7, 'J':8, 'Q':9, 'K':10, 'A':11, '2':12, 'r':13, 'R':14}.\n" +
                                         "If key = \"33rR\", card_pointrank_count = [2,0,...,0,1,1], len(card_pointrank_count) = 15")
 
-    def __get_num_card__(self):
-        return self.__num_card__
+    def __get_num_cards__(self):
+        return self.__num_cards__
 
-    num_card = property(__get_num_card__,
-                        doc="The number of cards in HandCards. For example, key = \"33rR\", num_card = 4")
+    num_cards = property(__get_num_cards__,
+                         doc="The number of cards in HandCards. For example, key = \"33rR\", num_card = 4")
 
     def __get_key__(self):
         return self.__key__
@@ -77,7 +77,7 @@ class DouDiZhuPokerHandCards:
 
         for c in range(len(cards_str.__card_pointrank_count__)):
             count = cards_str.__card_pointrank_count__[c]
-            self.__num_card__ += count
+            self.__num_cards__ += count
             self.__count2num__[self.card_pointrank_count[c]] -= 1
             self.__card_pointrank_count__[c] += count
             self.__count2num__[self.card_pointrank_count[c]] += 1
@@ -96,7 +96,7 @@ class DouDiZhuPokerHandCards:
 
         for c in range(len(cards_str.__card_pointrank_count__)):
             count = cards_str.__card_pointrank_count__[c]
-            self.__num_card__ -= count
+            self.__num_cards__ -= count
             self.__count2num__[self.card_pointrank_count[c]] -= 1
             self.__card_pointrank_count__[c] -= count
             if self.__card_pointrank_count__[c] < 0:

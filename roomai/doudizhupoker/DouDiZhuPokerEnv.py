@@ -124,17 +124,16 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
         '''
 
         if isinstance(action, DouDiZhuPokerActionChance):
-            len = self.private_state.__unused_cards__
-            idx = len % 3
-            self.person_states[idx].__hand_cards__.remove_cards(action.key)
-            self.private_state.__unused_cards__.remove(action.key)
+            idx = self.private_state.__unused_cards__.num_cards % 3
+            self.person_states[idx].__hand_cards__.add_cards(action.key)
+            self.private_state.__unused_cards__.remove_cards(action.key)
 
-            if len > 3:
+            if self.private_state.__unused_cards__.num_cards > 3:
                 self.person_states[3].__available_actions__ = dict()
-                for card in self.private_state.__unused_cards__:
+                for card in self.private_state.__unused_cards__.key:
                     self.person_states[3].__available_actions__[card] = DouDiZhuPokerActionChance.lookup(card)
             else:
-                self.public_state.turn = self.public_state.param_start_turn
+                self.public_state.__turn__ = self.public_state.param_start_turn
                 self.person_states[self.public_state.param_start_turn].__available_actions__ = self.available_actions(self.public_state, self.person_states[self.public_state.param_start_turn])
 
             infos = self.__gen_infos__()
@@ -194,7 +193,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                 self.__update_license__(turn, action)
                 self.public_state.__continuous_cheat_num__ = 0
     
-                num = self.person_states[turn].hand_cards.num_card
+                num = self.person_states[turn].hand_cards.num_cards
                 if num == 0:
                     self.public_state.__epoch__ += 1
                     if turn == self.public_state.landlord_id:
@@ -331,7 +330,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                         actions[action_key] = action
                 continue
 
-            if pattern[1] + pattern[4] > person_state.hand_cards.num_card:
+            if pattern[1] + pattern[4] > person_state.hand_cards.num_cards:
                 continue
             sum1 = 0
 
@@ -625,7 +624,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                         actions[action_key] = action
                 continue
 
-            if pattern[1] + pattern[4] > person_state.hand_cards.num_card:
+            if pattern[1] + pattern[4] > person_state.hand_cards.num_cards:
                 continue
             sum1 = 0
 

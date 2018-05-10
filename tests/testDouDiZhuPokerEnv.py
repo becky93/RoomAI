@@ -9,32 +9,31 @@ from roomai.doudizhupoker   import *
 class DouDiZhuPokerEnvTester(unittest.TestCase):
     """
     """
-    def testNormal(self):
-        """
-
-        """
+    def testSmokeTest(self):
+        '''
+        
+        :return: 
         '''
         env = DouDiZhuPokerEnv()
+        infos, public_state, person_states, private_state = env.init()
+        while public_state.is_terminal == False:
+            available_actions = list(infos[public_state.turn].person_state.available_actions.values())
+            action = available_actions[int(random.random() * len(available_actions))]
+            env.forward(action)
 
 
-        p = [0,0,0]
-        env.init()
+        env = DouDiZhuPokerEnv()
+        infos, public_state, person_states, private_state  = env.init()
+        num_card = private_state.__unused_cards__.num_cards
+        for i in range(17 * 3):
+            available_actions = list(infos[public_state.turn].person_state.available_actions.values())
+            action = available_actions[int(random.random() * len(available_actions))]
+            env.forward(action)
+        env = env
+        self.assertTrue((env.public_state.turn in [0,1,2]))
+        x = 0
 
-        cards = [0 for i in range(15)]
-        
-        for i in range(3):
-            for j in range(15): 
-                cards[j] += env.person_states[i].hand_cards.card_pointrank_count[j]
-        for j in range(15):
-            c = env.private_state.keep_cards.card_pointrank_count[j]
-            cards[j] += c
 
-
-        for i in range(13):
-            self.assertEqual(cards[i],4)
-        for i in range(13,15):
-            self.assertEqual(cards[i],1)
-        '''
 
     def testFoward(self):
         """
@@ -56,7 +55,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         print ("_______________________________________________________________")
         #print (env.private_state.__unused_cards__.key)
         print (env.person_states[0].hand_cards.key)
-        print (env.person_states[0].hand_cards.num_card)
+        print (env.person_states[0].hand_cards.num_cards)
         print (env.person_states[1].hand_cards.key)
         print (env.person_states[2].hand_cards.key)
         env.public_state.__turn__ = 0
@@ -104,7 +103,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         print (env.public_state.turn)
         print (env.private_state.__unused_cards__)
         print (env.person_states[0].hand_cards.key)
-        print (env.person_states[0].hand_cards.num_card)
+        print (env.person_states[0].hand_cards.num_cards)
         print (env.person_states[1].hand_cards.key)
         print (env.person_states[2].hand_cards.key)
         print (type(infos[0].person_state))
@@ -127,7 +126,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         print ("1111_______________________________________________________________ cheat")
         print (env.private_state.__unused_cards__.key)
         print (env.person_states[0].hand_cards.key)
-        print (env.person_states[0].hand_cards.num_card)
+        print (env.person_states[0].hand_cards.num_cards)
         print (env.person_states[1].hand_cards.key)
         print (env.person_states[2].hand_cards.key)
 
@@ -142,7 +141,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         print ("111111111111_______________________________________________________________ cheat")
         print (env.private_state.__unused_cards__.key)
         print (env.person_states[0].hand_cards.key)
-        print (env.person_states[0].hand_cards.num_card)
+        print (env.person_states[0].hand_cards.num_cards)
         print (env.person_states[1].hand_cards.key)
         print (env.person_states[2].hand_cards.key)
 
@@ -159,7 +158,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         print ("22222_______________________________________________________________ start")
         print (env.private_state.__unused_cards__.key)
         print (env.person_states[0].hand_cards.key)
-        print (env.person_states[0].hand_cards.num_card)
+        print (env.person_states[0].hand_cards.num_cards)
         print (env.person_states[1].hand_cards.key)
         print (env.person_states[2].hand_cards.key)
 
@@ -175,7 +174,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         print ("22222_______________________________________________________________ 0 boom")
         print (env.private_state.__unused_cards__.key)
         print (env.person_states[0].hand_cards.key)
-        print (env.person_states[0].hand_cards.num_card)
+        print (env.person_states[0].hand_cards.num_cards)
         print (env.person_states[1].hand_cards.key)
         print (env.person_states[2].hand_cards.key)
         self.assertEqual(person_states[0].hand_cards.card_pointrank_count[0], 0)
@@ -205,7 +204,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         print ("3333333 _______________________________________________________________0 2222")
         print (env.private_state.__unused_cards__.key)
         print (env.person_states[0].hand_cards.key)
-        print (env.person_states[0].hand_cards.num_card)
+        print (env.person_states[0].hand_cards.num_cards)
         print (env.person_states[1].hand_cards.key)
         print (env.person_states[2].hand_cards.key)
 
@@ -227,7 +226,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         print ("3333333 _______________________________________________________________0 1111")
         print (env.private_state.__unused_cards__.key)
         print (env.person_states[0].hand_cards.key)
-        print (env.person_states[0].hand_cards.num_card)
+        print (env.person_states[0].hand_cards.num_cards)
         print (env.person_states[1].hand_cards.key)
         print (env.person_states[2].hand_cards.key)
 
@@ -252,7 +251,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         print ("3333333 _______________________________________________________________0 3333")
         print (env.private_state.__unused_cards__.key)
         print (env.person_states[0].hand_cards.key)
-        print (env.person_states[0].hand_cards.num_card)
+        print (env.person_states[0].hand_cards.num_cards)
         print (env.person_states[1].hand_cards.key)
         print (env.person_states[2].hand_cards.key)
 
@@ -274,11 +273,11 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         print ("3333333 _______________________________________________________________0 12")
         print (env.private_state.__unused_cards__.key)
         print (env.person_states[0].hand_cards.key)
-        print (env.person_states[0].hand_cards.num_card)
+        print (env.person_states[0].hand_cards.num_cards)
         print (env.person_states[1].hand_cards.key)
         print (env.person_states[2].hand_cards.key)
 
-        print (env.person_states[0].hand_cards.num_card)
+        print (env.person_states[0].hand_cards.num_cards)
         expected_scores = [1,1,-2]
         scores = public_state.scores
         print (public_state.scores)
