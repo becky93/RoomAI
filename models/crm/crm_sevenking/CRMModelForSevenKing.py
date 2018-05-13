@@ -15,13 +15,13 @@ from roomai.sevenking import SevenKingUtils
 from roomai.sevenking import SevenKingAction
 from roomai.sevenking import SevenKingInfo
 
-BATCH_START = 0
-BATCH_SIZE = 60
-TIME_STEPS = 1
-INPUT_SIZE = 54
-OUTPUT_SIZE = 1
-CELL_SIZE = 1
-LR = 0.0001
+# BATCH_START = 0
+# BATCH_SIZE = 60
+# TIME_STEPS = 2
+# INPUT_SIZE = 54
+# OUTPUT_SIZE = 1
+# CELL_SIZE = 1
+# LR = 0.0001
 
 '''
 class LSTMRNN(object):
@@ -105,7 +105,7 @@ class LSTMRNN(object):
 '''
 
 class RNNModel():
-    def __init__(self, BATCH_START=0, BATCH_SIZE=60, TIME_STEPS=1, INPUT_SIZE=54, OUTPUT_SIZE=1, CELL_SIZE=1, LR=0.0001):
+    def __init__(self, BATCH_START=0, BATCH_SIZE=50, TIME_STEPS=108, INPUT_SIZE=54, OUTPUT_SIZE=1, CELL_SIZE=1, LR=0.0001):
         self.BATCH_START = BATCH_START
         self.BATCH_SIZE = BATCH_SIZE
         self.TIME_STEPS = TIME_STEPS
@@ -127,19 +127,17 @@ class RNNModel():
             'out': tf.Variable(tf.constant(0.1, shape=[self.OUTPUT_SIZE]))
         }
 
-        # self.output = self.RNN(self.xs, self.weights, self.biases)
-        # self.output_reshape = tf.reshape(self.output, [-1, self.TIME_STEPS, self.OUTPUT_SIZE])
-        # self.cost = tf.losses.mean_squared_error(labels=self.ys, predictions=self.output_reshape)
-        # self.train = tf.train.AdamOptimizer(self.LR).minimize(self.cost)
-        # self.check = tf.add_check_numerics_ops()
-
         self.sess = tf.Session()
 
     def RNN(self, x, weights, biases):
         x = tf.unstack(x, self.TIME_STEPS, 1)
         lstm_cell = rnn.BasicLSTMCell(self.CELL_SIZE, forget_bias=1.0)
         outputs, states = rnn.static_rnn(lstm_cell, x, dtype=tf.float32)
-        return tf.matmul(outputs[-1], weights['out']) + biases['out']
+        y = []
+        for output in outputs:
+            y.append(tf.matmul(output, weights['out']) + biases['out'])
+        return y
+        # return tf.matmul(outputs[-1], weights['out']) + biases['out']
 
     def model(self):
         self.output = self.RNN(self.xs, self.weights, self.biases)
@@ -153,10 +151,33 @@ class RNNModel():
         # with tf.Session() as sess:
         #     sess.run(tf.global_variables_initializer())
         k = 0
-        while (k + self.BATCH_SIZE) < len(res):
+        # change seq to required format
+        new_seq = []
+        new_res = []
+        for l in range(len(seq)):
+            if l < self.TIME_STEPS:
+                seq_t2 = []
+                seq_t1 = [0] * self.INPUT_SIZE
+                for j in range(self.TIME_STEPS-l-1):
+                    seq_t2.append(seq_t1)
+                seq_t2.extend(seq[0:(l+1)].tolist())
+                new_seq.append(seq_t2)
 
-            batch_x = seq[k:k + self.BATCH_SIZE]
-            batch_y = res[k:k + self.BATCH_SIZE]
+                res_t = [0] * (self.TIME_STEPS-l-1)
+                res_t.extend(res[0:(l+1)].tolist())
+                new_res.append(res_t)
+            else:
+                seq_t2 = seq[(l+1-self.TIME_STEPS):(l+1)].tolist()
+                new_seq.append(seq_t2)
+
+                res_t = res[(l+1-self.TIME_STEPS):(l+1)].tolist()
+                new_res.append(res_t)
+
+        new_seq = np.array(new_seq)
+        new_res = np.array(new_res)
+        while (k + self.BATCH_SIZE) < len(res):
+            batch_x = new_seq[k:k + self.BATCH_SIZE]
+            batch_y = new_res[k:k + self.BATCH_SIZE]
 
             batch_x = batch_x.reshape(-1, self.TIME_STEPS, self.INPUT_SIZE)
             batch_y = batch_y.reshape(-1, self.TIME_STEPS, self.OUTPUT_SIZE)
@@ -175,6 +196,7 @@ class RNNModel():
     def save_model(self, path):
         saver = tf.train.Saver()
         save_path = saver.save(self.sess, path)
+        self.sess.close()
 
 
 class SevenKingPlayer(CRMPlayer):
@@ -265,10 +287,16 @@ class SevenKingPlayer(CRMPlayer):
         for action in self.available_actions:
             this_action = action_list
             this_action.append(input_trans(action))
+            action_t = []
+            if len(this_action) < self.rnn_model.TIME_STEPS:
+                action_t1 = [0] * self.rnn_model.INPUT_SIZE
+                for j in range(self.rnn_model.TIME_STEPS-len(this_action)):
+                    action_t.append(action_t1)
+                action_t.extend(this_action)
+            else:
+                action_t = this_action[(len(this_action)-self.rnn_model.TIME_STEPS):-1]
             regret_list[action] = self.rnn_model.sess.run(self.rnn_model.output, feed_dict={
-                self.rnn_model.xs: this_action.reshape(-1, self.rnn_model.TIME_STEPS, self.rnn_model.INPUT_SIZE),
-                self.rnn_model.ys: res.reshape(-1, self.rnn_model.TIME_STEPS, self.rnn_model.OUTPUT_SIZE)})
-            # result = self.rnn_model.sess.run(regret_list[action], feed_dict={self.rnn_model.xs: this_action})
+                self.rnn_model.xs: np.array(action_t).reshape(-1, self.rnn_model.TIME_STEPS, self.rnn_model.INPUT_SIZE)})
 
         cur_strategies = dict()
         normalizing_sum = 0
@@ -297,7 +325,7 @@ class SevenKingPlayer(CRMPlayer):
             return list(self.available_actions.values())[idx]
 
     def reset(self):
-        pass
+        self.rnn_model.sess.close()
 
 
 def input_trans(key_list):
