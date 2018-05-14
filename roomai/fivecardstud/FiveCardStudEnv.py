@@ -23,13 +23,13 @@ class FiveCardStudEnv(roomai.common.AbstractEnv):
     #@override
     def init(self, params = dict()):
         '''
-        Initialize FiveCardStud game enviroment with the params. The params are as follows:
-        1. param_num_normal_players denotes how many players join in this game, default 3
-        2. param_backward_enable denotes whether the environment will stores all history information. If you need call the backward function, please set it to bet True. default False
-        3. param_start_turn: The param_start_turn is the id of a normal player, who is the first to take an action. 
-        3. param_initialization_chips denotes the initialization chips of players, default [500,500,500]
-        4. param_floor_bet denotes the minimal bet, default 10
-       An example of params is {"param_num_normal_players":3,"param_initialization_chips":[500,500,500]}
+        Initialize FiveCardStud game enviroment with the params. The params are as follows:\n
+        1. param_num_normal_players denotes how many players join in this game, default 3\n
+        2. param_backward_enable denotes whether the environment will stores all history information. If you need call the backward function, please set it to bet True. default False\n
+        3. param_start_turn: The param_start_turn is the id of a normal player, who is the first to take an action. \n
+        3. param_initialization_chips denotes the initialization chips of players, default [500,500,500]\n
+        4. param_floor_bet denotes the minimal bet, default 10\n
+       An example of params is {"param_num_normal_players":3,"param_initialization_chips":[500,500,500]}\n
         
         :param params: initialization param
         :return: infos, public_state, person_states, private_state

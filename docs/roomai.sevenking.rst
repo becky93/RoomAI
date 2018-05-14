@@ -12,6 +12,14 @@ roomai\.sevenking\.SevenKingAction module
     :undoc-members:
     :show-inheritance:
 
+roomai\.sevenking\.SevenKingActionChance module
+-----------------------------------------------
+
+.. automodule:: roomai.sevenking.SevenKingActionChance
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 roomai\.sevenking\.SevenKingEnv module
 --------------------------------------
 

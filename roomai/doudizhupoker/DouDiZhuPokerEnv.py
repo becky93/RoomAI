@@ -166,7 +166,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                 self.public_state.__is_terminal__ = True
                 self.public_state.__scores__      = [0.0, 0.0, 0.0]
 
-                self.__gen_history__()
+                self.__gen_state_history_list__()
                 infos = self.__gen_infos__()
                 return infos, self.public_state, self.person_states, self.private_state
 

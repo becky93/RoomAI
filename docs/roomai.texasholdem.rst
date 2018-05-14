@@ -12,6 +12,14 @@ roomai\.texasholdem\.TexasHoldemAction module
     :undoc-members:
     :show-inheritance:
 
+roomai\.texasholdem\.TexasHoldemActionChance module
+---------------------------------------------------
+
+.. automodule:: roomai.texasholdem.TexasHoldemActionChance
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 roomai\.texasholdem\.TexasHoldemEnv module
 ------------------------------------------
 

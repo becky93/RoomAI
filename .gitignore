@@ -1,6 +1,6 @@
 experiment
 .idea
-build
+_build
 *.zip
 *.pyc
 *.swp

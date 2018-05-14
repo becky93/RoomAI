@@ -12,6 +12,14 @@ roomai\.fivecardstud\.FiveCardStudAction module
     :undoc-members:
     :show-inheritance:
 
+roomai\.fivecardstud\.FiveCardStudActionChance module
+-----------------------------------------------------
+
+.. automodule:: roomai.fivecardstud.FiveCardStudActionChance
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 roomai\.fivecardstud\.FiveCardStudEnv module
 --------------------------------------------
 

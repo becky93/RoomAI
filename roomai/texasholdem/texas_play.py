@@ -1,5 +1,5 @@
 #!/bin/python
-import roomai.texas
+import roomai.texasholdem
 import random
 import roomai.common
 random.seed(4)
@@ -9,7 +9,7 @@ class Player(roomai.common.AbstractPlayer):
     def take_action(self):
         action = raw_input("choosed_acton:")
         #action = ""
-        return roomai.texas.TexasHoldemAction.lookup(action)
+        return roomai.texasholdem.TexasHoldemAction.lookup(action)
     def reset(self):
         pass
 
@@ -28,7 +28,7 @@ def show_info(info):
 
 if __name__ == "__main__":
     players     = [Player(), Player(), Player(), roomai.common.RandomPlayerChance()]
-    env         = roomai.texas.TexasHoldemEnv()
+    env         = roomai.texasholdem.TexasHoldemEnv()
 
     num_players = len(players)
     infos, public_state, person_states, private_state = env.init({"num_normal_players": num_players-1})

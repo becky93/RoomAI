@@ -13,13 +13,12 @@ class BridgeEnv(roomai.common.AbstractEnv):
     The Bridge game environment
     '''
 
-
     def init(self, params = dict()):
         '''
         Initialize the Bridge game environment.The params is the initialization params with the following params:\n
-        1. param_backward_enable: If you need call the backward function of the enviroment, please set it to True. Default False.
-        2. param_start_turn: The param_start_turn is the id of a normal player, who is the first to take an action. In KuhnPoker, param_start_turn must be 0 or 1.
-        3. param_vulnerable: An array of boolean variables denotes whether is the corresponding player vulnerable. param_vulnerable[0] must equal param_vulnerable[2], param_vulnerable[1] must equal param_vulnerable[3]. 
+        1. param_backward_enable: If you need call the backward function of the enviroment, please set it to True. Default False.\n
+        2. param_start_turn: The param_start_turn is the id of a normal player, who is the first to take an action. In KuhnPoker, param_start_turn must be 0 or 1.\n
+        3. param_vulnerable: An array of boolean variables denotes whether is the corresponding player vulnerable. param_vulnerable[0] must equal param_vulnerable[2], param_vulnerable[1] must equal param_vulnerable[3]. \n
         For example, param_vulnerable=[false,true,false,true]
         
         
