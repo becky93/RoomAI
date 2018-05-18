@@ -408,7 +408,7 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
             action_list.append(input_trans(action_key))
 
         regret_list.append(0.0)
-        util, isTerminal = OutcomeSamplingCRM(env, this_turn, player, temp_probs, sampleProb*action_prob, action_list, regret_list, available_actions[action_key], depth+1)
+        util, isTerminal = OutcomeSamplingCRM(env, this_turn, player, temp_probs, action_prob, action_list, regret_list, available_actions[action_key], depth+1)
 
         temp_prob = 1.0
         for j in range(num_players):
@@ -417,7 +417,8 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
 
         # strategy_util = cur_strategies[new_key] * temp_prob * util / sampleProb
         # strategy_util = temp_prob * util
-        strategy_util = util / cur_strategies[new_key]
+        # strategy_util = util / cur_strategies[new_key]
+        strategy_util = cur_strategies[new_key] * util / sampleProb
         # strategy_util = available_actions[action_key] * temp_prob * util
 
         strategies = player.get_strategies(state, available_actions)
