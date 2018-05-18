@@ -3,9 +3,9 @@ import random
 
 from algorithms import CRMAlgorithm
 from algorithms import CRMPlayer
-from roomai.kuhn import Example_KuhnPokerAlwaysBetPlayer
-from roomai.kuhn import KuhnPokerEnv
-from roomai.kuhn import KuhnPokerRandomPlayer
+from roomai.kuhnpoker import Example_KuhnPokerAlwaysBetPlayer
+from roomai.kuhnpoker import KuhnPokerEnv
+from roomai.kuhnpoker import KuhnPokerRandomPlayer
 
 
 class KuhnPokerCRMPlayer(CRMPlayer):

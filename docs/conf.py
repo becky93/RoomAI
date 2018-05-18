@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # -*- coding: utf-8 -*-
 #
 # roomai documentation build configuration file, created by
-# sphinx-quickstart on Thu Mar  8 22:59:22 2018.
+# sphinx-quickstart on Mon Apr 23 08:31:20 2018.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.

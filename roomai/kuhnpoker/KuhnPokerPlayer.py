@@ -2,7 +2,7 @@
 #coding:utf-8
 import random
 import roomai.common
-import roomai.kuhn.KuhnPokerActionChance
+import roomai.kuhnpoker.KuhnPokerActionChance
 
 class KuhnPokerChancePlayer(roomai.common.AbstractPlayer):
     def receive_info(self, info):
@@ -18,7 +18,7 @@ class Example_KuhnPokerAlwaysBetPlayer(roomai.common.AbstractPlayer):
         pass     
 
     def take_action(self):
-        return roomai.kuhn.KuhnPokerAction("bet")
+        return roomai.kuhnpoker.KuhnPokerAction("bet")
 
     def reset(self):
         pass

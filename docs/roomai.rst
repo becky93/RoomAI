@@ -10,9 +10,9 @@ Subpackages
     roomai.common
     roomai.doudizhupoker
     roomai.fivecardstud
-    roomai.kuhn
+    roomai.kuhnpoker
     roomai.sevenking
-    roomai.texas
+    roomai.texasholdem
 
 Submodules
 ----------

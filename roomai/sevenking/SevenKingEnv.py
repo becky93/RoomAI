@@ -22,28 +22,43 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         '''
         Initialize the SevenKing game environment with the initialization params.\n
         The initialization is a dict with some options\n
-        1) backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False\n
-        2) num_normal_players: how many players are in the game  \n
-        An example of the initialization param is {"num_normal_players":2,"backward_enable":True}\n
+        1. param_backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False\n
+        2. param_num_normal_players: how many players are in the game  \n
+        3. param_start_turn: players[start_turn] is first normal player to take an action
+        An example of the initialization param is {"param_num_normal_players":2,"param_backward_enable":True}\n
 
         :param params: the initialization params
         :return: infos, public_state, person_states, private_state
         '''
 
-        if "num_normal_players" in params:
-            self.__params__["num_normal_players"] = params["num_normal_players"]
-        else:
-            self.__params__["num_normal_players"] = 3
-
-        if "backward_enable" in params:
-            self.__params__["backward_enable"] = params["backward_enable"]
-        else:
-            self.__params__["backward_enable"] = False
-
+        logger = roomai.get_logger()
 
         self.public_state  = SevenKingPublicState()
         self.private_state = SevenKingPrivateState()
-        self.person_states = [SevenKingPersonState() for i in range(self.__params__["num_normal_players"] + 1)]
+
+
+        if "param_num_normal_players" in params:
+            self.public_state.__param_num_normal_players__ = params["param_num_normal_players"]
+        else:
+            self.public_state.__param_num_normal_players__ = 3
+        logger.info("param_num_normal_players = %d"%(self.public_state.param_num_normal_players))
+
+        if "param_backward_enable" in params:
+            self.public_state.__param_backward_enable__ = params["param_backward_enable"]
+        else:
+            self.public_state.__param_backward_enable__ = False
+        logger.info("param_backward_enable = "+str(self.public_state.param_backward_enable))
+
+        if "param_start_turn" in params:
+            self.public_state.__param_start_turn__ = params["param_start_turn"]
+        else:
+            self.public_state.__param_start_turn__ = int(random.random() * self.public_state.param_num_normal_players)
+        logger.info("param_start_turn = %d"%(self.public_state.param_num_normal_players))
+
+
+        self.person_states = [SevenKingPersonState() for i in range(self.public_state.param_num_normal_players + 1)]
+
+
 
         self.public_state_history  = []
         self.private_state_history = []
@@ -54,7 +69,7 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         random.shuffle(allcards)
         self.private_state.__keep_cards__ = allcards
 
-        for i in range(self.__params__["num_normal_players"]):
+        for i in range(self.public_state.param_num_normal_players):
             tmp = []
             for j in range(5):
                 c = self.private_state.__keep_cards__.pop()
@@ -64,20 +79,20 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         ## public_state
         self.public_state.__turn__,_          = self.__choose_player_with_lowest_card__()
         self.public_state.__is_terminal__     = False
-        self.public_state.__scores__          = []
+        self.public_state.__scores__          = [0 for i in range(self.public_state.param_num_normal_players)]
         self.public_state.__license_action__  = SevenKingAction.lookup("")
         self.public_state.__stage__           = 0
 
-        self.public_state.__num_normal_players__     = self.__params__["num_normal_players"]
+
         self.public_state.__num_keep_cards__  = len(self.private_state.keep_cards)
         self.public_state.__num_hand_cards__  = [len(person_state.hand_cards) for person_state in self.person_states]
-        self.public_state.__is_fold__         = [False for i in range(self.public_state.num_normal_players)]
+        self.public_state.__is_fold__         = [False for i in range(self.public_state.param_num_normal_players)]
         self.public_state.__num_fold__        = 0
 
         self.public_state.__action_list__ = []
 
         ## person_state
-        for i in range(self.__params__["num_normal_players"]+1):
+        for i in range(self.public_state.param_num_normal_players+1):
             self.person_states[i].__id__   = i
             if i == self.public_state.turn:
                 self.person_states[i].__available_actions__ = SevenKingEnv.available_actions(self.public_state, self.person_states[i])
@@ -147,7 +162,7 @@ class SevenKingEnv(roomai.common.AbstractEnv):
             new_turn, min_card               = self.__choose_player_with_lowest_card__()
             pu.__turn__                         = new_turn
             pu.__num_fold__                     = 0
-            pu.__is_fold__                      = [False for i in range(pu.num_normal_players)]
+            pu.__is_fold__                      = [False for i in range(pu.param_num_normal_players)]
             pu.__license_action__               = SevenKingAction.lookup("")
             pes[new_turn].__available_actions__                    = SevenKingEnv.available_actions(pu, pes[new_turn])
             keys = list(pes[new_turn].available_actions.keys())
@@ -158,17 +173,17 @@ class SevenKingEnv(roomai.common.AbstractEnv):
 
 
         ## round next
-        elif self.public_state.num_fold + 1 == pu.num_normal_players:
+        elif self.public_state.num_fold + 1 == pu.param_num_normal_players:
             new_turn                            = self.__choose_player_with_nofold__()
             pu.__turn__                         = new_turn
             pu.__num_fold__                     = 0
-            pu.__is_fold__                      = [False for i in range(pu.num_normal_players)]
+            pu.__is_fold__                      = [False for i in range(pu.param_num_normal_players)]
             pu.__license_action__               = SevenKingAction.lookup("")
             pes[new_turn].__available_actions__ = SevenKingEnv.available_actions(pu, pes[new_turn])
 
 
         else:
-            new_turn                            = (turn + 1) % pu.num_normal_players
+            new_turn                            = (turn + 1) % pu.param_num_normal_players
             pu.__turn__                         = new_turn
             pes[new_turn].__available_actions__ = SevenKingEnv.available_actions(pu, pes[new_turn])
 
@@ -179,12 +194,12 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         return infos, self.public_state, self.person_states, self.private_state
 
     def __compute_scores__(self):
-        scores                         = [-1 for i in range(self.__params__["num_normal_players"])]
-        scores[self.public_state.turn] = self.__params__["num_normal_players"] -1
+        scores                         = [-1 for i in range(self.public_state.param_num_normal_players)]
+        scores[self.public_state.turn] = self.public_state.param_num_normal_players -1
         return scores
 
     def __choose_player_with_nofold__(self):
-        for player_id in range(self.public_state.num_normal_players):
+        for player_id in range(self.public_state.param_num_normal_players):
             if self.public_state.is_fold[player_id]== False:
                 return player_id
 
@@ -193,7 +208,7 @@ class SevenKingEnv(roomai.common.AbstractEnv):
     def __choose_player_with_lowest_card__(self):
         min_card    = self.person_states[0].hand_cards[0]
         min_playerid = 0
-        for playerid in range(self.__params__["num_normal_players"]):
+        for playerid in range(self.public_state.__param_num_normal_players__):
             for c in self.person_states[playerid].hand_cards:
                 if SevenKingPokerCard.compare(min_card, c) > 0:
                     min_card     = c
@@ -210,10 +225,10 @@ class SevenKingEnv(roomai.common.AbstractEnv):
         :param players: The players
         :return: scores for the players
         '''
-        num_normal_players = len(players)
-        infos, public_state, person_states, private_state = env.init({"num_normal_players":num_normal_players})
+        num_normal_players = len(players)-1
+        infos, public_state, person_states, private_state = env.init({"param_num_normal_players":num_normal_players})
 
-        for i in range(env.__params__["num_normal_players"]):
+        for i in range(public_state.param_num_normal_players + 1):
             players[i].receive_info(infos[i])
 
         while public_state.is_terminal == False:
@@ -221,7 +236,7 @@ class SevenKingEnv(roomai.common.AbstractEnv):
             action = players[turn].take_action()
             infos, public_state, person_states, private_state = env.forward(action)
 
-            for i in range(env.__params__["num_normal_players"]):
+            for i in range(public_state.param_num_normal_players + 1):
                 players[i].receive_info(infos[i])
 
         return public_state.scores

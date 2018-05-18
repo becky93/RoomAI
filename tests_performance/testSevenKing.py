@@ -165,7 +165,7 @@ class testSevenKing(unittest.TestCase):
         """
         env = SevenKingEnv()
 
-        infos, public_state, person_states, private_state = env.init({"num_normal_players":2})
+        infos, public_state, person_states, private_state = env.init({"param_num_normal_players":2})
         assert(len(infos) == 2)
         turn = public_state.turn
         self.show_hand_card(person_states[turn].hand_cards)

@@ -3,6 +3,7 @@ import os
 import roomai.common
 from roomai.doudizhupoker.DouDiZhuPokerAction import DouDiZhuActionElement
 import copy
+from roomai.doudizhupoker.DouDiZhuPokerHandCards import DouDiZhuPokerHandCards
 
 
 
@@ -19,7 +20,7 @@ class DouDiZhuPokerPublicState(roomai.common.AbstractPublicState):
         self.__continuous_cheat_num__ = 0
         self.__is_response__ = False
 
-        self.__keep_cards__ = None
+        self.__keep_cards__   = DouDiZhuPokerHandCards("")
         self.__first_player__ = -1
         self.__phase__ = -1
         self.__epoch__ = -1
@@ -59,6 +60,10 @@ class DouDiZhuPokerPublicState(roomai.common.AbstractPublicState):
 
     def __get_epoch__(self):    return self.__epoch__
     epoch = property(__get_epoch__, doc = "The epoch denotes the count about a player takes an action.")
+
+    def __get_keep_cards__(self): return self.__keep_cards__
+    keep_cards = property(__get_keep_cards__, doc = "The keep cards have two cards, which are public to all players and belong to the landlord player after the bidding stage. For example, keep_cards = roomai.doudizhupoker.DouDiZhuPokerHandCards(\"445\")")
+
 
     def __deepcopy__(self, memodict={}, newinstance = None):
         if newinstance is None:

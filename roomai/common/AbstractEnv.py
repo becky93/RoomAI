@@ -17,7 +17,6 @@ class AbstractEnv(object):
     '''
 
     def __init__(self, params=dict()):
-        self.__params__ = dict(params)
         self.__public_state_history__ = []
         self.__person_states_history__ = []
         self.__private_state_history__ = []
@@ -38,20 +37,21 @@ class AbstractEnv(object):
         return tuple(__infos__)
 
     def __gen_state_history_list__(self):
-
-        if "backward_enable" not in self.__params__ or self.__params__["backward_enable"] == False:
+        if self.public_state.param_backward_enable == False:
             return
 
         self.__public_state_history__.append(self.public_state.__deepcopy__())
         self.__private_state_history__.append(self.private_state.__deepcopy__())
         self.__person_states_history__.append([person_state.__deepcopy__() for person_state in self.person_states])
 
+
+
     def init(self, params=dict()):
         '''
-        Initialize the game environment 
+        Initialize the game environment. 
 
-        :param params:  
-        :return:  infos, public_state, person_states, private_state
+        :param params
+        :return: infos, public_state, person_states, private_state
         '''
 
         raise ("The init function hasn't been implemented")
@@ -100,9 +100,9 @@ class AbstractEnv(object):
         :raise: The game environment has reached the initialization state and can't go back further.
         '''
 
-        if "backward_enable" not in self.__params__ or self.__params__["backward_enable"] == False:
+        if self.public_state.param_backward_enable == False:
             raise ValueError(
-                "Env can't backward when params[\"backward_enable\"] = False. If you want to use this backward function, please env.init({\"backward_enable\":true,...})")
+                "The environmcan't backward when params[\"param_backward_enable\"] = False. If you want to use this backward function, please env.init({\"param_backward_enable\":true,...})")
 
         if len(self.__public_state_history__) == 1:
             raise ValueError("Env has reached the initialization state and can't go back further. ")
@@ -121,12 +121,11 @@ class AbstractEnv(object):
     def __deepcopy__(self, memodict={}, newinstance=None):
         if newinstance is None:
             newinstance = AbstractEnv()
-        newinstance.__params__ = dict(self.__params__)
         newinstance.private_state = self.private_state.__deepcopy__()
         newinstance.public_state = self.public_state.__deepcopy__()
         newinstance.person_states = [pe.__deepcopy__() for pe in self.person_states]
 
-        if "backward_enable" not in self.__params__ or self.__params__["backward_enable"] == False:
+        if self.public_state.param_backward_enable == False:
             return newinstance
 
         newinstance.__private_state_history__ = [pr.__deepcopy__() for pr in self.__private_state_history__]
@@ -149,7 +148,7 @@ class AbstractEnv(object):
         :param players: The players
         :return: scores for the players
         '''
-        raise NotImplementedError("The round function hasn't been implemented")
+        raise NotImplementedError("The compete function hasn't been implemented")
 
 
 

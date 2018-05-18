@@ -36,7 +36,7 @@ class BridgeTester(unittest.TestCase):
         env = roomai.bridge.BridgeEnv()
         allcards = list(roomai.bridge.AllBridgePlayingPokerCards.values())
         allcards.sort(key = cmp_to_key(roomai.common.PokerCard.compare))
-        infos, public_state, person_states, private_state = env.init({"start_turn":0})
+        infos, public_state, person_states, private_state = env.init({"param_start_turn":0})
         for i in range(4):
             print (i,person_states[i].hand_cards_dict, len(person_states[i].hand_cards_dict))
             self.assertEqual(len(person_states[i].hand_cards_dict),13)
@@ -70,7 +70,7 @@ class BridgeTester(unittest.TestCase):
         env = roomai.bridge.BridgeEnv()
         allcards = list(roomai.bridge.AllBridgePlayingPokerCards.values())
         allcards.sort(key = cmp_to_key(roomai.common.PokerCard.compare))
-        infos, public_state, person_states, private_state = env.init({"start_turn":0, "backward_enable":True})
+        infos, public_state, person_states, private_state = env.init({"param_start_turn":0, "param_backward_enable":True})
         for i in range(4):
             print (i,person_states[i].hand_cards_dict, len(person_states[i].hand_cards_dict))
             self.assertEqual(len(person_states[i].hand_cards_dict),13)

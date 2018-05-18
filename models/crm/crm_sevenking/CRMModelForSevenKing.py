@@ -359,7 +359,7 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
 
     # initialization
     if depth == 0:
-        infos, public_state, person_states, private_state = env.init({"record_history": True, 'num_normal_players': num_players, 'backward_enable':True})
+        infos, public_state, person_states, private_state = env.init({'param_num_normal_players': num_players, 'param_backward_enable':True})
     else:
         infos, public_state, person_states, private_state = env.forward(action)
 
@@ -488,7 +488,7 @@ if __name__ == '__main__':
     # sess.run(tf.global_variables_initializer())
 
     num_players = 2
-    env = SevenKingEnv({'num_normal_players': num_players, 'backward_enable':True})
+    env = SevenKingEnv({'param_num_normal_players': num_players, 'param_backward_enable':True})
     player = SevenKingPlayer()
     player.rnn_model.model()
     player.rnn_model.sess.run(tf.global_variables_initializer())

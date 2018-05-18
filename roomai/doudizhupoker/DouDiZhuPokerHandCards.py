@@ -66,12 +66,17 @@ class DouDiZhuPokerHandCards:
         strs.sort()
         return "".join(strs)
 
-    def __add_cards__(self, cards):
-        if isinstance(cards, str) == True:
-            cards = DouDiZhuPokerHandCards(cards)
+    def add_cards(self, cards_str):
+        '''
+        add some cards to this handcards
+        
+        :param cards_str: the cards added to this handcards, for example, "445"
+        '''
+        if isinstance(cards_str, str) == True:
+            cards_str = DouDiZhuPokerHandCards(cards_str)
 
-        for c in range(len(cards.__card_pointrank_count__)):
-            count = cards.__card_pointrank_count__[c]
+        for c in range(len(cards_str.__card_pointrank_count__)):
+            count = cards_str.__card_pointrank_count__[c]
             self.__num_card__ += count
             self.__count2num__[self.card_pointrank_count[c]] -= 1
             self.__card_pointrank_count__[c] += count
@@ -79,15 +84,23 @@ class DouDiZhuPokerHandCards:
 
         self.__key__ = self.__compute_key__()
 
-    def __remove_cards__(self, cards):
-        if isinstance(cards, str) == True:
-            cards = DouDiZhuPokerHandCards(cards)
+    def remove_cards(self, cards_str):
+        '''
+        remove some cards from 
+        
+        :param cards_str: the cards removed from this handcards, for example, "445"
+        :exception ValueException:
+        '''
+        if isinstance(cards_str, str) == True:
+            cards_str = DouDiZhuPokerHandCards(cards_str)
 
-        for c in range(len(cards.__card_pointrank_count__)):
-            count = cards.__card_pointrank_count__[c]
+        for c in range(len(cards_str.__card_pointrank_count__)):
+            count = cards_str.__card_pointrank_count__[c]
             self.__num_card__ -= count
             self.__count2num__[self.card_pointrank_count[c]] -= 1
             self.__card_pointrank_count__[c] -= count
+            if self.__card_pointrank_count__[c] < 0:
+                raise ValueError("Unable remove cards(%s) from handcards(%s)"%(cards_str, self.__key__))
             self.__count2num__[self.card_pointrank_count[c]] += 1
 
         self.__key__ = self.__compute_key__()
@@ -96,7 +109,7 @@ class DouDiZhuPokerHandCards:
         str = action.key
         if str == 'x' or str == 'b':
             return
-        self.__remove_cards__(DouDiZhuPokerHandCards(str))
+        self.remove_cards(DouDiZhuPokerHandCards(str))
 
     def __deepcopy__(self, memodict={}, newinstance=None):
         return DouDiZhuPokerHandCards(self.key)

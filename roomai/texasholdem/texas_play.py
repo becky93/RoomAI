@@ -19,7 +19,7 @@ def show_public(public_state):
            "chips:%s"%(",".join([str(i) for i in public_state.chips])) +\
            "  bets:%s"%(",".join([str(i) for i in public_state.bets])) +\
            "  is_folds:%s\n"%(",".join([str(i) for i in public_state.is_fold])) +\
-           "public_cards:%s"%(",".join([c.key for c in public_state.public_cards]))
+           "  public_cards:%s"%(",".join([c.key for c in public_state.public_cards]))
            )
 def show_info(info):
     person_state          = info.person_state
@@ -27,13 +27,13 @@ def show_info(info):
     print ("%d cards:%s"%(person_state.id,",".join([c.key for c in person_state.hand_cards])))
 
 if __name__ == "__main__":
-    players     = [Player(), Player(), Player()]
+    players     = [Player(), Player(), Player(), roomai.common.RandomPlayerChance()]
     env         = roomai.texas.TexasHoldemEnv()
 
-    num_normal_players = len(players)
-    infos, public_state, person_states, private_state = env.init({"num_normal_players": num_normal_players})
+    num_players = len(players)
+    infos, public_state, person_states, private_state = env.init({"num_normal_players": num_players-1})
     show_public(public_state)
-    for i in range(env.num_normal_players):
+    for i in range(num_players):
         players[i].receive_info(infos[i])
         show_info(infos[i])
     print ("\n")
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         print ("%d player take an action (%s)"%(turn,action.key))
         infos, public_state, person_states, private_state = env.forward(action)
         show_public(public_state)
-        for i in range(env.num_normal_players):
+        for i in range(num_players):
             players[i].receive_info(infos[i])
             show_info(infos[i])
         print ("\n")
