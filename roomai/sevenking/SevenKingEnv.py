@@ -41,19 +41,19 @@ class SevenKingEnv(roomai.common.AbstractEnv):
             self.public_state.__param_num_normal_players__ = params["param_num_normal_players"]
         else:
             self.public_state.__param_num_normal_players__ = 3
-        logger.info("param_num_normal_players = %d"%(self.public_state.param_num_normal_players))
+        # logger.info("param_num_normal_players = %d"%(self.public_state.param_num_normal_players))
 
         if "param_backward_enable" in params:
             self.public_state.__param_backward_enable__ = params["param_backward_enable"]
         else:
             self.public_state.__param_backward_enable__ = False
-        logger.info("param_backward_enable = "+str(self.public_state.param_backward_enable))
+        # logger.info("param_backward_enable = "+str(self.public_state.param_backward_enable))
 
         if "param_start_turn" in params:
             self.public_state.__param_start_turn__ = params["param_start_turn"]
         else:
             self.public_state.__param_start_turn__ = int(random.random() * self.public_state.param_num_normal_players)
-        logger.info("param_start_turn = %d"%(self.public_state.param_num_normal_players))
+        # logger.info("param_start_turn = %d"%(self.public_state.param_num_normal_players))
 
 
         self.person_states = [SevenKingPersonState() for i in range(self.public_state.param_num_normal_players + 1)]

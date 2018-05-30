@@ -1,6 +1,7 @@
 #!/bin/python
 
 import roomai.sevenking
+import roomai.common
 from roomai.sevenking import SevenKingAction
 from roomai.sevenking import SevenKingPokerCard
 

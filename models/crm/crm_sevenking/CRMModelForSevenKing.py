@@ -14,6 +14,7 @@ from roomai.sevenking import SevenKingEnv
 from roomai.sevenking import SevenKingUtils
 from roomai.sevenking import SevenKingAction
 from roomai.sevenking import SevenKingInfo
+from roomai.sevenking import SevenKingPlayer as skp
 
 # BATCH_START = 0
 # BATCH_SIZE = 60
@@ -188,7 +189,7 @@ class RNNModel():
                                                     feed_dict={self.xs: batch_x, self.ys: batch_y})
 
             if math.isnan(costs):
-                    pdb.set_trace()
+                pdb.set_trace()
 
             if i % 100 == 0:
                 print('cost: ', round(costs, 4))
@@ -214,8 +215,8 @@ class SevenKingPlayer(CRMPlayer):
         hand_cards = info.person_state.hand_cards
         history = info.public_state.action_list
         hand_cards_keys = []
-        for i in range(len(hand_cards)):
-            hand_cards_keys.append(hand_cards[i].key)
+        for j in range(len(hand_cards)):
+            hand_cards_keys.append(hand_cards[j].key)
 
         return "%s_%s" % ("_".join(hand_cards_keys), "".join(history))
 
@@ -279,7 +280,7 @@ class SevenKingPlayer(CRMPlayer):
 
     def take_action(self):
         action_list = []
-        regret_list = []
+        regret_list = dict()
 
         for action in self.action_history:
             action_list.append(input_trans(action))
@@ -298,13 +299,14 @@ class SevenKingPlayer(CRMPlayer):
             regret_list[action] = self.rnn_model.sess.run(self.rnn_model.output, feed_dict={
                 self.rnn_model.xs: np.array(action_t).reshape(-1, self.rnn_model.TIME_STEPS, self.rnn_model.INPUT_SIZE)})
 
+        # pdb.set_trace()
         cur_strategies = dict()
         normalizing_sum = 0
         for key in regret_list:
-            normalizing_sum += max(regret_list[key], 0)
+            normalizing_sum += max(regret_list[key][-1][0][0], 0)
         for key in regret_list:
             if normalizing_sum > 0:
-                cur_strategies[key] = max(regret_list[key], 0) / normalizing_sum
+                cur_strategies[key] = max(regret_list[key][-1][0][0], 0) / normalizing_sum
             else:
                 cur_strategies[key] = 1.0 / len(self.available_actions)
 
@@ -431,8 +433,8 @@ def OutcomeSamplingCRM(env, cur_turn, player, probs, sampleProb, action_list, re
 
         regret_list[depth] = player.regrets[new_key]
 
-        if player.regrets[new_key] > 1.0 or player.regrets[new_key] < -1.0:
-            pdb.set_trace()
+        # if player.regrets[new_key] > 1.0 or player.regrets[new_key] < -1.0:
+        #     pdb.set_trace()
 
         player.strategies[new_key] = strategies[new_key] + probs[this_turn] * cur_strategies[new_key]
 
@@ -493,7 +495,7 @@ if __name__ == '__main__':
     player = SevenKingPlayer()
     player.rnn_model.model()
     player.rnn_model.sess.run(tf.global_variables_initializer())
-    for i in range(200000):
+    for i in range(2000):
 
         seq, res = Train(player, env, num_players)
 
@@ -547,4 +549,8 @@ if __name__ == '__main__':
                 print('cost: ', round(cost, 4))
         '''
 
-    player.rnn_model.save_model("/path")
+    # player.rnn_model.save_model("./path/")
+    player2 = skp.AlwaysFoldPlayer()
+    for i in range(10):
+        scores = env.compete(env,players=[player, player2])
+        print(scores)
