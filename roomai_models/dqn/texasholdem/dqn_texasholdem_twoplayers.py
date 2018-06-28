@@ -1,10 +1,10 @@
-import models.dqn.dqnalgorithm
+import roomai_models.dqn.dqnalgorithm
 import numpy as np
 import tensorflow as tf
 import roomai
 
 
-class DQN_TexasHoldem_TwoPlayers(models.dqn.dqnalgorithm.DqnPlayer):
+class DQN_TexasHoldem_TwoPlayers(roomai_models.dqn.dqnalgorithm.DqnPlayer):
     def __init__(self, model_address = None, params = dict()):
         self.num_point  = 15
         self.num_suit   = 5 ## small king and three king

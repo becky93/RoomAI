@@ -2,8 +2,8 @@
 
 import random
 import roomai.common
-from models.dqn.dqnalgorithm import Experience
-from models.dqn.dqnalgorithm import DqnPlayer
+from roomai_models.dqn.dqnalgorithm import Experience
+from roomai_models.dqn.dqnalgorithm import DqnPlayer
 
 
 

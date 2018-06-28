@@ -2,7 +2,6 @@ import roomai.common
 
 class CRFOutSampling(object):
 
-
     def dfs(self, env, player, p0, p1, action=None, deep=0):
 
         if deep == 0:

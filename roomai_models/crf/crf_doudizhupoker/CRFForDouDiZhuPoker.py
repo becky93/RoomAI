@@ -1,14 +1,12 @@
 #!/bin/python
 import random
 
-from algorithms import CRMAlgorithm
-from algorithms import CRMPlayer
+from roomai_models.crf.algorithms import CRFPlayer
 from roomai.kuhnpoker import Example_KuhnPokerAlwaysBetPlayer
 from roomai.kuhnpoker import KuhnPokerEnv
-from roomai.kuhnpoker import KuhnPokerRandomPlayer
 
 
-class KuhnPokerCRMPlayer(CRMPlayer):
+class KuhnPokerCRMPlayer(CRFPlayer):
     """
     """
     def __init__(self):
@@ -130,18 +128,22 @@ class KuhnPokerCRMPlayer(CRMPlayer):
         """
         pass
 
+'''
+example usage:
 if __name__ == "__main__":
     env     = KuhnPokerEnv()
     player  = KuhnPokerCRMPlayer()
-    algo    = CRMAlgorithm()
+    import roomai_models.crf.algorithms
+    algo    = roomai_models.crf.algorithms.CRFOutSampling
     for i in range(10000):
         algo.dfs(env = env, player=player, p0 = 1, p1 = 1, deep = 0)
 
-    print player.regrets
-    print player.strategies
+    print (player.regrets)
+    print (player.strategies)
     player.is_train = False
 
-    player_random = KuhnPokerRandomPlayer()
+    import roomai.common
+    player_random = roomai.common.RandomPlayer()
     sum_scores = [0.0,0.0]
     num        = 0
     for i in range(10000):
@@ -151,7 +153,7 @@ if __name__ == "__main__":
         num           += 1
     for i in range(len(sum_scores)):
         sum_scores[i] /= num
-    print sum_scores
+    print (sum_scores)
 
 
     player_alwaysbet = Example_KuhnPokerAlwaysBetPlayer()
@@ -164,7 +166,7 @@ if __name__ == "__main__":
         num           += 1
     for i in range(len(sum_scores)):
         sum_scores[i] /= num
-    print sum_scores
+    print (sum_scores)
 
     sum_scores = [0.0, 0.0]
     num = 0
@@ -175,4 +177,6 @@ if __name__ == "__main__":
         num += 1
     for i in range(len(sum_scores)):
         sum_scores[i] /= num
-    print sum_scores
+    print (sum_scores)
+
+'''

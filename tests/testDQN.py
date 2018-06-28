@@ -1,11 +1,11 @@
 
 import unittest
-from models.dqn.dqnalgorithm import DqnAlgorithm
+from roomai_models.dqn.dqnalgorithm import DqnAlgorithm
 import random
 import roomai
 import roomai.sevenking
-from models.dqn.dqnalgorithm import DqnPlayer
-from models.dqn.sevenking import DQN_SevenKing_ThreePlayers
+from roomai_models.dqn.dqnalgorithm import DqnPlayer
+from roomai_models.dqn.sevenking import DQN_SevenKing_ThreePlayers
 
 class ExamplePlayer(DqnPlayer):
     def terminal_info_feat(self):
