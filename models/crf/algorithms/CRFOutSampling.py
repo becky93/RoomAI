@@ -19,10 +19,10 @@ class CRFOutSampling(object):
         else:
 
             turn = public_state.turn
-            state = player.gen_state(infos[turn])
+            state = player.gen_state_feat(infos[turn])
             available_actions = infos[turn].person_state.available_actions.values()
             num_available_actions = len(available_actions)
-            regrets = player.get_current_regrets(state, available_actions)
+            regrets = player.get_immediate_regrets(state, available_actions)
             strategies = player.get_averge_strategies(state, available_actions)
 
             cur_p = p0
@@ -65,7 +65,7 @@ class CRFOutSampling(object):
                     print strategies,new_strategies,cur_p,cur_strategy
                     '''
 
-            player.update_current_regrets(state, available_actions, new_regrets)
+            player.update_immediate_regrets(state, available_actions, new_regrets)
             player.update_averge_strategies(state, available_actions, new_strategies)
             result = counterfactual_h
 
