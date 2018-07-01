@@ -48,10 +48,10 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
             env.person_states[i].__hand_cards__ = DouDiZhuPokerHandCards("")
             for j in range(4*i,4*(i+1)):
                 for count in range(4):
-                    env.person_states[i].hand_cards.add_cards(DouDiZhuActionElement.rank_to_str[j])
-            env.person_states[i].hand_cards.add_cards(DouDiZhuActionElement.rank_to_str[12])
+                    env.person_states[i].hand_cards.__add_cards__(DouDiZhuActionElement.rank_to_str[j])
+            env.person_states[i].hand_cards.__add_cards__(DouDiZhuActionElement.rank_to_str[12])
         env.private_state.__unused_cards__ = DouDiZhuPokerHandCards("")
-        env.private_state.__unused_cards__ .add_cards("".join([DouDiZhuActionElement.rank_to_str[12], DouDiZhuActionElement.rank_to_str[13], DouDiZhuActionElement.rank_to_str[14]]))
+        env.private_state.__unused_cards__ .__add_cards__("".join([DouDiZhuActionElement.rank_to_str[12], DouDiZhuActionElement.rank_to_str[13], DouDiZhuActionElement.rank_to_str[14]]))
         print ("_______________________________________________________________")
         #print (env.private_state.__unused_cards__.key)
         print (env.person_states[0].hand_cards.key)

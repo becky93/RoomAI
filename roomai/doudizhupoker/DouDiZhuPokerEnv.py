@@ -39,7 +39,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
 
         landlord_id = self.public_state.landlord_id
         self.public_state.__keep_cards__ = DouDiZhuPokerHandCards('%s'%(self.private_state.__unused_cards__.key))
-        self.person_states[landlord_id].hand_cards.add_cards(self.private_state.__unused_cards__.key)
+        self.person_states[landlord_id].hand_cards.__add_cards__(self.private_state.__unused_cards__.key)
 
 
     #@Overide
@@ -93,9 +93,9 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
         self.private_state.__unused_cards__       = DouDiZhuPokerHandCards("")
         for i in range(13):
             for j in range(4):
-                self.private_state.__unused_cards__.add_cards(DouDiZhuActionElement.rank_to_str[i])
-        self.private_state.__unused_cards__.add_cards(DouDiZhuActionElement.rank_to_str[13])
-        self.private_state.__unused_cards__.add_cards(DouDiZhuActionElement.rank_to_str[14])
+                self.private_state.__unused_cards__.__add_cards__(DouDiZhuActionElement.rank_to_str[i])
+        self.private_state.__unused_cards__.__add_cards__(DouDiZhuActionElement.rank_to_str[13])
+        self.private_state.__unused_cards__.__add_cards__(DouDiZhuActionElement.rank_to_str[14])
 
         for i in range(3):
             self.person_states[i].__hand_cards__ = DouDiZhuPokerHandCards("")
@@ -125,8 +125,8 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
 
         if isinstance(action, DouDiZhuPokerActionChance):
             idx = self.private_state.__unused_cards__.num_cards % 3
-            self.person_states[idx].__hand_cards__.add_cards(action.key)
-            self.private_state.__unused_cards__.remove_cards(action.key)
+            self.person_states[idx].__hand_cards__.__add_cards__(action.key)
+            self.private_state.__unused_cards__.__remove_cards__(action.key)
 
             if self.private_state.__unused_cards__.num_cards > 3:
                 self.person_states[3].__available_actions__ = dict()
@@ -550,9 +550,9 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
         person_state.__hand_cards__     = DouDiZhuPokerHandCards("")
         for i in range(13):
             for j in range(4):
-                person_state.hand_cards.add_cards(DouDiZhuActionElement.rank_to_str[i])
-        person_state.hand_cards.add_cards(DouDiZhuActionElement.rank_to_str[DouDiZhuActionElement.str_to_rank["r"]])
-        person_state.hand_cards.add_cards(DouDiZhuActionElement.rank_to_str[DouDiZhuActionElement.str_to_rank["R"]])
+                person_state.hand_cards.__add_cards__(DouDiZhuActionElement.rank_to_str[i])
+        person_state.hand_cards.__add_cards__(DouDiZhuActionElement.rank_to_str[DouDiZhuActionElement.str_to_rank["r"]])
+        person_state.hand_cards.__add_cards__(DouDiZhuActionElement.rank_to_str[DouDiZhuActionElement.str_to_rank["R"]])
         actions = dict()
 
 

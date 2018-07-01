@@ -66,12 +66,7 @@ class DouDiZhuPokerHandCards:
         strs.sort()
         return "".join(strs)
 
-    def add_cards(self, cards_str):
-        '''
-        add some cards to this handcards
-        
-        :param cards_str: the cards added to this handcards, for example, "445"
-        '''
+    def __add_cards__(self, cards_str):
         if isinstance(cards_str, str) == True:
             cards_str = DouDiZhuPokerHandCards(cards_str)
 
@@ -84,13 +79,7 @@ class DouDiZhuPokerHandCards:
 
         self.__key__ = self.__compute_key__()
 
-    def remove_cards(self, cards_str):
-        '''
-        remove some cards from 
-        
-        :param cards_str: the cards removed from this handcards, for example, "445"
-        :exception ValueException:
-        '''
+    def __remove_cards__(self, cards_str):
         if isinstance(cards_str, str) == True:
             cards_str = DouDiZhuPokerHandCards(cards_str)
 
@@ -109,7 +98,7 @@ class DouDiZhuPokerHandCards:
         str = action.key
         if str == 'x' or str == 'b':
             return
-        self.remove_cards(DouDiZhuPokerHandCards(str))
+        self.__remove_cards__(DouDiZhuPokerHandCards(str))
 
     def __deepcopy__(self, memodict={}, newinstance=None):
         return DouDiZhuPokerHandCards(self.key)
