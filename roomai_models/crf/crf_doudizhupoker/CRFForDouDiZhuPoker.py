@@ -4,6 +4,8 @@ import random
 from roomai_models.crf.algorithms import CRFPlayer
 import roomai.doudizhupoker
 import numpy as np
+from roomai.doudizhupoker.DouDiZhuPokerHandCards import DouDiZhuPokerHandCards
+
 
 pattern_to_idx = dict()
 patterns_list  = list(roomai.doudizhupoker.AllPatterns.keys())
@@ -29,6 +31,7 @@ num_card     = 15
 all_action_feats = dict()
 
 
+
 env_for_available_actions  = roomai.doudizhupoker.DouDiZhuPokerEnv()
 env_for_available_actions .init({"param_start_turn": 0})
 env_for_available_actions .forward(roomai.doudizhupoker.DouDiZhuPokerAction.lookup("b"))
@@ -36,20 +39,19 @@ env_for_available_actions .forward(roomai.doudizhupoker.DouDiZhuPokerAction.look
 infos_for_available_actions, public_state_for_available_actions, person_states_for_available_actions, private_state_for_available_actions =\
     env_for_available_actions .forward(roomai.doudizhupoker.DouDiZhuPokerAction.lookup("x"))
 
-
 def available_actions(hand_cards_str, last_action_str):
     if last_action_str == "x":
-        person_states_for_available_actions[0].__hand_cards__ = roomai.doudizhupoker.DouDiZhuPokerHandCards(hand_cards_str)
+        person_states_for_available_actions[0].__hand_cards__ = roomai.doudizhupoker.DouDiZhuPokerHandCards.lookup(hand_cards_str)
         return env_for_available_actions.available_actions(env_for_available_actions.public_state, env_for_available_actions.person_states[0])
     else:
-        person_states_for_available_actions[0].__hand_cards__ = roomai.doudizhupoker.DouDiZhuPokerHandCards(hand_cards_str + last_action)
-        person_states_for_available_actions[1].__hand_cards__ = roomai.doudizhupoker.DouDiZhuPokerHandCards(hand_cards_str)
-        infos, public_state, person_states, private_state = env_for_available_actions.forward(roomai.doudizhupoker.DouDiZhuPokerAction.lookup(last_action))
+        person_states_for_available_actions[0].__hand_cards__ = roomai.doudizhupoker.DouDiZhuPokerHandCards.lookup("".join(sorted(hand_cards_str + last_action_str)))
+        person_states_for_available_actions[1].__hand_cards__ = roomai.doudizhupoker.DouDiZhuPokerHandCards.lookup(hand_cards_str)
+        infos, public_state, person_states, private_state = env_for_available_actions.forward(roomai.doudizhupoker.DouDiZhuPokerAction.lookup(last_action_str))
         return person_states[1].available_actions
 
-def next_hand_cards(hand_cards_str, action_str):
-    roomai.doudizhupoker.DouDiZhuPokerHandCards(hand_cards_str).__remove_action__(action_str)
-    return "x"
+def next_hand_cards_str(hand_cards_str, action_str):
+    hand_cards = roomai.doudizhupoker.DouDiZhuPokerHandCards.lookup(hand_cards_str)
+    return  hand_cards.remove_cards_of_action(action_str).key
 
 class CRFForDouDiZhuPokerPlayer(CRFPlayer):
     ### different feature ####
@@ -79,10 +81,10 @@ class CRFForDouDiZhuPokerPlayer(CRFPlayer):
         return struct_feat
 
     def gen_info_action_feat(self, info, action):
-        next_hand_cards_str = next_hand_cards(info.person_state.hand_cards.key)
+        next_hand_cards_str_key = next_hand_cards_str(info.person_state.hand_cards.key, action.key)
         np.hstack([self.gen_info_feat(info).reshape((num_pattern * num_card)), \
                    self.gen_action_feat(action).reshape((num_pattern * num_card)), \
-                   self.gen_actions_feat(available_actions(next_hand_cards_str,"x")).reshape((num_pattern * num_card))])
+                   self.gen_actions_feat(available_actions(next_hand_cards_str_key,"x")).reshape((num_pattern * num_card))])
 
     def gen_info_actions_feat(self, info, actions):
         x                        = np.zeros((len(actions), num_pattern, num_card, 6))
@@ -99,8 +101,8 @@ class CRFForDouDiZhuPokerPlayer(CRFPlayer):
             act = actions[i]
             act_feat = self.gen_action_feat(act)
 
-            next_hand_cards_str  = next_hand_cards(info.person_state.hand_cards.key)
-            next_hand_cards_feat = self.gen_actions_feat(available_actions(next_hand_cards_str, "x"))
+            next_hand_cards_str_key  = next_hand_cards_str(info.person_state.hand_cards.key)
+            next_hand_cards_feat = self.gen_actions_feat(available_actions(next_hand_cards_str_key, "x"))
 
             x[i, :, :, 0] = current_info_feat
             x[i, :, :, 1] = history_action_feats[0]

@@ -3,6 +3,8 @@ import os
 import roomai.common
 import copy
 
+from roomai.doudizhupoker import DouDiZhuPokerUtil
+
 
 #
 #0, 1, 2, 3, ..., 7,  8, 9, 10, 11, 12, 13, 14
@@ -10,13 +12,6 @@ import copy
 #|                |   |              |       |
 #3,               10, J, Q,  K,  A,  2,  r,  R
 #
-
-class DouDiZhuActionElement:
-    str_to_rank  = {'3':0, '4':1, '5':2, '6':3, '7':4, '8':5, '9':6, 'T':7, 'J':8, 'Q':9, 'K':10, 'A':11, '2':12, 'r':13, 'R':14, 'x':15, 'b':16}
-    # x means check, b means bid
-    rank_to_str  = {0: '3', 1: '4', 2: '5', 3: '6', 4: '7', 5: '8', 6: '9', 7: 'T', 8: 'J', 9: 'Q', 10: 'K', 11: 'A', 12: '2', 13: 'r', 14: 'R', 15: 'x', 16: 'b'}
-
-    number_of_pokercards = 15
 
 
 class DouDiZhuPokerAction(roomai.common.AbstractAction):
@@ -40,8 +35,8 @@ class DouDiZhuPokerAction(roomai.common.AbstractAction):
 
         self.__masterCards__         = [c for c in masterCards]
         self.__slaveCards__          = [c for c in slaveCards]
-        self.__license__             = "".join(sorted([DouDiZhuActionElement.rank_to_str[c] for c in self.__masterCards__]))
-        self.__dipper__              = "".join(sorted([DouDiZhuActionElement.rank_to_str[c] for c in self.__slaveCards__]))
+        self.__license__             = "".join(sorted([DouDiZhuPokerUtil.rank_to_str[c] for c in self.__masterCards__]))
+        self.__dipper__              = "".join(sorted([DouDiZhuPokerUtil.rank_to_str[c] for c in self.__slaveCards__]))
 
         self.__masterPoints2Count__  = None
         self.__slavePoints2Count__   = None
@@ -96,7 +91,7 @@ class DouDiZhuPokerAction(roomai.common.AbstractAction):
         key_int = (masterCards + slaveCards)
         key_str = []
         for key in key_int:
-            key_str.append(DouDiZhuActionElement.rank_to_str[key])
+            key_str.append(DouDiZhuPokerUtil.rank_to_str[key])
         key_str.sort()
         return "".join(key_str)
 
@@ -119,7 +114,7 @@ class DouDiZhuPokerAction(roomai.common.AbstractAction):
         self.__isMasterStraight__ = 0
         num = 0
         for v in self.__masterPoints2Count__:
-            if (v + 1) in self.__masterPoints2Count__ and (v + 1) < DouDiZhuActionElement.str_to_rank["2"]:
+            if (v + 1) in self.__masterPoints2Count__ and (v + 1) < DouDiZhuPokerUtil.str_to_rank["2"]:
                 num += 1
         if num == len(self.__masterPoints2Count__) - 1 and len(self.__masterPoints2Count__) != 1:
             self.__isMasterStraight__ = 1
@@ -140,21 +135,21 @@ class DouDiZhuPokerAction(roomai.common.AbstractAction):
         # is cheat?
         if len(self.__masterCards__) == 1 \
                 and len(self.__slaveCards__) == 0 \
-                and self.__masterCards__[0] == DouDiZhuActionElement.str_to_rank["x"]:
+                and self.__masterCards__[0] == DouDiZhuPokerUtil.str_to_rank["x"]:
             self.__pattern__ = AllPatterns["i_cheat"]
 
         # is roblord
         elif len(self.__masterCards__) == 1 \
                 and len(self.__slaveCards__) == 0 \
-                and self.__masterCards__[0] == DouDiZhuActionElement.str_to_rank["b"]:
+                and self.__masterCards__[0] == DouDiZhuPokerUtil.str_to_rank["b"]:
             self.__pattern__ = AllPatterns["i_bid"]
 
         # is twoKings
         elif len(self.__masterCards__) == 2 \
                 and len(self.__masterPoints2Count__) == 2 \
                 and len(self.__slaveCards__) == 0 \
-                and self.__masterCards__[0] in [DouDiZhuActionElement.str_to_rank["r"], DouDiZhuActionElement.str_to_rank["R"]] \
-                and self.__masterCards__[1] in [DouDiZhuActionElement.str_to_rank["r"], DouDiZhuActionElement.str_to_rank["R"]]:
+                and self.__masterCards__[0] in [DouDiZhuPokerUtil.str_to_rank["r"], DouDiZhuPokerUtil.str_to_rank["R"]] \
+                and self.__masterCards__[1] in [DouDiZhuPokerUtil.str_to_rank["r"], DouDiZhuPokerUtil.str_to_rank["R"]]:
             self.__pattern__ = AllPatterns["x_rocket"]
 
         else:

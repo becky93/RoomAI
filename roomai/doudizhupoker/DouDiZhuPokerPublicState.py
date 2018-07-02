@@ -1,7 +1,7 @@
 #!/bin/python
 import os
 import roomai.common
-from roomai.doudizhupoker.DouDiZhuPokerAction import DouDiZhuActionElement
+from roomai.doudizhupoker.DouDiZhuPokerAction import DouDiZhuPokerUtil
 import copy
 from roomai.doudizhupoker.DouDiZhuPokerHandCards import DouDiZhuPokerHandCards
 
@@ -20,7 +20,7 @@ class DouDiZhuPokerPublicState(roomai.common.AbstractPublicState):
         self.__continuous_cheat_num__ = 0
         self.__is_response__ = False
 
-        self.__keep_cards__   = DouDiZhuPokerHandCards("")
+        self.__keep_cards__   = DouDiZhuPokerHandCards.lookup("")
         self.__first_player__ = -1
         self.__phase__ = -1
         self.__epoch__ = -1

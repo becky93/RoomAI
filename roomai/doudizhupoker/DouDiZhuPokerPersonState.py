@@ -1,7 +1,7 @@
 #!/bin/python
 import os
 import roomai.common
-from roomai.doudizhupoker.DouDiZhuPokerAction import DouDiZhuActionElement
+from roomai.doudizhupoker.DouDiZhuPokerAction import DouDiZhuPokerUtil
 import copy
 from roomai.doudizhupoker.DouDiZhuPokerHandCards import DouDiZhuPokerHandCards
 
@@ -12,7 +12,7 @@ class DouDiZhuPokerPersonState(roomai.common.AbstractPersonState):
     '''
     def __init__(self):
         super(DouDiZhuPokerPersonState,self).__init__()
-        self.__hand_cards__        = DouDiZhuPokerHandCards("")
+        self.__hand_cards__        = DouDiZhuPokerHandCards.lookup("")
 
     def __get_hand_cards__(self):
         return self.__hand_cards__

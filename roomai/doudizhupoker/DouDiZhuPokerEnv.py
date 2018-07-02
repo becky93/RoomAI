@@ -25,7 +25,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
             
 
     def __update_cards__(self, turn, action):
-        self.person_states[turn].hand_cards.__remove_action__(action)
+        self.person_states[turn].__hand_cards__ = self.person_states[turn].hand_cards.remove_cards_of_action(action)
 
 
     def __update_phase_bid2play__(self):
@@ -38,8 +38,8 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
         self.public_state.__turn__                  = self.public_state.landlord_id
 
         landlord_id = self.public_state.landlord_id
-        self.public_state.__keep_cards__ = DouDiZhuPokerHandCards('%s'%(self.private_state.__unused_cards__.key))
-        self.person_states[landlord_id].hand_cards.__add_cards__(self.private_state.__unused_cards__.key)
+        self.public_state.__keep_cards__ = DouDiZhuPokerHandCards.lookup('%s'%(self.private_state.__unused_cards__.key))
+        self.person_states[landlord_id].__hand_cards__ = self.person_states[landlord_id].hand_cards.add_cards(self.private_state.__unused_cards__.key)
 
 
     #@Overide
@@ -90,15 +90,11 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
         self.public_state.__is_terminal__         = False
         self.public_state.__scores__              = [0,0,0]
 
-        self.private_state.__unused_cards__       = DouDiZhuPokerHandCards("")
-        for i in range(13):
-            for j in range(4):
-                self.private_state.__unused_cards__.__add_cards__(DouDiZhuActionElement.rank_to_str[i])
-        self.private_state.__unused_cards__.__add_cards__(DouDiZhuActionElement.rank_to_str[13])
-        self.private_state.__unused_cards__.__add_cards__(DouDiZhuActionElement.rank_to_str[14])
+        self.private_state.__unused_cards__       = DouDiZhuPokerHandCards.lookup("")
+        self.private_state.__unused_cards__       = self.private_state.__unused_cards__.add_cards("AAAA22223333444455556666777788889999QQQQKKKKJJJJrR")
 
         for i in range(3):
-            self.person_states[i].__hand_cards__ = DouDiZhuPokerHandCards("")
+            self.person_states[i].__hand_cards__ = DouDiZhuPokerHandCards.lookup("")
             self.person_states[i].__id__         = i
         self.person_states[i].__id__ = 3
 
@@ -125,8 +121,8 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
 
         if isinstance(action, DouDiZhuPokerActionChance):
             idx = self.private_state.__unused_cards__.num_cards % 3
-            self.person_states[idx].__hand_cards__.__add_cards__(action.key)
-            self.private_state.__unused_cards__.__remove_cards__(action.key)
+            self.person_states[idx].__hand_cards__ = self.person_states[idx].__hand_cards__.add_cards(action.key)
+            self.private_state.__unused_cards__ = self.private_state.__unused_cards__.remove_cards(action.key)
 
             if self.private_state.__unused_cards__.num_cards > 3:
                 self.person_states[3].__available_actions__ = dict()
@@ -308,23 +304,23 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                 continue
 
             if "i_cheat" == pattern[0]:
-                action_key = DouDiZhuPokerAction.__master_slave_cards_to_key__([DouDiZhuActionElement.str_to_rank["x"]], [])
+                action_key = DouDiZhuPokerAction.__master_slave_cards_to_key__([DouDiZhuPokerUtil.str_to_rank["x"]], [])
                 action     = DouDiZhuPokerAction.lookup(action_key)
                 if cls.is_action_valid(action,public_state, person_state) == True:
                     actions[action_key] = action
                 continue
 
             if "i_bid" == pattern[0]:
-                action_key = DouDiZhuPokerAction.__master_slave_cards_to_key__([DouDiZhuActionElement.str_to_rank["b"]], [])
+                action_key = DouDiZhuPokerAction.__master_slave_cards_to_key__([DouDiZhuPokerUtil.str_to_rank["b"]], [])
                 action     = DouDiZhuPokerAction.lookup(action_key)
                 if cls.is_action_valid(action, public_state,person_state) == True:
                     actions[action_key] = action
                 continue
 
             if pattern[0] == "x_rocket":
-                if person_state.hand_cards.card_pointrank_count[DouDiZhuActionElement.str_to_rank["r"]] == 1 and \
-                                person_state.hand_cards.card_pointrank_count[DouDiZhuActionElement.str_to_rank["R"]] == 1:
-                    action_key  = DouDiZhuPokerAction.__master_slave_cards_to_key__([DouDiZhuActionElement.str_to_rank["r"], DouDiZhuActionElement.str_to_rank["R"]], [])
+                if person_state.hand_cards.card_pointrank_count[DouDiZhuPokerUtil.str_to_rank["r"]] == 1 and \
+                                person_state.hand_cards.card_pointrank_count[DouDiZhuPokerUtil.str_to_rank["R"]] == 1:
+                    action_key  = DouDiZhuPokerAction.__master_slave_cards_to_key__([DouDiZhuPokerUtil.str_to_rank["r"], DouDiZhuPokerUtil.str_to_rank["R"]], [])
                     action      = DouDiZhuPokerAction.lookup(action_key)
                     if cls.is_action_valid(action,public_state,person_state) == True:
                         actions[action_key] = action
@@ -547,12 +543,12 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
         public_state = DouDiZhuPokerPublicState()
         person_state = DouDiZhuPokerPersonState()
         public_state.__is_response__    = False
-        person_state.__hand_cards__     = DouDiZhuPokerHandCards("")
+        person_state.__hand_cards__     = DouDiZhuPokerHandCards.lookup("")
         for i in range(13):
             for j in range(4):
-                person_state.hand_cards.__add_cards__(DouDiZhuActionElement.rank_to_str[i])
-        person_state.hand_cards.__add_cards__(DouDiZhuActionElement.rank_to_str[DouDiZhuActionElement.str_to_rank["r"]])
-        person_state.hand_cards.__add_cards__(DouDiZhuActionElement.rank_to_str[DouDiZhuActionElement.str_to_rank["R"]])
+                person_state.hand_cards.add_cards(DouDiZhuPokerUtil.rank_to_str[i])
+        person_state.hand_cards.add_cards(DouDiZhuPokerUtil.rank_to_str[DouDiZhuPokerUtil.str_to_rank["r"]])
+        person_state.hand_cards.add_cards(DouDiZhuPokerUtil.rank_to_str[DouDiZhuPokerUtil.str_to_rank["R"]])
         actions = dict()
 
 
@@ -592,8 +588,8 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                 continue
 
             if "i_cheat" == pattern[0]:
-                action_key = DouDiZhuPokerAction.__master_slave_cards_to_key__([DouDiZhuActionElement.str_to_rank["x"]], [])
-                action     = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank["x"]], [])
+                action_key = DouDiZhuPokerAction.__master_slave_cards_to_key__([DouDiZhuPokerUtil.str_to_rank["x"]], [])
+                action     = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank["x"]], [])
                 if action_key in actions:
                     if cls.__action_priority__(action, actions[action_key]) > 0:
                         actions[action_key] = action
@@ -603,8 +599,8 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                 continue
 
             if "i_bid" == pattern[0]:
-                action_key = DouDiZhuPokerAction.__master_slave_cards_to_key__([DouDiZhuActionElement.str_to_rank["b"]], [])
-                action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank["b"]], [])
+                action_key = DouDiZhuPokerAction.__master_slave_cards_to_key__([DouDiZhuPokerUtil.str_to_rank["b"]], [])
+                action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank["b"]], [])
                 if action_key in actions:
                     if cls.__action_priority__(action, actions[action_key]) > 0:
                         actions[action_key] = action
@@ -613,10 +609,10 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                 continue
 
             if pattern[0] == "x_rocket":
-                if person_state.hand_cards.card_pointrank_count[DouDiZhuActionElement.str_to_rank["r"]] == 1 and \
-                                person_state.hand_cards.card_pointrank_count[DouDiZhuActionElement.str_to_rank["R"]] == 1:
-                    action_key  = DouDiZhuPokerAction.__master_slave_cards_to_key__([DouDiZhuActionElement.str_to_rank["r"], DouDiZhuActionElement.str_to_rank["R"]], [])
-                    action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank["r"], DouDiZhuActionElement.str_to_rank["R"]], [])
+                if person_state.hand_cards.card_pointrank_count[DouDiZhuPokerUtil.str_to_rank["r"]] == 1 and \
+                                person_state.hand_cards.card_pointrank_count[DouDiZhuPokerUtil.str_to_rank["R"]] == 1:
+                    action_key  = DouDiZhuPokerAction.__master_slave_cards_to_key__([DouDiZhuPokerUtil.str_to_rank["r"], DouDiZhuPokerUtil.str_to_rank["R"]], [])
+                    action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank["r"], DouDiZhuPokerUtil.str_to_rank["R"]], [])
                     if action_key in actions:
                         if cls.__action_priority__(action, actions[action_key]) > 0:
                             actions[action_key] = action

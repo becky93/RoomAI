@@ -1,8 +1,10 @@
 import os
 import roomai.common
-from roomai.doudizhupoker.DouDiZhuPokerAction import DouDiZhuActionElement
+from roomai.doudizhupoker.DouDiZhuPokerAction import DouDiZhuPokerUtil
 import copy
 
+
+AllDouDiZhuPokerHandCards = dict()
 
 class DouDiZhuPokerHandCards:
     '''
@@ -10,14 +12,21 @@ class DouDiZhuPokerHandCards:
 
     '''
 
+    @classmethod
+    def lookup(cls, key):
+        if key not in AllDouDiZhuPokerHandCards:
+            AllDouDiZhuPokerHandCards[key] = DouDiZhuPokerHandCards(key)
+        return AllDouDiZhuPokerHandCards[key]
+
+
     def __init__(self, cardstr):
-        self.__card_pointrank_count__ = [0 for i in range(DouDiZhuActionElement.number_of_pokercards)]
+        self.__card_pointrank_count__ = [0 for i in range(DouDiZhuPokerUtil.number_of_pokercards)]
         for c in cardstr:
-            idx = DouDiZhuActionElement.str_to_rank[c]
+            idx = DouDiZhuPokerUtil.str_to_rank[c]
             if idx < 0 or idx >= len(self.__card_pointrank_count__):
                 xxx = 0
             self.__card_pointrank_count__[idx] += 1
-            if idx >= DouDiZhuActionElement.number_of_pokercards:
+            if idx >= DouDiZhuPokerUtil.number_of_pokercards:
                 raise Exception("%s is invalid for a handcard" % (cardstr))
 
         self.__num_cards__ = sum(self.card_pointrank_count)
@@ -28,7 +37,7 @@ class DouDiZhuPokerHandCards:
         strs = []
         for h in range(len(self.__card_pointrank_count__)):
             for count in range(self.__card_pointrank_count__[h]):
-                strs.append(DouDiZhuActionElement.rank_to_str[h])
+                strs.append(DouDiZhuPokerUtil.rank_to_str[h])
         strs.sort()
         self.__key__ = "".join(strs)
 
@@ -62,43 +71,30 @@ class DouDiZhuPokerHandCards:
         strs = []
         for h in range(len(self.__card_pointrank_count__)):
             for count in range(self.__card_pointrank_count__[h]):
-                strs.append(DouDiZhuActionElement.rank_to_str[h])
+                strs.append(DouDiZhuPokerUtil.rank_to_str[h])
         strs.sort()
         return "".join(strs)
 
-    def __add_cards__(self, cards_str):
-        if isinstance(cards_str, str) == True:
-            cards_str = DouDiZhuPokerHandCards(cards_str)
+    def add_cards(self, cards_str):
+        return self.lookup("".join(sorted(self.key + cards_str)))
 
-        for c in range(len(cards_str.__card_pointrank_count__)):
-            count = cards_str.__card_pointrank_count__[c]
-            self.__num_cards__ += count
-            self.__count2num__[self.card_pointrank_count[c]] -= 1
-            self.__card_pointrank_count__[c] += count
-            self.__count2num__[self.card_pointrank_count[c]] += 1
+    def remove_cards(self, cards_str):
+        card_pointrank_count_list = list(self.card_pointrank_count)
+        for c in cards_str:
+            pointrank = DouDiZhuPokerUtil.str_to_rank[c]
+            card_pointrank_count_list[pointrank] -=1
+        str = ""
+        for i in range(len(card_pointrank_count_list)):
+            for j in range(card_pointrank_count_list[i]):
+                str += DouDiZhuPokerUtil.rank_to_str[i]
+        return self.lookup("".join(sorted(str)))
 
-        self.__key__ = self.__compute_key__()
 
-    def __remove_cards__(self, cards_str):
-        if isinstance(cards_str, str) == True:
-            cards_str = DouDiZhuPokerHandCards(cards_str)
-
-        for c in range(len(cards_str.__card_pointrank_count__)):
-            count = cards_str.__card_pointrank_count__[c]
-            self.__num_cards__ -= count
-            self.__count2num__[self.card_pointrank_count[c]] -= 1
-            self.__card_pointrank_count__[c] -= count
-            if self.__card_pointrank_count__[c] < 0:
-                raise ValueError("Unable remove cards(%s) from handcards(%s)"%(cards_str, self.__key__))
-            self.__count2num__[self.card_pointrank_count[c]] += 1
-
-        self.__key__ = self.__compute_key__()
-
-    def __remove_action__(self, action):
+    def remove_cards_of_action(self, action):
         str = action.key
         if str == 'x' or str == 'b':
             return
-        self.__remove_cards__(DouDiZhuPokerHandCards(str))
+        return self.remove_cards(str)
 
     def __deepcopy__(self, memodict={}, newinstance=None):
-        return DouDiZhuPokerHandCards(self.key)
+        return self.lookup(self.key)

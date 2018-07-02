@@ -45,13 +45,13 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
 
         ### init
         for i in range(3):
-            env.person_states[i].__hand_cards__ = DouDiZhuPokerHandCards("")
+            env.person_states[i].__hand_cards__ = DouDiZhuPokerHandCards.lookup("")
             for j in range(4*i,4*(i+1)):
                 for count in range(4):
-                    env.person_states[i].hand_cards.__add_cards__(DouDiZhuActionElement.rank_to_str[j])
-            env.person_states[i].hand_cards.__add_cards__(DouDiZhuActionElement.rank_to_str[12])
-        env.private_state.__unused_cards__ = DouDiZhuPokerHandCards("")
-        env.private_state.__unused_cards__ .__add_cards__("".join([DouDiZhuActionElement.rank_to_str[12], DouDiZhuActionElement.rank_to_str[13], DouDiZhuActionElement.rank_to_str[14]]))
+                    env.person_states[i].__hand_cards__ = env.person_states[i].hand_cards.add_cards(DouDiZhuPokerUtil.rank_to_str[j])
+            env.person_states[i].__hand_cards__ = env.person_states[i].hand_cards.add_cards(DouDiZhuPokerUtil.rank_to_str[12])
+        env.private_state.__unused_cards__ = DouDiZhuPokerHandCards.lookup("")
+        env.private_state.__unused_cards__  = env.private_state.__unused_cards__.add_cards("".join([DouDiZhuPokerUtil.rank_to_str[12], DouDiZhuPokerUtil.rank_to_str[13], DouDiZhuPokerUtil.rank_to_str[14]]))
         print ("_______________________________________________________________")
         #print (env.private_state.__unused_cards__.key)
         print (env.person_states[0].hand_cards.key)
@@ -72,16 +72,16 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         self.assertFalse(env.is_action_valid(action, env.public_state,env.person_states[env.public_state.turn]))
 
         ##0 turn = 0
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank["b"]], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank["b"]], [])
         infos, public_state, person_states, private_state = env.forward(action)
 
         ##1 turn = 1
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank["b"]], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank["b"]], [])
         infos, public_state, person_states, private_state = env.forward(action)
         
         ##2 turn = 2
         self.assertEqual(env.public_state.turn,2)
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank["b"]], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank["b"]], [])
         infos, public_state, person_states, private_state = env.forward(action)
         self.assertEqual(public_state.landlord_id,2)
         self.assertEqual(public_state.phase, 1)
@@ -113,7 +113,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         self.assertEqual(env.public_state.turn,0)
         action = DouDiZhuPokerAction([0], [])
         self.assertFalse(env.is_action_valid(action,public_state,person_states[public_state.turn]), False)
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank['x']], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank['x']], [])
         infos, public_state, person_states, private_state = env.forward(action) ############################################# cheat
         self.assertEqual(public_state.license_playerid,2)
         self.assertEqual(public_state.turn,1)
@@ -132,7 +132,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
 
         ## 5 turn == 1 license_id =0
         self.assertEqual(env.public_state.epoch,5)
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank['x']], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank['x']], [])
         self.assertTrue(env.public_state.continuous_cheat_num,1)
         infos, public_state, person_states, private_state= env.forward(action) ########################################## cheat
         # landlord 0:4, 1:4, 2:4,  3:4  12:1
@@ -167,7 +167,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         self.assertEqual(env.public_state.license_playerid, 2)
         self.assertEqual(env.public_state.turn, 0)
         self.assertEqual(env.public_state.is_response, True)
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank['x']], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank['x']], [])
         self.assertTrue(env.is_action_valid(action,public_state,person_states[public_state.turn]))
         action = DouDiZhuPokerAction([0, 0, 0, 0],[])
         infos, public_state, person_states, private_state= env.forward(action) #################
@@ -185,10 +185,10 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         # peasant2 8:2, 9:4, 10:4, 11:4 12:2 13:1 14:1
 
         ## 8 turn == 1 license_id =0
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank['x']], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank['x']], [])
         env.forward(action)
         ## 9 turn = 2  license_id = 0
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank['x']], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank['x']], [])
         env.forward(action)
         # landlord 0:0, 1:4, 2:4,  3:4  12:0 
         # peasant1 4:3, 5:4, 6:4,  7:4  12:1
@@ -210,10 +210,10 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
 
 
         ## 11 turn == 1 license_id =0
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank['x']], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank['x']], [])
         env.forward(action)
         ## 12 turn = 2  license_id = 0
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank['x']], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank['x']], [])
         env.forward(action)
         # landlord 0:0, 1:4, 2:4,  3:4  12:0 
         # peasant1 4:3, 5:4, 6:4,  7:4  12:1
@@ -232,10 +232,10 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
 
 
         ## 14 turn == 1 license_id =0
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank['x']], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank['x']], [])
         env.forward(action)
         ## 15 turn = 2  license_id = 0
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank['x']], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank['x']], [])
         env.forward(action)
         # landlord 0:0, 1:2, 2:2,  3:2  12:0 
         # peasant1 4:3, 5:4, 6:4,  7:4  12:1
@@ -256,10 +256,10 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         print (env.person_states[2].hand_cards.key)
 
         ## 14 turn == 1 license_id =0
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank['x']], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank['x']], [])
         env.forward(action)
         ## 15 turn = 2  license_id = 0
-        action = DouDiZhuPokerAction([DouDiZhuActionElement.str_to_rank['x']], [])
+        action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank['x']], [])
         env.forward(action)
         # landlord 0:0, 1:2, 2:2,  3:2  12:0
         # peasant1 4:3, 5:4, 6:4,  7:4  12:1
