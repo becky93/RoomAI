@@ -151,7 +151,6 @@ class AbstractEnv(object):
         raise NotImplementedError("The compete function hasn't been implemented")
 
 
-
     @classmethod
     def available_actions(self, public_state, person_state):
         '''

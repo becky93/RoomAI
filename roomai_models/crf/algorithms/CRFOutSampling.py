@@ -33,7 +33,7 @@ class CRFOutSampling(object):
             turn                  = public_state.turn
             available_actions     = infos[turn].person_state.available_actions.values()
             num_available_actions = len(available_actions)
-            counterfactual_values = player.get_counterfactual_values(infos[turn], available_actions)
+            counterfactual_regrets = player.get_counterfactual_regrets(infos[turn], available_actions)
             averge_strategies     = player.get_averge_strategies(infos[turn], available_actions)
 
 
@@ -42,22 +42,21 @@ class CRFOutSampling(object):
             choose_action                         = available_actions[choose_action_idx]
             new_reach_probs                       = list(reach_probs)
             new_reach_probs[turn]                 = reach_probs[turn] * averge_strategies[choose_action_idx]
-            utility_prob      = self.dfs(env, player, reach_probs, choose_action, deep + 1)
+            utility_prob                          = self.dfs(env, player, new_reach_probs, choose_action, deep + 1)
 
             if current_player_idx  == turn:
                 utility_prob = utility_prob * averge_strategies[choose_action_idx]
 
-            if turn == current_player_idx:
                 ### update new counterfactual_values
                 prod1 = 1
                 for i in range(len(reach_probs)):
                     if i != current_player_idx: prod1 *= reach_probs[i]
-                counterfactual_values[choose_action_idx] = prod1 * utility_prob
-                player.update_counterfactual_values(infos[turn], available_actions, counterfactual_values)
+                counterfactual_regrets[choose_action_idx] = prod1 * utility_prob
+                player.update_counterfactual_regrets(infos[turn], available_actions, counterfactual_regrets)
 
                 ### computing immediate regret and current_strategy
-                mean_counterfactual_value = sum(counterfactual_values) / len(counterfactual_values)
-                immediate_regret          = [counterfactual_values[i] - mean_counterfactual_value for i in range(len(counterfactual_values))]
+                mean_counterfactual_regret = sum(counterfactual_regrets) / len(counterfactual_regrets)
+                immediate_regret          = [counterfactual_regrets[i] - mean_counterfactual_regret for i in range(len(counterfactual_regrets))]
                 cur_strategy = [0 for i in range(num_available_actions)]
                 sum1 = 0
                 for i in range(num_available_actions):
@@ -71,6 +70,7 @@ class CRFOutSampling(object):
                 #### update average strategy
                 new_strategies = [0 for i in range(num_available_actions)]
                 for i in range(num_available_actions):
+                    ## 李博帮忙看下这里对不对
                     new_strategies[i] = averge_strategies[i] + reach_probs[turn] * cur_strategy[i]
                 sum1 = sum(new_strategies)
                 for i in range(num_available_actions):

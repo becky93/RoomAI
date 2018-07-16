@@ -39,18 +39,14 @@ env1.forward(DouDiZhuPokerAction.lookup("b"))
 env1.forward(DouDiZhuPokerAction.lookup("x"))
 infos1, public_state1, person_states1, private_state1 = env1 .forward(DouDiZhuPokerAction.lookup("x"))
 
-def available_actions(hand_cards_str, last_action_str):
-    if last_action_str == "x":
-        person_states1.__hand_cards__ = DouDiZhuPokerHandCards.lookup(hand_cards_str)
-        return DouDiZhuPokerEnv.available_actions(public_state1, person_states1[0])
-    else:
-        person_states1[0].__hand_cards__ = DouDiZhuPokerHandCards.lookup("".join(sorted(hand_cards_str + last_action_str)))
-        person_states1[1].__hand_cards__ = DouDiZhuPokerHandCards.lookup(hand_cards_str)
-        infos, public_state, person_states, private_state = env1.forward(DouDiZhuPokerAction.lookup(last_action_str))
-        return person_states[1].available_actions
+def available_actions(hand_cards_str):
+    person_state = person_states1[0].__deepcopy__()
+    person_state.__hand_cards__ =  DouDiZhuPokerHandCards.lookup(hand_cards_str)
+    return DouDiZhuPokerEnv.available_actions(public_state1, person_states1[0])
+
 
 def next_hand_cards_str(hand_cards_str, action_str):
-    hand_cards = roomai.doudizhupoker.DouDiZhuPokerHandCards.lookup(hand_cards_str)
+    hand_cards = DouDiZhuPokerHandCards.lookup(hand_cards_str)
     return  hand_cards.remove_cards_of_action(action_str).key
 
 class CRFForDouDiZhuPokerPlayer(CRFPlayer):
