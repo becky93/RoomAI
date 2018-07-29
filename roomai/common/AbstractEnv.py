@@ -45,7 +45,6 @@ class AbstractEnv(object):
         self.__person_states_history__.append([person_state.__deepcopy__() for person_state in self.person_states])
 
 
-
     def init(self, params=dict()):
         '''
         Initialize the game environment. 

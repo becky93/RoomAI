@@ -119,6 +119,9 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
         :return: infos, public_state, person_states, private_state
         '''
 
+        self.public_state.__action_history__.append((self.public_state.turn, action))
+        self.public_state.__epoch__ += 1
+
         if isinstance(action, DouDiZhuPokerActionChance):
             idx = self.private_state.__unused_cards__.num_cards % 3
             self.person_states[idx].__hand_cards__ = self.person_states[idx].__hand_cards__.add_cards(action.key)
@@ -150,7 +153,6 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                     self.public_state.is_response,
                     landlord_id)
             )
-        self.public_state.__action_history__.append((self.public_state.turn,action))
         self.person_states[self.public_state.turn].__available_actions__ = dict()
 
         turn = self.public_state.turn
@@ -171,7 +173,6 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                 self.__update_phase_bid2play__()
 
 
-                self.public_state.__epoch__ += 1
                 self.person_states[self.public_state.turn].__available_actions__ =\
                     DouDiZhuPokerEnv.available_actions(self.public_state, self.person_states[self.public_state.turn])
 
@@ -191,7 +192,6 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
     
                 num = self.person_states[turn].hand_cards.num_cards
                 if num == 0:
-                    self.public_state.__epoch__ += 1
                     if turn == self.public_state.landlord_id:
                         self.public_state.__is_terminal__                           = True
                         self.public_state.__scores__                                = [-1,-1,-1]
@@ -217,7 +217,6 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
             self.public_state.__is_response__ = True
 
 
-        self.public_state.__epoch__              += 1
         self.person_states[self.public_state.turn].__available_actions__\
             = DouDiZhuPokerEnv.available_actions(self.public_state, self.person_states[self.public_state.turn])
          

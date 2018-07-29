@@ -62,7 +62,9 @@ class AbstractPublicState(object):
             newinstance = AbstractPublicState()
 
         newinstance.__turn__           = self.__turn__
-        newinstance.__action_history__ = list(self.__action_history__)
+        if len(self.__action_history__) > 0:
+            xx = 0
+        newinstance.__action_history__ = list(tuple(self.__action_history__))
         newinstance.__is_terminal__    = self.is_terminal
         if self.scores is None:
             newinstance.__scores__ = None

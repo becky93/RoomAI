@@ -23,18 +23,24 @@ class CRFOutSampling(object):
         else:
             infos, public_state, person_states, private_state = env.forward(action)
 
-        utility_prob = 1
-        if public_state.is_terminal == True:
-            utility  = public_state.scores
-            utility_prob = utility[current_player_idx] * 1
-        else:
+        print ("deep = %d, param_backward_enable = %s" %(deep, env.public_state.param_backward_enable))
 
+        utility_multiply_prob = 1
+        if public_state.is_terminal == True:
+            utility = public_state.scores
+            utility_multiply_prob = utility[current_player_idx] * 1
+        elif public_state.turn == 3: ### chance player
+            turn                       = public_state.turn
+            available_actions          = list(infos[turn].person_state.available_actions.values())
+            choose_action              = available_actions[int(random.random() * len(available_actions))]
+            utility_multiply_prob      = self.dfs(current_player_idx, env, player, reach_probs=reach_probs, action = choose_action, deep = deep + 1)
+        else:
             ### prepare for the basic data
-            turn                  = public_state.turn
-            available_actions     = infos[turn].person_state.available_actions.values()
-            num_available_actions = len(available_actions)
+            turn                   = public_state.turn
+            available_actions      = list(infos[turn].person_state.available_actions.values())
+            num_available_actions  = len(available_actions)
             counterfactual_regrets = player.get_counterfactual_regrets(infos[turn], available_actions)
-            averge_strategies     = player.get_averge_strategies(infos[turn], available_actions)
+            averge_strategies      = player.get_averge_strategies(infos[turn], available_actions)
 
 
             ### sampling one path
@@ -42,16 +48,16 @@ class CRFOutSampling(object):
             choose_action                         = available_actions[choose_action_idx]
             new_reach_probs                       = list(reach_probs)
             new_reach_probs[turn]                 = reach_probs[turn] * averge_strategies[choose_action_idx]
-            utility_prob                          = self.dfs(env, player, new_reach_probs, choose_action, deep + 1)
+            utility_multiply_prob                 = self.dfs(current_player_idx, env, player, new_reach_probs, choose_action, deep + 1)
 
             if current_player_idx  == turn:
-                utility_prob = utility_prob * averge_strategies[choose_action_idx]
+                utility_multiply_prob = utility_multiply_prob * averge_strategies[choose_action_idx]
 
                 ### update new counterfactual_values
                 prod1 = 1
                 for i in range(len(reach_probs)):
                     if i != current_player_idx: prod1 *= reach_probs[i]
-                counterfactual_regrets[choose_action_idx] = prod1 * utility_prob
+                counterfactual_regrets[choose_action_idx] = prod1 * utility_multiply_prob
                 player.update_counterfactual_regrets(infos[turn], available_actions, counterfactual_regrets)
 
                 ### computing immediate regret and current_strategy
@@ -80,9 +86,12 @@ class CRFOutSampling(object):
 
 
         if deep != 0:
+            if env.public_state.param_backward_enable == False:
+                xxx = 0
+                yyy = 0
             env.backward()
 
-        return utility_prob
+        return utility_multiply_prob
 
 
 
