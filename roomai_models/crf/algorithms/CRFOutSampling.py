@@ -23,7 +23,7 @@ class CRFOutSampling(object):
         else:
             infos, public_state, person_states, private_state = env.forward(action)
 
-        print ("deep = %d, param_backward_enable = %s" %(deep, env.public_state.param_backward_enable))
+        print ("deep = %d, param_backward_enable = %s， turn = %d， is_terminal = %s" %(deep, env.public_state.param_backward_enable, public_state.turn, public_state.is_terminal))
 
         utility_multiply_prob = 1
         if public_state.is_terminal == True:

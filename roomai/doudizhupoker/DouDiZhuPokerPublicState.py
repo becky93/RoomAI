@@ -25,6 +25,8 @@ class DouDiZhuPokerPublicState(roomai.common.AbstractPublicState):
         self.__phase__ = -1
         self.__epoch__ = -1
 
+        self.__constant_num_of_action_issuing_cards__ = 47
+
     def __get_landlord_candidate_id__(self):    return self.__landlord_candidate_id__
     landlord_candidate_id = property(__get_landlord_candidate_id__, doc = "The candiate landlord player id during the betting_for_be_landlord phase")
 

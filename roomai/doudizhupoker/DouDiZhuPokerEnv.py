@@ -17,6 +17,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
     '''
     The DouDiZhuPoker game environment
     '''
+    __constant_num_chanceplayer__ = 47
 
     def __update_license__(self, turn, action):
         if action.pattern[0] != "i_cheat":
@@ -160,7 +161,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
             if action.pattern[0] == "i_bid":
                 self.public_state.__landlord_candidate_id__ = turn
 
-            if self.public_state.epoch == 3 and self.public_state.landlord_candidate_id == -1:
+            if self.public_state.epoch == self.public_state.__constant_num_of_action_issuing_cards__ + 3 and self.public_state.landlord_candidate_id == -1:
                 self.public_state.__is_terminal__ = True
                 self.public_state.__scores__      = [0.0, 0.0, 0.0]
 
@@ -168,8 +169,8 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                 infos = self.__gen_infos__()
                 return infos, self.public_state, self.person_states, self.private_state
 
-            if (self.public_state.epoch == 2 and self.public_state.landlord_candidate_id != -1)\
-                or self.public_state.epoch == 3:
+            if (self.public_state.epoch == self.public_state.__constant_num_of_action_issuing_cards__ + 2 and self.public_state.landlord_candidate_id != -1)\
+                or self.public_state.epoch == self.public_state.__constant_num_of_action_issuing_cards__ + 3:
                 self.__update_phase_bid2play__()
 
 
@@ -191,6 +192,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                 self.public_state.__continuous_cheat_num__ = 0
     
                 num = self.person_states[turn].hand_cards.num_cards
+                print ("num of current_player hand card = %d"%(num))
                 if num == 0:
                     if turn == self.public_state.landlord_id:
                         self.public_state.__is_terminal__                           = True
