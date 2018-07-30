@@ -28,6 +28,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         for i in range(17 * 3):
             available_actions = list(infos[public_state.turn].person_state.available_actions.values())
             action = available_actions[int(random.random() * len(available_actions))]
+            print(action.key)
             env.forward(action)
         env = env
         self.assertTrue((env.public_state.turn in [0,1,2]))
@@ -41,7 +42,11 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         """
         env = DouDiZhuPokerEnv()
         p = [0,0,0]
-        env.init()
+        infos,public_state, person_states, private_state = env.init({"param_start_turn":0})
+
+        while isinstance(list(person_states[public_state.turn].available_actions.values())[0],DouDiZhuPokerActionChance) == True:
+            env.forward(list(person_states[public_state.turn].available_actions.values())[0])
+
 
         ### init
         for i in range(3):
@@ -52,6 +57,9 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
             env.person_states[i].__hand_cards__ = env.person_states[i].hand_cards.add_cards(DouDiZhuPokerUtil.rank_to_str[12])
         env.private_state.__unused_cards__ = DouDiZhuPokerHandCards.lookup("")
         env.private_state.__unused_cards__  = env.private_state.__unused_cards__.add_cards("".join([DouDiZhuPokerUtil.rank_to_str[12], DouDiZhuPokerUtil.rank_to_str[13], DouDiZhuPokerUtil.rank_to_str[14]]))
+
+
+
         print ("_______________________________________________________________")
         #print (env.private_state.__unused_cards__.key)
         print (env.person_states[0].hand_cards.key)
@@ -131,7 +139,7 @@ class DouDiZhuPokerEnvTester(unittest.TestCase):
         print (env.person_states[2].hand_cards.key)
 
         ## 5 turn == 1 license_id =0
-        self.assertEqual(env.public_state.epoch,5)
+        self.assertEqual(env.public_state.epoch,51 + 5)
         action = DouDiZhuPokerAction([DouDiZhuPokerUtil.str_to_rank['x']], [])
         self.assertTrue(env.public_state.continuous_cheat_num,1)
         infos, public_state, person_states, private_state= env.forward(action) ########################################## cheat

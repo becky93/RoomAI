@@ -92,7 +92,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
         self.public_state.__scores__              = [0,0,0]
 
         self.private_state.__unused_cards__       = DouDiZhuPokerHandCards.lookup("")
-        self.private_state.__unused_cards__       = self.private_state.__unused_cards__.add_cards("AAAA22223333444455556666777788889999QQQQKKKKJJJJrR")
+        self.private_state.__unused_cards__       = self.private_state.__unused_cards__.add_cards("AAAA22223333444455556666777788889999TTTTQQQQKKKKJJJJrR")
 
         for i in range(3):
             self.person_states[i].__hand_cards__ = DouDiZhuPokerHandCards.lookup("")
@@ -123,6 +123,8 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
         self.public_state.__action_history__.append((self.public_state.turn, action))
         self.public_state.__epoch__ += 1
 
+        ##print (self.public_state.__epoch__)
+
         if isinstance(action, DouDiZhuPokerActionChance):
             idx = self.private_state.__unused_cards__.num_cards % 3
             self.person_states[idx].__hand_cards__ = self.person_states[idx].__hand_cards__.add_cards(action.key)
@@ -140,7 +142,8 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
             self.__gen_state_history_list__()
             return infos, self.public_state, self.person_states, self.private_state
 
-        if self.is_action_valid(action, self.public_state, self.person_states[self.public_state.turn]) is False:
+        flag = self.is_action_valid(action, self.public_state, self.person_states[self.public_state.turn])
+        if  flag is False:
             landlord_id = self.public_state.landlord_id
             if self.public_state.phase == 0:
                 landlord_id = -1
@@ -161,7 +164,7 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
             if action.pattern[0] == "i_bid":
                 self.public_state.__landlord_candidate_id__ = turn
 
-            if self.public_state.epoch == self.public_state.__constant_num_of_action_issuing_cards__ + 3 and self.public_state.landlord_candidate_id == -1:
+            if self.public_state.epoch == self.public_state.__constant_num_of_action_issuing_cards__ + 4 and self.public_state.landlord_candidate_id == -1:
                 self.public_state.__is_terminal__ = True
                 self.public_state.__scores__      = [0.0, 0.0, 0.0]
 
@@ -169,8 +172,8 @@ class DouDiZhuPokerEnv(roomai.common.AbstractEnv):
                 infos = self.__gen_infos__()
                 return infos, self.public_state, self.person_states, self.private_state
 
-            if (self.public_state.epoch == self.public_state.__constant_num_of_action_issuing_cards__ + 2 and self.public_state.landlord_candidate_id != -1)\
-                or self.public_state.epoch == self.public_state.__constant_num_of_action_issuing_cards__ + 3:
+            if (self.public_state.epoch == self.public_state.__constant_num_of_action_issuing_cards__ + 3 and self.public_state.landlord_candidate_id != -1)\
+                or self.public_state.epoch == self.public_state.__constant_num_of_action_issuing_cards__ + 4:
                 self.__update_phase_bid2play__()
 
 

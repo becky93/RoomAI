@@ -21,11 +21,10 @@ class DouDiZhuPokerPublicState(roomai.common.AbstractPublicState):
         self.__is_response__ = False
 
         self.__keep_cards__   = DouDiZhuPokerHandCards.lookup("")
-        self.__first_player__ = -1
         self.__phase__ = -1
         self.__epoch__ = -1
 
-        self.__constant_num_of_action_issuing_cards__ = 47
+        self.__constant_num_of_action_issuing_cards__ = 51
 
     def __get_landlord_candidate_id__(self):    return self.__landlord_candidate_id__
     landlord_candidate_id = property(__get_landlord_candidate_id__, doc = "The candiate landlord player id during the betting_for_be_landlord phase")
@@ -52,8 +51,8 @@ class DouDiZhuPokerPublicState(roomai.common.AbstractPublicState):
     def __get_keep_cards__(self):   return self.__keep_cards__
     keep_cards = property(__get_keep_cards__, doc = "The keep cards")
 
-    def __get_first_player__(self): return self.__first_player__
-    first_player = property(__get_first_player__, doc = "The players[first_player] is first to take an action")
+    #def __get_first_player__(self): return self.__first_player__
+    #first_player = property(__get_first_player__, doc = "The players[first_player] is first to take an action")
 
     def __get_phase__(self):    return self.__phase__
     phase = property(__get_phase__,
