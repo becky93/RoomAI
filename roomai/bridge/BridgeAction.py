@@ -1,6 +1,9 @@
 #!/bin/python
+
 import roomai.common
 import roomai.bridge
+
+#hidden = 0
 
 class BridgeAction(roomai.common.AbstractAction):
     '''
