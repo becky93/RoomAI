@@ -81,10 +81,10 @@ class CRFForDouDiZhuPokerPlayer(CRFPlayer):
                                           strides=[1, 2, 2, 1], padding='SAME')
 
             ### layer2
-            strategy_conv2_weight = tf.get_variable('info_conv1w', shape=[3, 3, 16, 32],
+            strategy_conv2_weight = tf.get_variable('strategy_conv1w', shape=[3, 3, 16, 32],
                                                 initializer=tf.contrib.layers.xavier_initializer())
             strategy_conv2 = tf.nn.conv2d(strategy_pool1, filter=strategy_conv2_weight, strides=[1, 1, 1, 1], padding='SAME')
-            strategy_bias2 = tf.nn.relu(strategy_conv2 + tf.get_variable('info_conv1b', shape=[32],
+            strategy_bias2 = tf.nn.relu(strategy_conv2 + tf.get_variable('strategy_conv1b', shape=[32],
                                                   initializer=tf.contrib.layers.xavier_initializer()))
             strategy_pool2 = tf.nn.max_pool(strategy_bias2, ksize=[1, 2, 2, 1],
                                           strides=[1, 2, 2, 1], padding='SAME')
@@ -92,7 +92,9 @@ class CRFForDouDiZhuPokerPlayer(CRFPlayer):
             ### DNN layer1
             strategy_dim0        = 256
             strategy_dnn0        = tf.reshape(strategy_pool2,[-1,strategy_dim0])
-            strategy_dnn0_weight = self.__variable_with_weight_decay__(name="strategy_dnn_layer0_w", shape=[strategy_dnn0.get_shape()[1], 256], wd=self.weight_decay)
+            strategy_dnn0_weight = self.__variable_with_weight_decay__(name="strategy_dnn_layer0_w",
+                                                                       shape=[strategy_dnn0.get_shape()[1], 512],
+                                                                       wd=self.weight_decay)
             strategy_dnn0_bias   = tf.get_variable("strategy_dnn_layer0_b", shape=[512], initializer=tf.contrib.layers.xavier_initializer())
             strategy_dnn1        = tf.nn.relu(tf.matmul(strategy_dnn0, strategy_dnn0_weight) + strategy_dnn0_bias)
 
@@ -114,7 +116,7 @@ class CRFForDouDiZhuPokerPlayer(CRFPlayer):
             self.strategy      = tf.nn.softmax(tf.reshape(strategy_dnn3,shape = [-1]))
             self.strategy_loss = tf.nn.softmax_cross_entropy_with_logits(labels=self.strategy_targets,logits=self.strategy)
             self.strategy_optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
-            self.strategy_train_op = self.optimizer.minimize(self.strategy_loss)
+            self.strategy_train_op = self.strategy_optimizer.minimize(self.strategy_loss)
 
             ############################################## regret model ###############################################
             ### layer1
@@ -128,11 +130,11 @@ class CRFForDouDiZhuPokerPlayer(CRFPlayer):
                                             strides=[1, 2, 2, 1], padding='SAME')
 
             ### layer2
-            regret_conv2_weight = tf.get_variable('info_conv1w', shape=[3, 3, 16, 32],
+            regret_conv2_weight = tf.get_variable('regret_conv1w', shape=[3, 3, 16, 32],
                                                     initializer=tf.contrib.layers.xavier_initializer())
             regret_conv2 = tf.nn.conv2d(regret_pool1, filter=regret_conv2_weight, strides=[1, 1, 1, 1],
                                           padding='SAME')
-            regret_bias2 = tf.nn.relu(regret_conv2 + tf.get_variable('info_conv1b', shape=[32],
+            regret_bias2 = tf.nn.relu(regret_conv2 + tf.get_variable('regret_conv1b', shape=[32],
                                                                          initializer=tf.contrib.layers.xavier_initializer()))
             regret_pool2 = tf.nn.max_pool(regret_bias2, ksize=[1, 2, 2, 1],
                                             strides=[1, 2, 2, 1], padding='SAME')
@@ -141,7 +143,7 @@ class CRFForDouDiZhuPokerPlayer(CRFPlayer):
             regret_dim0 = 256
             regret_dnn0 = tf.reshape(regret_pool2, [-1, regret_dim0])
             regret_dnn0_weight = self.__variable_with_weight_decay__(name="regret_dnn_layer0_w",
-                                                                       shape=[regret_dnn0.get_shape()[1], 256],
+                                                                       shape=[regret_dnn0.get_shape()[1], 512],
                                                                        wd=self.weight_decay)
             regret_dnn0_bias = tf.get_variable("regret_dnn_layer0_b", shape=[512],
                                                  initializer=tf.contrib.layers.xavier_initializer())
@@ -166,7 +168,7 @@ class CRFForDouDiZhuPokerPlayer(CRFPlayer):
             self.regret_loss = tf.reduce_mean(
                 (regret_dnn2 - self.regret_targets) * (regret_dnn2 - self.regret_targets))
             self.regret_optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
-            self.regret_train_op = self.optimizer.minimize(self.regret_loss)
+            self.regret_train_op = self.regret_optimizer.minimize(self.regret_loss)
 
             self.init = tf.global_variables_initializer()
             self.sess = tf.Session()
@@ -306,8 +308,8 @@ class CRFForDouDiZhuPokerPlayer(CRFPlayer):
 
 
 if __name__ == "__main__":
-    env     = KuhnPokerEnv()
-    player  = KuhnPokerCRMPlayer()
+    env     = DouDiZhuPokerEnv
+    player  = CRFForDouDiZhuPokerPlayer()
     import roomai_models.crf.algorithms
     algo    = roomai_models.crf.algorithms.CRFOutSampling
     for i in range(10000):
@@ -322,7 +324,7 @@ if __name__ == "__main__":
     sum_scores = [0.0,0.0]
     num        = 0
     for i in range(10000):
-        scores = KuhnPokerEnv.compete(env,[player, player_random])
+        scores = DouDiZhuPokerEnv.compete(env,[player, player_random])
         sum_scores[0] += scores[0]
         sum_scores[1] += scores[1]
         num           += 1
@@ -331,27 +333,6 @@ if __name__ == "__main__":
     print (sum_scores)
 
 
-    player_alwaysbet = Example_KuhnPokerAlwaysBetPlayer()
-    sum_scores = [0.0,0.0]
-    num        = 0
-    for i in range(10000):
-        scores = KuhnPokerEnv.compete(env,[player, player_alwaysbet])
-        sum_scores[0] += scores[0]
-        sum_scores[1] += scores[1]
-        num           += 1
-    for i in range(len(sum_scores)):
-        sum_scores[i] /= num
-    print (sum_scores)
 
-    sum_scores = [0.0, 0.0]
-    num = 0
-    for i in range(10000):
-        scores = KuhnPokerEnv.compete(env, [player_random, player_alwaysbet])
-        sum_scores[0] += scores[0]
-        sum_scores[1] += scores[1]
-        num += 1
-    for i in range(len(sum_scores)):
-        sum_scores[i] /= num
-    print (sum_scores)
 
 
