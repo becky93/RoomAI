@@ -86,7 +86,7 @@ class DouDiZhuPokerPublicState(roomai.common.AbstractPublicState):
         else:
             newinstance.__keep_cards__ = self.keep_cards.__deepcopy__()
 
-        newinstance.__first_player__ = self.first_player
+#        newinstance.__first_player__ = self.first_player
         newinstance.__phase__ = self.phase
         newinstance.__epoch__ = self.epoch
 

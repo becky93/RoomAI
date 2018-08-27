@@ -81,10 +81,10 @@ class CRFForDouDiZhuPokerPlayer(CRFPlayer):
                                           strides=[1, 2, 2, 1], padding='SAME')
 
             ### layer2
-            strategy_conv2_weight = tf.get_variable('strategy_conv1w', shape=[3, 3, 16, 32],
+            strategy_conv2_weight = tf.get_variable('strategy_conv2w', shape=[3, 3, 16, 32],
                                                 initializer=tf.contrib.layers.xavier_initializer())
             strategy_conv2 = tf.nn.conv2d(strategy_pool1, filter=strategy_conv2_weight, strides=[1, 1, 1, 1], padding='SAME')
-            strategy_bias2 = tf.nn.relu(strategy_conv2 + tf.get_variable('strategy_conv1b', shape=[32],
+            strategy_bias2 = tf.nn.relu(strategy_conv2 + tf.get_variable('strategy_conv2b', shape=[32],
                                                   initializer=tf.contrib.layers.xavier_initializer()))
             strategy_pool2 = tf.nn.max_pool(strategy_bias2, ksize=[1, 2, 2, 1],
                                           strides=[1, 2, 2, 1], padding='SAME')
@@ -130,11 +130,11 @@ class CRFForDouDiZhuPokerPlayer(CRFPlayer):
                                             strides=[1, 2, 2, 1], padding='SAME')
 
             ### layer2
-            regret_conv2_weight = tf.get_variable('regret_conv1w', shape=[3, 3, 16, 32],
+            regret_conv2_weight = tf.get_variable('regret_conv2w', shape=[3, 3, 16, 32],
                                                     initializer=tf.contrib.layers.xavier_initializer())
             regret_conv2 = tf.nn.conv2d(regret_pool1, filter=regret_conv2_weight, strides=[1, 1, 1, 1],
                                           padding='SAME')
-            regret_bias2 = tf.nn.relu(regret_conv2 + tf.get_variable('regret_conv1b', shape=[32],
+            regret_bias2 = tf.nn.relu(regret_conv2 + tf.get_variable('regret_conv2b', shape=[32],
                                                                          initializer=tf.contrib.layers.xavier_initializer()))
             regret_pool2 = tf.nn.max_pool(regret_bias2, ksize=[1, 2, 2, 1],
                                             strides=[1, 2, 2, 1], padding='SAME')
@@ -308,12 +308,12 @@ class CRFForDouDiZhuPokerPlayer(CRFPlayer):
 
 
 if __name__ == "__main__":
-    env     = DouDiZhuPokerEnv
+    env     = DouDiZhuPokerEnv()
     player  = CRFForDouDiZhuPokerPlayer()
     import roomai_models.crf.algorithms
-    algo    = roomai_models.crf.algorithms.CRFOutSampling
+    algo    = roomai_models.crf.algorithms.CRFOutSampling()
     for i in range(10000):
-        algo.dfs(env = env, player=player, p0 = 1, p1 = 1, deep = 0)
+        algo.dfs(env = env, player=player, current_player_idx = 0, reach_probs= 1, deep = 0)
 
     print (player.regrets)
     print (player.strategies)

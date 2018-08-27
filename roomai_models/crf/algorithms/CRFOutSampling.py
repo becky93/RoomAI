@@ -16,7 +16,7 @@ def sampling(probs):
 
 class CRFOutSampling(object):
 
-    def dfs(self, current_player_idx, env, player, reach_probs, action = None, deep = 0):
+    def dfs(self, env, player, current_player_idx,reach_probs, action = None, deep = 0):
 
         if deep == 0:
             infos, public_state, person_states, private_state = env.init({"param_backward_enable": True})
@@ -33,7 +33,7 @@ class CRFOutSampling(object):
             turn                       = public_state.turn
             available_actions          = list(infos[turn].person_state.available_actions.values())
             choose_action              = available_actions[int(random.random() * len(available_actions))]
-            utility_multiply_prob      = self.dfs(current_player_idx, env, player, reach_probs=reach_probs, action = choose_action, deep = deep + 1)
+            utility_multiply_prob      = self.dfs(env, player,current_player_idx, reach_probs=reach_probs, action = choose_action, deep = deep + 1)
         else:
             ### prepare for the basic data
             turn                   = public_state.turn
@@ -48,7 +48,7 @@ class CRFOutSampling(object):
             choose_action                         = available_actions[choose_action_idx]
             new_reach_probs                       = list(reach_probs)
             new_reach_probs[turn]                 = reach_probs[turn] * averge_strategies[choose_action_idx]
-            utility_multiply_prob                 = self.dfs(current_player_idx, env, player, new_reach_probs, choose_action, deep + 1)
+            utility_multiply_prob                 = self.dfs(env, player, current_player_idx, new_reach_probs, choose_action, deep + 1)
 
             if current_player_idx  == turn:
                 utility_multiply_prob = utility_multiply_prob * averge_strategies[choose_action_idx]
