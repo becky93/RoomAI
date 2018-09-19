@@ -1,4 +1,4 @@
 #!/bin/python
-from roomai.RoomAIUtils import *
+from roomai.Utils import *
 
 
