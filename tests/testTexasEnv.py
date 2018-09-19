@@ -28,17 +28,17 @@ class TexasEnvTester(unittest.TestCase):
 
 
         infos,public_state, person_states, private_state  = env.init(params)
-        self.assertEqual(infos[0].person_state.id,0)
-        env.person_states[0].__hand_cards__ = [roomai.games.texasholdem.PokerCard(0, 0), roomai.games.texasholdem.PokerCard(0, 1)]
-        env.person_states[0].__hand_cards__ = [roomai.games.texasholdem.PokerCard(2, 0), roomai.games.texasholdem.PokerCard(2, 1)]
-        env.person_states[0].__hand_cards__ = [roomai.games.texasholdem.PokerCard(2, 0), roomai.games.texasholdem.PokerCard(2, 1)]
-        env.private_state.__keep_cards__    = [roomai.games.texasholdem.PokerCard(3, 0), roomai.games.texasholdem.PokerCard(4, 0),
+        self.assertEqual(infos[0].person_state_history[-1].id,0)
+        env.__person_states_history__[0][-1].__hand_cards__ = [roomai.games.texasholdem.PokerCard(0, 0), roomai.games.texasholdem.PokerCard(0, 1)]
+        env.__person_states_history__[0][-1].__hand_cards__ = [roomai.games.texasholdem.PokerCard(2, 0), roomai.games.texasholdem.PokerCard(2, 1)]
+        env.__person_states_history__[0][-1].__hand_cards__ = [roomai.games.texasholdem.PokerCard(2, 0), roomai.games.texasholdem.PokerCard(2, 1)]
+        env.__private_state_history__[-1].__keep_cards__    = [roomai.games.texasholdem.PokerCard(3, 0), roomai.games.texasholdem.PokerCard(4, 0),
                                                roomai.games.texasholdem.PokerCard(5, 0), roomai.games.texasholdem.PokerCard(6, 0),
                                                roomai.games.texasholdem.PokerCard(7, 0)]
 
-        self.assertEqual(env.public_state.turn, 0)
-        self.assertNotEqual(len(infos[0].person_state.available_actions), 0)
-        self.assertTrue("Allin_100" in infos[0].person_state.available_actions.keys())
+        self.assertEqual(env.__public_state_history__[-1].turn, 0)
+        self.assertNotEqual(len(infos[0].person_state_history[-1].available_actions), 0)
+        self.assertTrue("Allin_100" in infos[0].person_state_history[-1].available_actions.keys())
         # dealer_id = 0
         # turn = 0
         # chips:100, 90, 80
@@ -48,13 +48,13 @@ class TexasEnvTester(unittest.TestCase):
 
         action = TexasHoldemAction("Allin_100")
         infos,public_state, person_states, private_state  = env.forward(action)
-        self.assertEqual(env.public_state.turn, 1)
-        self.assertNotEqual(len(infos[1].person_state.available_actions), 0)
-        self.assertTrue("Allin_90" in infos[1].person_state.available_actions.keys())
-        self.assertEqual(env.public_state.turn, 1)
-        self.assertEqual(env.public_state.chips[0],0)
-        self.assertEqual(env.public_state.chips[1],90)
-        self.assertEqual(env.public_state.stage, Stage.firstStage)
+        self.assertEqual(env.__public_state_history__[-1].turn, 1)
+        self.assertNotEqual(len(infos[1].person_state_history[-1].available_actions), 0)
+        self.assertTrue("Allin_90" in infos[1].person_state_history[-1].available_actions.keys())
+        self.assertEqual(env.__public_state_history__[-1].turn, 1)
+        self.assertEqual(env.__public_state_history__[-1].chips[0],0)
+        self.assertEqual(env.__public_state_history__[-1].chips[1],90)
+        self.assertEqual(env.__public_state_history__[-1].stage, Stage.firstStage)
         # dealer_id = 0
         # turn = 1
         # chips:0,   90, 80
@@ -69,7 +69,7 @@ class TexasEnvTester(unittest.TestCase):
         # chips:0,   90, 80
         # bets :100, 10, 20
         # state:all,  q,  n
-        self.assertEqual(env.public_state.turn, 2)
+        self.assertEqual(env.__public_state_history__[-1].turn, 2)
 
 
         action = TexasHoldemAction("Fold_0")
@@ -79,16 +79,16 @@ class TexasEnvTester(unittest.TestCase):
         # chips:0,   90, 80
         # bets :100, 10, 20
         # state:all,  q,  n
-        print (env.public_state.bets)
-        print (env.public_state.is_allin)
-        print (env.public_state.is_fold)
-        print (env.public_state.chips)
-        print (env.public_state.turn)
-        self.assertTrue(public_state.is_terminal)
+        print (env.__public_state_history__[-1].bets)
+        print (env.__public_state_history__[-1].is_allin)
+        print (env.__public_state_history__[-1].is_fold)
+        print (env.__public_state_history__[-1].chips)
+        print (env.__public_state_history__[-1].turn)
+        self.assertTrue(public_state[-1].is_terminal)
 
-        self.assertEqual(public_state.scores[0], 30.0/public_state.param_big_blind_bet)
-        self.assertEqual(public_state.scores[1], -10.0/public_state.param_big_blind_bet)
-        self.assertEqual(public_state.scores[2], -20.0/public_state.param_big_blind_bet)
+        self.assertEqual(public_state[-1].scores[0], 30.0/public_state[-1].param_big_blind_bet)
+        self.assertEqual(public_state[-1].scores[1], -10.0/public_state[-1].param_big_blind_bet)
+        self.assertEqual(public_state[-1].scores[2], -20.0/public_state[-1].param_big_blind_bet)
 
 
     def testEnv3Players2(self):
@@ -106,17 +106,17 @@ class TexasEnvTester(unittest.TestCase):
 
 
         infos,public_state, person_states, private_state = env.init(params)
-        self.assertEqual(infos[0].person_state.id,0)
-        env.person_states[0].__hand_cards__ = [roomai.games.texasholdem.PokerCard(7, 0), roomai.games.texasholdem.PokerCard(7, 1)]
-        env.person_states[1].__hand_cards__ = [roomai.games.texasholdem.PokerCard(2, 0), roomai.games.texasholdem.PokerCard(2, 1)]
-        env.person_states[2].__hand_cards__ = [roomai.games.texasholdem.PokerCard(2, 2), roomai.games.texasholdem.PokerCard(2, 3)]
-        env.private_state.__keep_cards__    = [roomai.games.texasholdem.PokerCard(3, 1), roomai.games.texasholdem.PokerCard(4, 2),
+        self.assertEqual(infos[0].person_state_history[-1].id,0)
+        env.__person_states_history__[0][-1].__hand_cards__ = [roomai.games.texasholdem.PokerCard(7, 0), roomai.games.texasholdem.PokerCard(7, 1)]
+        env.__person_states_history__[1][-1].__hand_cards__ = [roomai.games.texasholdem.PokerCard(2, 0), roomai.games.texasholdem.PokerCard(2, 1)]
+        env.__person_states_history__[2][-1].__hand_cards__ = [roomai.games.texasholdem.PokerCard(2, 2), roomai.games.texasholdem.PokerCard(2, 3)]
+        env.__private_state_history__[-1].__keep_cards__    = [roomai.games.texasholdem.PokerCard(3, 1), roomai.games.texasholdem.PokerCard(4, 2),
                                                roomai.games.texasholdem.PokerCard(5, 3), roomai.games.texasholdem.PokerCard(6, 0),
                                                roomai.games.texasholdem.PokerCard(7, 3)]
-        self.assertEqual(env.public_state.turn, 0)
-        self.assertNotEqual(len(infos[0].person_state.available_actions), 0)
-        self.assertTrue("Raise_60" in infos[0].person_state.available_actions.keys())
-        self.assertEqual(env.public_state.raise_account, 20)
+        self.assertEqual(env.__public_state_history__[-1].turn, 0)
+        self.assertNotEqual(len(infos[0].person_state_history[-1].available_actions), 0)
+        self.assertTrue("Raise_60" in infos[0].person_state_history[-1].available_actions.keys())
+        self.assertEqual(env.__public_state_history__[-1].raise_account, 20)
         # dealer_id = 0
         # turn = 0
         # chips:100, 490, 980
@@ -128,11 +128,11 @@ class TexasEnvTester(unittest.TestCase):
 
         action = TexasHoldemAction("Raise_60")
         infos,public_state, person_states, private_state  = env.forward(action)
-        print (env.public_state.num_needed_to_action, env.public_state.is_needed_to_action)
-        self.assertEqual(env.public_state.turn, 1)
-        self.assertTrue("Raise_60" not in infos[1].person_state.available_actions)
-        self.assertTrue("Raise_80" not in infos[1].person_state.available_actions)
-        self.assertEqual(env.public_state.raise_account, 40)
+        print (env.__public_state_history__[-1].num_needed_to_action, env.__public_state_history__[-1].is_needed_to_action)
+        self.assertEqual(env.__public_state_history__[-1].turn, 1)
+        self.assertTrue("Raise_60" not in infos[1].person_state_history[-1].available_actions)
+        self.assertTrue("Raise_80" not in infos[1].person_state_history[-1].available_actions)
+        self.assertEqual(env.__public_state_history__[-1].raise_account, 40)
         action = TexasHoldemAction("Call_40")
         self.assertRaises(ValueError, env.forward, action)
         # dealer_id = 0
@@ -147,12 +147,12 @@ class TexasEnvTester(unittest.TestCase):
 
         action = TexasHoldemAction("Call_50")
         infos,public_state, person_states, private_state  = env.forward(action)
-        assert(public_state.stage == Stage.firstStage)
-        print (env.public_state.num_needed_to_action, env.public_state.is_needed_to_action)
-        print (public_state.stage)
-        print (public_state.chips)
-        print (public_state.bets)
-        print (public_state.param_dealer_id)
+        assert(public_state[-1].stage == Stage.firstStage)
+        print (env.__public_state_history__[-1].num_needed_to_action, env.__public_state_history__[-1].is_needed_to_action)
+        print (public_state[-1].stage)
+        print (public_state[-1].chips)
+        print (public_state[-1].bets)
+        print (public_state[-1].param_dealer_id)
         # dealer_id = 0
         # turn  = 2
         # stage = 1
@@ -165,12 +165,12 @@ class TexasEnvTester(unittest.TestCase):
         action = TexasHoldemAction("Call_40")
         infos,public_state, person_states, private_state  = env.forward(action)
         print ("\n\n")
-        print ("stage",public_state.stage)
-        print ("dealer_id+1", (public_state.param_dealer_id+1)%public_state.param_num_normal_players)
-        print ("is_needed_to_action", public_state.is_needed_to_action)
-        self.assertEqual(infos[0].public_state.stage,Stage.secondStage)
-        self.assertEqual(env.public_state.chips[1],440)
-        self.assertEqual(env.public_state.turn, 1)
+        print ("stage",public_state[-1].stage)
+        print ("dealer_id+1", (public_state[-1].param_dealer_id+1)%public_state[-1].param_num_normal_players)
+        print ("is_needed_to_action", public_state[-1].is_needed_to_action)
+        self.assertEqual(infos[0].public_state_history[-1].stage,Stage.secondStage)
+        self.assertEqual(env.__public_state_history__[-1].chips[1],440)
+        self.assertEqual(env.__public_state_history__[-1].turn, 1)
         # dealer_id = 0
         # turn  = 1
         # stage = 2
@@ -184,15 +184,15 @@ class TexasEnvTester(unittest.TestCase):
         infos,public_state, person_states, private_state  = env.forward(action)
         infos,public_state, person_states, private_state  = env.forward(action)
         infos,public_state, person_states, private_state  = env.forward(action)
-        self.assertEqual(env.public_state.stage,3)
-        self.assertEqual(len(env.public_state.public_cards),4)
+        self.assertEqual(env.__public_state_history__[-1].stage,3)
+        self.assertEqual(len(env.__public_state_history__[-1].public_cards),4)
         p = 0
         tmp = [roomai.games.texasholdem.PokerCard(3, 1), roomai.games.texasholdem.PokerCard(4, 2),
                roomai.games.texasholdem.PokerCard(5, 3), roomai.games.texasholdem.PokerCard(6, 0)]
-        self.assertEqual(env.public_state.raise_account, 40)
-        self.assertEqual(env.public_state.stage, 3)
-        self.assertEqual(env.public_state.turn, 1)
-        print ("1",infos[1].person_state.available_actions.keys())
+        self.assertEqual(env.__public_state_history__[-1].raise_account, 40)
+        self.assertEqual(env.__public_state_history__[-1].stage, 3)
+        self.assertEqual(env.__public_state_history__[-1].turn, 1)
+        print ("1",infos[1].person_state_history[-1].available_actions.keys())
         # dealer_id = 0
         # turn  = 1
         # stage = 3
@@ -204,10 +204,10 @@ class TexasEnvTester(unittest.TestCase):
 
         action = TexasHoldemAction("Allin_440")
         infos,public_state, person_states, private_state  = env.forward(action)
-        self.assertEqual(infos[0].public_state.max_bet_sofar, 500)
-        print ("2", infos[2].person_state.available_actions.keys())
-        self.assertEqual(env.public_state.is_allin[1],True)
-        self.assertEqual(infos[0].public_state.stage, 3)
+        self.assertEqual(infos[0].public_state[-1].max_bet_sofar, 500)
+        print ("2", infos[2].person_state_history[-1].available_actions.keys())
+        self.assertEqual(env.__public_state_history__[-1].is_allin[1],True)
+        self.assertEqual(infos[0].public_state[-1].stage, 3)
         # dealer_id = 0
         # turn  = 2
         # stage = 3
@@ -226,9 +226,9 @@ class TexasEnvTester(unittest.TestCase):
         # bets :100,   500,  500
         # 0 > 1 = 2
 
-        self.assertEqual(public_state.scores[0],200.0/public_state.param_big_blind_bet)
-        self.assertEqual(public_state.scores[1],-100.0/public_state.param_big_blind_bet)
-        self.assertEqual(public_state.scores[2],-100.0/public_state.param_big_blind_bet)
+        self.assertEqual(public_state[-1].scores[0],200.0/public_state[-1].param_big_blind_bet)
+        self.assertEqual(public_state[-1].scores[1],-100.0/public_state[-1].param_big_blind_bet)
+        self.assertEqual(public_state[-1].scores[2],-100.0/public_state[-1].param_big_blind_bet)
 
 
 
@@ -255,10 +255,10 @@ class TexasEnvTester(unittest.TestCase):
             params = {"param_num_normal_players": num_normal_players,  "chips": chips}
             infos, public_state, person_states, private_state = env.init(params)
 
-            while public_state.is_terminal != True:
+            while public_state[-1].is_terminal != True:
                 for i in range(3):
                     players[i].receive_info(infos[i])
-                turn   = public_state.turn
+                turn   = public_state[-1].turn
                 action = players[turn].take_action()
 
                 infos, public_state, person_states, private_state = env.forward(action)
@@ -275,10 +275,10 @@ class TexasEnvTester(unittest.TestCase):
             params = {"param_num_normal_players": num_normal_players, "dealer_id": dealer_id, "chips": chips}
             infos, public_state, person_states, private_state = env.init(params)
 
-            while public_state.is_terminal != True:
+            while public_state[-1].is_terminal != True:
                 for i in range(2):
                     players[i].receive_info(infos[i])
-                turn   = public_state.turn
+                turn   = public_state[-1].turn
                 action = players[turn].take_action()
 
                 infos, public_state, person_states, private_state = env.forward(action)

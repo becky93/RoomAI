@@ -101,9 +101,9 @@ class TexasHoldemStatePublic(roomai.games.common.AbstractStatePublic):
     def __get_param_dealer_id__(self):    return self.__param_dealer_id__
     param_dealer_id = property(__get_param_dealer_id__, doc="The player id of the dealer. The next player after the dealer is the small blind. The next player after the small blind is the big blind.For example, param_dealer_id = 2")
 
-    __param_initialization_chips__ = None
-    def __get_param_initialization_chips__(self):   return self.__param_initialization_chips__
-    param_initialization_chips = property(__get_param_initialization_chips__, doc="The initialization chips of this game. For example, param_initialization_chips = [10,5,6]")
+    __param_init_chips__ = None
+    def __get_param_init_chips__(self):   return self.__param_init_chips__
+    param_init_chips = property(__get_param_init_chips__, doc="The initialization chips of this game. For example, param_initialization_chips = [10,5,6]")
 
     __param_big_blind_bet__ = 10
     def __get_param_big_blind_bet__(self): return self.__param_big_blind_bet__
@@ -115,11 +115,13 @@ class TexasHoldemStatePublic(roomai.games.common.AbstractStatePublic):
                 newinstance = TexasHoldemStatePublic()
             newinstance = super(TexasHoldemStatePublic, self).__deepcopy__(newinstance=newinstance)
 
-            newinstance.__stage__         = self.stage
-            newinstance.__num_normal_players__   = self.num_normal_players
-            newinstance.__dealer_id__     = self.dealer_id
-            newinstance.__big_blind_bet__ = self.big_blind_bet
 
+            newinstance.__param_dealer_id__     = self.param_dealer_id
+            newinstance.__param_big_blind_bet__ = self.param_big_blind_bet
+            newinstance.__param_init_chips__    = self.__param_init_chips__
+            newinstance.__param_start_turn__    = self.__param_start_turn__
+
+            newinstance.__stage__         = self.stage
             if self.public_cards is None:
                 newinstance.__public_cards__ = None
             else:

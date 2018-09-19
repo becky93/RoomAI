@@ -101,11 +101,13 @@ class TexasUtilsTester(unittest.TestCase):
         env = TexasHoldemEnv()
         env.init()
 
-        actions = TexasHoldemEnv.available_actions(env.public_state, env.person_states[env.public_state.turn])
+        actions = TexasHoldemEnv.available_actions(env.__public_state_history__[-1], env.__person_states_history__[env.__public_state_history__[-1].turn][-1]
+)
         self.assertTrue("Allin_1000" in actions)
 
-        env.public_state.__raise_account__ = 200
-        actions = TexasHoldemEnv.available_actions(env.public_state, env.person_states[env.public_state.turn])
+        env.__public_state_history__[-1].__raise_account__ = 200
+        actions = TexasHoldemEnv.available_actions(env.__public_state_history__[-1], env.__person_states_history__[env.__public_state_history__[-1].turn][-1]
+)
         self.assertTrue("Call_10" in actions)
         self.assertTrue("Raise_210" in actions)
         self.assertTrue("Raise_410" in actions)
@@ -114,7 +116,8 @@ class TexasUtilsTester(unittest.TestCase):
         self.assertTrue("Allin_1000" in actions)
         for key in actions:
             act = actions[key]
-            self.assertTrue(TexasHoldemEnv.is_action_valid(act,env.public_state, env.person_states[env.public_state.turn]))
+            self.assertTrue(TexasHoldemEnv.is_action_valid(act,env.__public_state_history__[-1], env.__person_states_history__[env.__public_state_history__[-1].turn][-1]
+))
 
 
 
@@ -129,7 +132,8 @@ class TexasUtilsTester(unittest.TestCase):
         print (TexasHoldemAction.AllIn)
         action = TexasHoldemAction("Allin_1000")
         print (action.key)
-        self.assertTrue(env.is_action_valid(action, env.public_state, env.person_states[env.public_state.turn]))
+        self.assertTrue(env.is_action_valid(action, env.__public_state_history__[-1], env.__person_states_history__[env.__public_state_history__[-1].turn][-1]
+))
 
 
     def test_compare(self):

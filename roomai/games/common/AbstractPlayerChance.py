@@ -30,7 +30,7 @@ class RandomPlayerChance(AbstractPlayerChance):
     The RandomChancePlayer is a chance player, who randomly takes an action.
     '''
     def receive_info(self, info):
-        self.available_actions = info.person_state.available_actions
+        self.available_actions = info.person_state_history[-1].available_actions
 
     def take_action(self):
         import random

@@ -5,29 +5,28 @@ import roomai
 from roomai.games.common import AbstractStatePerson
 from roomai.games.common import AbstractStatePublic
 
-logger = roomai.get_logger()
+
 
 
 class Info(object):
     '''
-    The class of information sent by env to a player. The Info class contains the public state and the corresponding person state w.r.t the target player
+    The class of information sent by env to a player. The Info class contains the public state history and the corresponding person state history w.r.t the target player
     '''
-    def __init__(self):
-        self.__public_state__       = AbstractStatePublic()
-        self.__person_state__       = AbstractStatePerson()
+    def __init__(self, public_state_history_tuple, person_state_history_tuple):
+        self.__public_state_history_tuple__       = public_state_history_tuple
+        self.__person_state_history_tuple__       = person_state_history_tuple
 
 
-    def __get_public_state__(self):
-        return self.__public_state__
-    public_state = property(__get_public_state__, doc="The public state in the information")
+    def __get_public_state_history__(self):
+        return self.__public_state_history_tuple__
+    public_state_history = property(__get_public_state_history__, doc="The public state history in the information")
 
-    def __get_person_state__(self):
-        return self.__person_state__
-    person_state = property(__get_person_state__, doc="The person state in the information")
+    def __get_person_state_history__(self):
+        return self.__person_state_history_tuple__
+    person_state_history = property(__get_person_state_history__, doc="The person state history in the information")
 
-    def __deepcopy__(self, memodict={}, newinstance = None):
-        if newinstance is None:
-            newinstance = Info()
-        newinstance.__public_state__  = self.__public_state.__deepcopy__()
-        newinstance.__personc_state__ = self.__person_state.__deepcopy__()
+    def __deepcopy__(self, memodict={}):
+        newinstance = Info()
+        newinstance.__public_state_history_tuple__  = self.__public_state_history_tuple__
+        newinstance.__personc_state_history_tuple__ = self.__person_state_history_tuple__
         return newinstance

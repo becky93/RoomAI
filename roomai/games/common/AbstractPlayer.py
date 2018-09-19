@@ -39,7 +39,7 @@ class RandomPlayer(AbstractPlayer):
     The RandomPlayer is as a common baseline.\n
     '''
     def receive_info(self, info):
-        self.available_actions = info.person_state.available_actions
+        self.available_actions = info.person_state_history[-1].available_actions
 
     def take_action(self):
         import random

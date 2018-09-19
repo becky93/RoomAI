@@ -34,9 +34,6 @@ class AbstractStatePublic(object):
                                       "In some games, the number of normal players is constant, for exmple, doudizhu.\n"
                                       "In the other games, the number of normal players is variable, for example, texas hold em.\n")
 
-    def __get_param_backward_enable__(self):  return self.__param_backward_enable__
-    param_backward_enable = property(__get_param_backward_enable__, doc="If you need call the backward function of the enviroment, please set it to True. Default False.")
-
     def __get_turn__(self): return self.__turn__
     turn = property(__get_turn__, doc = "The players[turn] is expected to take an action.")
 

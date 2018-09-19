@@ -25,12 +25,9 @@ class AbstractEnv(object):
             logger.fatal("call env.__gen_infos__ before call the env.init function")
             raise Exception("call env.__gen_infos__ before call the env.init function")
 
-        num_players = len(self.__person_states_history__[0])
-        __infos__ = [Info() for i in range(num_players)]
+        num_players = len(self.__person_states_history__)
+        __infos__ = [Info(tuple(self.__public_state_history__), tuple(self.__person_states_history__[i])) for i in range(num_players)]
 
-        for i in range(num_players):
-            __infos__[i].__person_state__ = tuple(self.__person_states_history__[i])
-            __infos__[i].__public_state__ = tuple(self.__public_state_history__)
 
         return tuple(__infos__)
 
