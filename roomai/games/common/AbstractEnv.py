@@ -144,7 +144,7 @@ class AbstractEnv(object):
         raise NotImplementedError("The compete_interaction function hasn't been implemented")
 
     @classmethod
-    def available_actions(self, public_state, person_state):
+    def available_normal_actions(self, public_state, person_state):
         '''
         Generate all valid actions given the public state and the person state
 

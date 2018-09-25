@@ -123,14 +123,15 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
         # private info
         pr                     =  TexasHoldemStatePrivate()
         self.__private_state_history__.append(pr)
-        pr.__keep_cards__      =allcards[public_state.param_num_normal_players*2:public_state.param_num_normal_players*2+5]
+        pr.__keep_cards__        = []
+        ##pr.__keep_cards__      =allcards[public_state.param_num_normal_players*2:public_state.param_num_normal_players*2+5]
 
         ## person info
         self.__person_states_history__ = [[] for i in range(pu.param_num_normal_players + 1)]
         for i in range(pu.param_num_normal_players + 1):
             self.__person_states_history__[i].append(TexasHoldemStatePerson())
             self.__person_states_history__[i][0].__id__ = i
-            self.__person_states_history__[i][0].__hand_cards__ = allcards[i*2:(i+1)*2]
+            self.__person_states_history__[i][0].__hand_cards__ = []
         self.__person_states_history__[pu.turn][0].__available_actions__ = self.available_actions(pu, self.__person_states_history__[pu.turn][0])
 
         infos = self.__gen_infos__()
@@ -165,7 +166,7 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
             self.__person_states_history__[i].append(pe[i])
         self.__private_state_history__.append(pr)
 
-        if not self.is_action_valid(action, pu, pe[pu.turn]):
+        if action.key not in pe[pu.turn].available_actions:
             logger.critical("action=%s is invalid" % (action.key))
             raise ValueError("action=%s is invalid" % (action.key))
         pe[pu.turn].__available_actions__ = dict()
@@ -666,6 +667,8 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
         :param person_state: 
         :return: all valid actions
         '''
+
+
         pu = public_state
         pe = person_state
         turn = pu.turn
@@ -716,9 +719,6 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
 
         return key_actions
 
-    @classmethod
-    def is_action_valid(cls, action, public_state, person_state):
-        return action.key in person_state.available_actions
 
     def __deepcopy__(self, memodict={}, newinstance = None):
         if newinstance is None:

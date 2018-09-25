@@ -1,7 +1,8 @@
 #!/bin/python
 #coding:utf-8
 import roomai.games.common
-
+from roomai.games.texasholdem.TexasHoldemUtil import AllPokerCards
+from roomai.games.texasholdem.TexasHoldemUtil import PokerCard
 
 class TexasHoldemActionChance(roomai.games.common.AbstractActionChance):
     '''
@@ -23,7 +24,7 @@ class TexasHoldemActionChance(roomai.games.common.AbstractActionChance):
     def __init__(self, key):
         super(TexasHoldemActionChance, self).__init__(key)
         self.__key__  = key
-        self.__card__ = roomai.games.texasholdem.PokerCard.lookup(key)
+        self.__card__ = PokerCard.lookup(key)
 
     def __get_key__(self):
         return self.__key__
@@ -42,11 +43,14 @@ class TexasHoldemActionChance(roomai.games.common.AbstractActionChance):
         :param key: The specified key
         :return: The action
         '''
-        if key not in AllTexasActionChances:
-            AllTexasActionChances[key] = TexasHoldemActionChance(key)
+
         return AllTexasActionChances[key]
 
     def __deepcopy__(self, memodict={}, newinstance = None):
         return TexasHoldemActionChance.lookup(self.key)
 
 AllTexasActionChances = dict()
+for pokercard_key in AllPokerCards:
+    AllTexasActionChances[pokercard_key] = TexasHoldemActionChance(pokercard_key)
+
+

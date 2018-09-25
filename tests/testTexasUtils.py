@@ -116,8 +116,7 @@ class TexasUtilsTester(unittest.TestCase):
         self.assertTrue("Allin_1000" in actions)
         for key in actions:
             act = actions[key]
-            self.assertTrue(TexasHoldemEnv.is_action_valid(act,env.__public_state_history__[-1], env.__person_states_history__[env.__public_state_history__[-1].turn][-1]
-))
+
 
 
 
@@ -132,8 +131,7 @@ class TexasUtilsTester(unittest.TestCase):
         print (TexasHoldemAction.AllIn)
         action = TexasHoldemAction("Allin_1000")
         print (action.key)
-        self.assertTrue(env.is_action_valid(action, env.__public_state_history__[-1], env.__person_states_history__[env.__public_state_history__[-1].turn][-1]
-))
+
 
 
     def test_compare(self):

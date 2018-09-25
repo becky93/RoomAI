@@ -49,8 +49,8 @@ class TexasEnvTester(unittest.TestCase):
         action = TexasHoldemAction("Allin_100")
         infos,public_state, person_states, private_state  = env.forward(action)
         self.assertEqual(env.__public_state_history__[-1].turn, 1)
-        self.assertNotEqual(len(infos[1].person_state_history[-1].available_actions), 0)
-        self.assertTrue("Allin_90" in infos[1].person_state_history[-1].available_actions.keys())
+        self.assertNotEqual(len(infos[1].person_state_history[-1].available_normal_actions), 0)
+        self.assertTrue("Allin_90" in infos[1].person_state_history[-1].available_normal_actions.keys())
         self.assertEqual(env.__public_state_history__[-1].turn, 1)
         self.assertEqual(env.__public_state_history__[-1].chips[0],0)
         self.assertEqual(env.__public_state_history__[-1].chips[1],90)
@@ -192,7 +192,7 @@ class TexasEnvTester(unittest.TestCase):
         self.assertEqual(env.__public_state_history__[-1].raise_account, 40)
         self.assertEqual(env.__public_state_history__[-1].stage, 3)
         self.assertEqual(env.__public_state_history__[-1].turn, 1)
-        print ("1",infos[1].person_state_history[-1].available_actions.keys())
+        print ("1", infos[1].person_state_history[-1].available_actions.keys())
         # dealer_id = 0
         # turn  = 1
         # stage = 3

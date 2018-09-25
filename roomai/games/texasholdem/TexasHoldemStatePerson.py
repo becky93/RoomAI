@@ -16,7 +16,7 @@ class TexasHoldemStatePerson(roomai.games.common.AbstractStatePerson):
         if newinstance is None:
             newinstance    = TexasHoldemStatePerson()
         newinstance = super(TexasHoldemStatePerson, self).__deepcopy__(newinstance=newinstance)
-        newinstance.__hand_cards__ = [c.__deepcopy__() for c in self.hand_cards]
+        newinstance.__hand_cards__ = list(self.hand_cards)
         return  newinstance
 
 

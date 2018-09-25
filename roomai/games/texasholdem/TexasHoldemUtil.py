@@ -1,6 +1,8 @@
 #!/bin/python
 #coding:utf-8
 
+import roomai
+
 class Stage:
     firstStage  = 1
     secondStage = 2
@@ -112,6 +114,12 @@ class PokerCard(object):
         :param key: The specified key
         :return: The PokerCard with the specified key
         '''
+
+        logger = roomai.get_logger()
+        if key not in AllPokerCards:
+            logger.fatal("key (%s) is not invalid poker card key"%(key))
+            raise ValueError("key (%s) is not invalid poker card key"%(key))
+
         return AllPokerCards[key]
 
     @classmethod
