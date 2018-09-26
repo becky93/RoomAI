@@ -25,7 +25,7 @@ def show_public(public_state):
            )
 def show_info(info):
     person_state          = info.person_state
-    print ("%d available_actions: %s" % (person_state.id, ",".join(sorted(person_state.available_normal_actions.keys()))))
+    print ("%d available_actions: %s" % (person_state.id, ",".join(sorted(person_state.available_actions.keys()))))
     print ("%d cards:%s"%(person_state.id,",".join([c.key for c in person_state.hand_cards])))
 
 if __name__ == "__main__":

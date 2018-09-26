@@ -16,11 +16,7 @@ class AbstractStatePublic(object):
         self.__turn__               = None
 
         ## parameters
-        self.__param_start_turn__            = 0
         self.__param_num_normal_players__    = 2
-        self.__param_backward_enable__       = False
-
-        self.__action_history__     = []
 
         self.__is_terminal__        = False
         self.__scores__             = None
@@ -58,11 +54,8 @@ class AbstractStatePublic(object):
             newinstance = AbstractStatePublic()
 
         newinstance.__turn__           = self.__turn__
-        newinstance.__action_history__ = list(tuple(self.__action_history__))
         newinstance.__is_terminal__    = self.is_terminal
 
-        newinstance.__param_start_turn__ = self.__param_start_turn__
-        newinstance.__param_backward_enable__ = self.__param_backward_enable__
         newinstance.__param_num_normal_players__ = self.__param_num_normal_players__
 
         if self.scores is None:

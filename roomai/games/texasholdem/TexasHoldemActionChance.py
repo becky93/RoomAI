@@ -43,6 +43,10 @@ class TexasHoldemActionChance(roomai.games.common.AbstractActionChance):
         :param key: The specified key
         :return: The action
         '''
+        logger = roomai.get_logger()
+        if key not in AllTexasActionChances:
+            logger.fatal("%s is not a valid action chance key"%(key))
+            raise ValueError("%s is not a valid action chance key"%(key))
 
         return AllTexasActionChances[key]
 

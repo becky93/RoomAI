@@ -15,9 +15,11 @@ class AbstractEnv(object):
     The abstract class of game environment
     '''
 
-    __public_state_history__  = []
-    __person_states_history__ = []
-    __private_state_history__ = []
+
+    __public_state_history__            = []
+    __person_states_history__           = []
+    __private_state_history__           = []
+    __playerid_action_history__         = []
 
     def __gen_infos__(self):
         logger = roomai.get_logger()
@@ -26,7 +28,7 @@ class AbstractEnv(object):
             raise Exception("call env.__gen_infos__ before call the env.init function")
 
         num_players = len(self.__person_states_history__)
-        __infos__ = [Info(tuple(self.__public_state_history__), tuple(self.__person_states_history__[i])) for i in range(num_players)]
+        __infos__ = [Info(tuple(self.__public_state_history__), tuple(self.__person_states_history__[i]), tuple(self.__playerid_action_history__)) for i in range(num_players)]
 
 
         return tuple(__infos__)
@@ -103,9 +105,20 @@ class AbstractEnv(object):
         self.__public_state_history__.pop()
         self.__private_state_history__.pop()
         self.__person_states_history__.pop()
+        self.__playerid_action_history__.pop()
 
         infos = self.__gen_infos__()
-        return infos, self.__public_state_history__, self.__person_states_history__, self.__private_state_history__
+        return infos, self.__public_state_history__, self.__person_states_history__, self.__private_state_history__, self.__playerid_action_history__
+
+    def available_actions(self):
+        '''
+        Generate all valid actions given the public state and the person state
+
+        :param public_state: 
+        :param person_state: 
+        :return: A dict(action_key, action) contains all valid actions
+        '''
+        raise NotImplementedError("The available_actions function hasn't been implemented")
 
     def __deepcopy__(self, memodict={}, newinstance=None):
         if newinstance is None:
@@ -117,6 +130,8 @@ class AbstractEnv(object):
         if len(self.__person_states_history__) > 0:
             for i in range(len(self.__person_states_history__)):
                 newinstance.__person_states_history__.append([pe.__deepcopy__() for pe in self.__person_states_history__[i]])
+
+        newinstance.__playerid_action_history__ = list(tuple(self.__playerid_action_history__))
 
         return newinstance
 
@@ -143,13 +158,3 @@ class AbstractEnv(object):
         '''
         raise NotImplementedError("The compete_interaction function hasn't been implemented")
 
-    @classmethod
-    def available_normal_actions(self, public_state, person_state):
-        '''
-        Generate all valid actions given the public state and the person state
-
-        :param public_state: 
-        :param person_state: 
-        :return: A dict(action_key, action) contains all valid actions
-        '''
-        raise NotImplementedError("The available_actions function hasn't been implemented")

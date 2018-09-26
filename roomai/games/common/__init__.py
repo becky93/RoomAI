@@ -1,5 +1,6 @@
 #!/bin/python
 #!/bin/python
+from roomai.games.common.ActionRecord import  ActionRecord
 from roomai.games.common.AbstractStatePublic  import AbstractStatePublic
 from roomai.games.common.AbstractStatePerson  import AbstractStatePerson
 from roomai.games.common.AbstractStatePrivate import AbstractStatePrivate

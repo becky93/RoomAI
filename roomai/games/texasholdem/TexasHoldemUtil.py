@@ -83,27 +83,22 @@ class PokerCard(object):
 
     def __get_point_str__(self):
         return self.__point__
-
     point = property(__get_point_str__, doc="The point of the poker card")
 
     def __get_suit_str__(self):
         return self.__suit__
-
     suit = property(__get_suit_str__, doc="The suit of the poker card")
 
     def __get_point_rank__(self):
         return self.__point_rank__
-
     point_rank = property(__get_point_rank__, doc="The point rank of the poker card")
 
     def __get_suit_rank__(self):
         return self.__suit_rank__
-
     suit_rank = property(__get_suit_rank__, doc="The suit rank of the poker card")
 
     def __get_key__(self):
         return self.__key__
-
     key = property(__get_key__, doc="The key of the poker card")
 
     @classmethod
