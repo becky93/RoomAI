@@ -129,7 +129,7 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
             self.__person_states_history__[i][0].__id__ = i
             self.__person_states_history__[i][0].__hand_cards__ = []
 
-        self.__person_states_history__[pu.turn][0].__available_actions__ = self.available_actions(pu, self.__person_states_history__[pu.turn][0])
+        self.__person_states_history__[pu.turn][0].__available_actions__ = self.available_actions()
 
         infos = self.__gen_infos__()
 
@@ -466,7 +466,7 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
             dealer_id = int(random.random() * len(players))
             big_blind_bet = 50
 
-            infos, public, persons, private = env.init({"chips": chips,
+            infos, public, persons, private, action_history = env.init({"chips": chips,
                                                         "param_num_normal_players": num_normal_players,
                                                         "dealer_id": dealer_id,
                                                         "big_blind_bet": big_blind_bet})

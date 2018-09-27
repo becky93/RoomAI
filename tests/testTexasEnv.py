@@ -105,7 +105,7 @@ class TexasEnvTester(unittest.TestCase):
         players =  [RandomPlayer() for i in range(3)]
 
 
-        infos,public_state, person_states, private_state = env.init(params)
+        infos,public_state, person_states, private_state, action_history = env.init(params)
         self.assertEqual(infos[0].person_state_history[-1].id,0)
         env.__person_states_history__[0][-1].__hand_cards__ = [roomai.games.texasholdem.PokerCard(7, 0), roomai.games.texasholdem.PokerCard(7, 1)]
         env.__person_states_history__[1][-1].__hand_cards__ = [roomai.games.texasholdem.PokerCard(2, 0), roomai.games.texasholdem.PokerCard(2, 1)]

@@ -101,13 +101,11 @@ class TexasUtilsTester(unittest.TestCase):
         env = TexasHoldemEnv()
         env.init()
 
-        actions = TexasHoldemEnv.available_actions(env.__public_state_history__[-1], env.__person_states_history__[env.__public_state_history__[-1].turn][-1]
-)
+        actions = env.available_actions()
         self.assertTrue("Allin_1000" in actions)
 
         env.__public_state_history__[-1].__raise_account__ = 200
-        actions = TexasHoldemEnv.available_actions(env.__public_state_history__[-1], env.__person_states_history__[env.__public_state_history__[-1].turn][-1]
-)
+        actions = TexasHoldemEnv.available_actions()
         self.assertTrue("Call_10" in actions)
         self.assertTrue("Raise_210" in actions)
         self.assertTrue("Raise_410" in actions)
