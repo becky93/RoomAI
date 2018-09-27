@@ -169,6 +169,12 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
         pe[pu.turn].__available_actions__ = dict()
         self.__playerid_action_history__.append(roomai.games.common.ActionRecord(pu.turn,action))
 
+        if isinstance(action, TexasHoldemActionChance) == True:
+            self.__action_chance__(action)
+            pe[pu.turn].__available_actions__ = self.available_actions()
+            infos = self.__gen_infos__()
+            return infos, self.__public_state_history__, self.__person_states_history__, self.__private_state_history__
+
         if action.option == TexasHoldemAction.Fold:
             self.__action_fold__(action)
         elif action.option == TexasHoldemAction.Check:
@@ -378,6 +384,8 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
             scores[p]   /= pu.param_big_blind_bet * 1.0
         return scores
 
+    def __action_chance__(self, action):
+        pass
 
     def __action_fold__(self, action):
         pu = self.__public_state_history__[-1]
