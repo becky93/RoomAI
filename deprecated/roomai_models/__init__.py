@@ -1,2 +1,0 @@
-#!/bin/python
-placeholder = True

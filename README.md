@@ -10,7 +10,7 @@ RoomAI is a toolkit for developing AI-bots of Texas Holdem and Killers of Three 
 
 
 
-# Installation and The First Try
+# Install and Get Started
 
 You can install roomai with pip
 
@@ -23,9 +23,7 @@ Try your first RoomAI program
 
 <pre>
 #!/bin/python
-from roomai.kuhnpoker import *;
-import random
-import roomai
+from roomai.games. import *;
 import roomai.common
 
 class KuhnPokerExamplePlayer(roomai.common.AbstractPlayer):
