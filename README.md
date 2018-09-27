@@ -6,7 +6,7 @@
 
 
 
-RoomAI is a toolkit for developing and comparing AI-bots of imperfect information games.
+RoomAI is a toolkit for developing AI-bots of Texas Holdem and Killers of Three Kingdoms (KTK).
 
 
 
@@ -52,15 +52,14 @@ if __name__ == "__main__":
 
 # For More Information
 
- - [RoomAI Tutorials](docs/document/tutorials.md)
+ - [Introductions](docs/document/tutorials.md)
  
- - [Guides for AI Developers](docs/document/guides_ai.md)
+ - [Tutorials](docs/document/guides_ai.md)
  
- - [Guides for Game Developers](docs/document/guides_game.md)
+ - [Model Zoo](docs/document/model_zoo.md)
  
  - [API Docs](http://roomai.readthedocs.io/en/latest/?badge=latest)
  
- - [Model Zoo](docs/document/model_zoo.md)
  
  - [FQA](docs/document/fqa.md)
  
