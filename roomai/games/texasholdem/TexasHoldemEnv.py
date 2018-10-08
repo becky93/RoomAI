@@ -171,6 +171,7 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
 
         if isinstance(action, TexasHoldemActionChance) == True:
             self.__action_chance__(action)
+
             pe[pu.turn].__available_actions__ = self.available_actions()
             infos = self.__gen_infos__()
             return infos, self.__public_state_history__, self.__person_states_history__, self.__private_state_history__
@@ -219,12 +220,12 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
 
             pu.__turn__                                             = pu.param_dealer_id
             pu.__turn__                                             = self.__next_player__(pu)
-            pe[self.__public_state_history__[-1].turn].__available_actions__        = self.available_actions(self.__public_state_history__[-1], self.__person_states_history__[self.__public_state_history__[-1].turn][-1])
+            pe[self.__public_state_history__[-1].turn].__available_actions__        = self.available_actions()
 
         ##normal
         else:
             pu.__turn__  = self.__next_player__(pu)
-            self.__person_states_history__[self.__public_state_history__[-1].turn][-1].__available_actions__        = self.available_actions(self.__public_state_history__[-1], self.__person_states_history__[self.__public_state_history__[-1].turn][-1])
+            self.__person_states_history__[self.__public_state_history__[-1].turn][-1].__available_actions__        = self.available_actions()
 
         logger = roomai.get_logger()
 
@@ -385,7 +386,26 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
         return scores
 
     def __action_chance__(self, action):
-        pass
+        pu = self.__public_state_history__[-1]
+        pes = [self.__person_states_history__[i][-1] for i in range(len(self.__person_states_history__))]
+        pr = self.__private_state_history__[-1]
+
+
+        card = action.card
+        num  = len(pr.all_used_cards)
+        if num < (len(pes)-1) * 2:
+            idx = int(num / 2)
+            pes[idx].__hand_cards__.append(card)
+
+        elif num < (len(pes)-1) * 2 + 5:
+            pr.__keep_cards__.append(card)
+
+        else:
+            logger = roomai.get_logger()
+            logger.fatal("the chance action in the invalid condition")
+
+        pr.__all_used_cards__.append(card)
+
 
     def __action_fold__(self, action):
         pu = self.__public_state_history__[-1]
@@ -463,7 +483,7 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
         '''
 
         total_scores = [0 for i in range(len(players))]
-        total_count = 1000
+        total_count = 10
         num_normal_players = len(players)
 
         players = players + [roomai.games.common.RandomPlayerChance()]
