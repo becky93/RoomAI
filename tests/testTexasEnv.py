@@ -10,7 +10,19 @@ class TexasEnvTester(unittest.TestCase):
 
     def test_continuous_check(self):
         env = roomai.games.texasholdem.TexasHoldemEnv()
-        env.init({"num_normal_players":3, "big_blind_bet":10})
+        infos, public_history, persons_history, private_history, action_history = env.init({"num_normal_players":3, "big_blind_bet":10})
+
+        pu = public_history[-1]
+        pr = private_history[-1]
+        pe = persons_history[pu.turn][-1]
+
+        while len(pr.all_used_cards) < (len(persons_history) - 1) * 2 + 5:
+            action = list(pe.available_actions.values())[-1]
+            env.forward(action)
+
+            pu = public_history[-1]
+            pr = private_history[-1]
+            pe = persons_history[pu.turn][-1]
 
         env.forward(TexasHoldemAction.lookup("Call_10"))
         env.forward(TexasHoldemAction.lookup("Call_5"))
@@ -253,7 +265,7 @@ class TexasEnvTester(unittest.TestCase):
             num_normal_players = 3
             chips       = [1000 for i in range(num_normal_players)]
             params = {"param_num_normal_players": num_normal_players,  "chips": chips}
-            infos, public_state, person_states, private_state = env.init(params)
+            infos, public_state, person_states, private_state  = env.init(params)
 
             while public_state[-1].is_terminal != True:
                 for i in range(3):
