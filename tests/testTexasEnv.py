@@ -36,7 +36,7 @@ class TexasEnvTester(unittest.TestCase):
         dealer_id     = 0
         chips         = [100,100,100]
         big_blind_bet = 20
-        params  = {"param_num_normal_players":num_normal_players, "param_dealer_id":dealer_id, "param_initialization_chips":chips, "param_big_blind_bet":big_blind_bet, "backward_enable":True}
+        params  = {"param_num_normal_players":num_normal_players, "param_dealer_id":dealer_id, "param_init_chips":chips, "param_big_blind_bet":big_blind_bet, "backward_enable":True}
         players =  [RandomPlayer() for i in range(4)]
 
 
@@ -68,7 +68,7 @@ class TexasEnvTester(unittest.TestCase):
 
 
         action = TexasHoldemAction("Allin_100")
-        infos,public_state, person_states, private_state  = env.forward(action)
+        infos,public_state, person_states, private_state, action_history  = env.forward(action)
         self.assertEqual(env.__public_state_history__[-1].turn, 1)
         self.assertNotEqual(len(infos[1].person_state_history[-1].available_actions), 0)
         self.assertTrue("Allin_90" in infos[1].person_state_history[-1].available_actions.keys())
@@ -84,7 +84,7 @@ class TexasEnvTester(unittest.TestCase):
 
 
         action = TexasHoldemAction("Fold_0")
-        infos,public_state, person_states, private_state  = env.forward(action)
+        infos,public_state, person_states, private_state,action_history  = env.forward(action)
         # dealer_id = 0
         # turn = 2
         # chips:0,   90, 80
@@ -94,7 +94,7 @@ class TexasEnvTester(unittest.TestCase):
 
 
         action = TexasHoldemAction("Fold_0")
-        infos,public_state, person_states, private_state  = env.forward(action)
+        infos,public_state, person_states, private_state,action_history  = env.forward(action)
         # dealer_id = 0
         # turn = 1
         # chips:0,   90, 80
@@ -122,7 +122,7 @@ class TexasEnvTester(unittest.TestCase):
         dealer_id     = 0
         chips         = [100, 500,1000]
         big_blind_bet = 20
-        params  = {"param_num_normal_players":num_normal_players, "param_dealer_id":dealer_id, "param_initialization_chips":chips, "param_big_blind_bet":big_blind_bet}
+        params  = {"param_num_normal_players":num_normal_players, "param_dealer_id":dealer_id, "param_init_chips":chips, "param_big_blind_bet":big_blind_bet}
         players =  [RandomPlayer() for i in range(4)]
 
 
@@ -130,7 +130,7 @@ class TexasEnvTester(unittest.TestCase):
 
         for i in range(3 * 2 + 5):
             action = list(env.available_actions().values())[0]
-            env.forward(action)
+            infos, public_state_history, person_states_history, private_state_history, action_history = env.forward(action)
 
 
 
@@ -155,7 +155,7 @@ class TexasEnvTester(unittest.TestCase):
 
 
         action = TexasHoldemAction("Raise_60")
-        infos,public_state, person_states, private_state  = env.forward(action)
+        infos,public_state, person_states, private_state, action_history  = env.forward(action)
         print (env.__public_state_history__[-1].num_needed_to_action, env.__public_state_history__[-1].is_needed_to_action)
         self.assertEqual(env.__public_state_history__[-1].turn, 1)
         self.assertTrue("Raise_60" not in infos[1].person_state_history[-1].available_actions)
@@ -174,7 +174,7 @@ class TexasEnvTester(unittest.TestCase):
 
 
         action = TexasHoldemAction("Call_50")
-        infos,public_state, person_states, private_state  = env.forward(action)
+        infos,public_state, person_states, private_state, action_history  = env.forward(action)
         assert(public_state[-1].stage == Stage.firstStage)
         print (env.__public_state_history__[-1].num_needed_to_action, env.__public_state_history__[-1].is_needed_to_action)
         print (public_state[-1].stage)
@@ -191,7 +191,7 @@ class TexasEnvTester(unittest.TestCase):
         # expected:f,f,t
 
         action = TexasHoldemAction("Call_40")
-        infos,public_state, person_states, private_state  = env.forward(action)
+        infos,public_state, person_states, private_state,action_history  = env.forward(action)
         print ("\n\n")
         print ("stage",public_state[-1].stage)
         print ("dealer_id+1", (public_state[-1].param_dealer_id+1)%public_state[-1].param_num_normal_players)
@@ -209,9 +209,9 @@ class TexasEnvTester(unittest.TestCase):
 
 
         action = TexasHoldemAction("Check_0")
-        infos,public_state, person_states, private_state  = env.forward(action)
-        infos,public_state, person_states, private_state  = env.forward(action)
-        infos,public_state, person_states, private_state  = env.forward(action)
+        infos,public_state, person_states, private_state,action_history  = env.forward(action)
+        infos,public_state, person_states, private_state,action_history  = env.forward(action)
+        infos,public_state, person_states, private_state,action_history  = env.forward(action)
         self.assertEqual(env.__public_state_history__[-1].stage,3)
         self.assertEqual(len(env.__public_state_history__[-1].public_cards),4)
         p = 0
@@ -231,11 +231,11 @@ class TexasEnvTester(unittest.TestCase):
 
 
         action = TexasHoldemAction("Allin_440")
-        infos,public_state, person_states, private_state  = env.forward(action)
-        self.assertEqual(infos[0].public_state[-1].max_bet_sofar, 500)
+        infos,public_state, person_states, private_state,action_history  = env.forward(action)
+        self.assertEqual(infos[0].public_state_history[-1].max_bet_sofar, 500)
         print ("2", infos[2].person_state_history[-1].available_actions.keys())
         self.assertEqual(env.__public_state_history__[-1].is_allin[1],True)
-        self.assertEqual(infos[0].public_state[-1].stage, 3)
+        self.assertEqual(infos[0].public_state_history[-1].stage, 3)
         # dealer_id = 0
         # turn  = 2
         # stage = 3
@@ -246,9 +246,9 @@ class TexasEnvTester(unittest.TestCase):
 
 
         action = TexasHoldemAction("Call_440")
-        infos,public_state, person_states, private_state  = env.forward(action)
+        infos,public_state, person_states, private_state,action_history = env.forward(action)
         action = TexasHoldemAction("Allin_40")
-        infos,public_state, person_states, private_state  = env.forward(action)
+        infos,public_state, person_states, private_state,action_history  = env.forward(action)
         # dealer_id = 0
         # chips:0,     0,    500
         # bets :100,   500,  500
@@ -294,7 +294,7 @@ class TexasEnvTester(unittest.TestCase):
 
 
         for i in range(100):
-            players = [RandomPlayer() for i in range(2)]
+            players = [RandomPlayer() for i in range(3)]
 
             env = TexasHoldemEnv()
             num_normal_players = 2
@@ -304,7 +304,7 @@ class TexasEnvTester(unittest.TestCase):
             infos, public_state, person_states, private_state, action_history = env.init(params)
 
             while public_state[-1].is_terminal != True:
-                for i in range(2):
+                for i in range(num_normal_players+1):
                     players[i].receive_info(infos[i])
                 turn   = public_state[-1].turn
                 action = players[turn].take_action()

@@ -25,7 +25,7 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
         1. param_backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False\n
         2. param_num_normal_players: how many players are in the game, default 3\n
         3. param_dealer_id: the player id of the dealer, default random\n
-        4. param_initialization_chips: the initialization chips, default [1000,1000,...]\n
+        4. param_init_chips: the initialization chips, default [1000,1000,...]\n
         5. param_big_blind_bet: the number of chips for the big blind bet, default 10\n
         An example of the initialization param is {"param_num_normal_players":2,"backward_enable":True}
         
@@ -174,7 +174,7 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
             self.__action_chance__(action)
 
             if len(pr.all_used_cards) == (len(pes)-1) * 2 + 5:
-                pu.__turn__ = (pu.param_dealer_id + 2)%pu.param_num_normal_players
+                pu.__turn__ = (pu.param_dealer_id + 2 + 1)%pu.param_num_normal_players
 
             pes[pu.turn].__available_actions__ = self.available_actions()
 
@@ -225,7 +225,7 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
 
             pu.__turn__                                             = pu.param_dealer_id
             pu.__turn__                                             = self.__next_player__(pu)
-            pe[self.__public_state_history__[-1].turn].__available_actions__        = self.available_actions()
+            pes[self.__public_state_history__[-1].turn].__available_actions__        = self.available_actions()
 
         ##normal
         else:

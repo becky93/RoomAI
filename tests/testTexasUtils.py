@@ -109,6 +109,12 @@ class TexasUtilsTester(unittest.TestCase):
 
         while len(pr.all_used_cards) < (len(persons_history)-1) * 2 + 5:
             action = list(pe.available_actions.values())[-1]
+
+            if len(pr.all_used_cards) == (len(persons_history) -1)*2 + 4:
+                xx = 0
+                pass
+
+
             env.forward(action)
 
             pu = public_history[-1]
