@@ -38,6 +38,24 @@ matrix:
     - DOCKER_JOB_NAME='tensorforce_1.5.0_py3'
     - DOCKER_IMAGE='tensorflow/tensorflow:1.5.0-py3'
   - env:
+    - DOCKER_JOB_NAME='tensorforce_1.6.0_py2'
+    - DOCKER_IMAGE='tensorflow/tensorflow:1.6.0'
+  - env:
+    - DOCKER_JOB_NAME='tensorforce_1.6.0_py3'
+    - DOCKER_IMAGE='tensorflow/tensorflow:1.6.0-py3'
+  - env:
+    - DOCKER_JOB_NAME='tensorforce_1.7.0_py2'
+    - DOCKER_IMAGE='tensorflow/tensorflow:1.7.0'
+  - env:
+    - DOCKER_JOB_NAME='tensorforce_1.7.0_py3'
+    - DOCKER_IMAGE='tensorflow/tensorflow:1.7.0-py3'
+  - env:
+    - DOCKER_JOB_NAME='tensorforce_1.8.0_py2'
+    - DOCKER_IMAGE='tensorflow/tensorflow:1.8.0'
+  - env:
+    - DOCKER_JOB_NAME='tensorforce_1.8.0_py3'
+    - DOCKER_IMAGE='tensorflow/tensorflow:1.8.0-py3'
+  - env:
     - DOCKER_JOB_NAME='tensorforce_latest_py2'
     - DOCKER_IMAGE='tensorflow/tensorflow:latest'
   - env:

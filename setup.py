@@ -9,5 +9,5 @@ setup(  name        = "roomai",
         author      = "RoomAI Dev",
         author_email= "lili1987mail@gmail.com",
         license     = "MIT",
-        packages    = ["roomai_models","roomai","roomai.doudizhupoker","roomai.kuhnpoker","roomai.common","roomai.texasholdem","roomai.fivecardstud","roomai.sevenking","roomai.bridge"],
+        packages    = ["roomai","roomai.games","roomai.games.bang","roomai.games.common","roomai.games.texasholdem","roomai.models","roomai.models.algorithms","roomai.models.bang","roomai.models.texasholdem"],
         zip_safe    = False)
