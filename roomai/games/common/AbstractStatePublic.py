@@ -33,9 +33,6 @@ class AbstractStatePublic(object):
     def __get_turn__(self): return self.__turn__
     turn = property(__get_turn__, doc = "The players[turn] is expected to take an action.")
 
-    def __get_action_history__(self):   return tuple(self.__action_history__)
-    action_history = property(__get_action_history__, doc = "The action_history so far. For example, action_history = [(0, roomai.kuhnpoker.KuhnAction.lookup(\"check\"),(1,roomai.kuhnpoker.KuhnAction.lookup(\"bet\")].\n"
-                                                            "The format of the item in action_history is (person_id, action)")
 
     def __get_is_terminal__(self):   return  self.__is_terminal__
     is_terminal = property(__get_is_terminal__,doc = "is_terminal = True means the game is over. At this time, scores is not None, scores = [float0,float1,...] for player0, player1,... For example, scores = [-1,2,-1].\n"

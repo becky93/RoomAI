@@ -15,6 +15,7 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
     The TexasHoldem game environment
     '''
 
+
     #@override
     def init(self, params = dict()):
         '''
@@ -87,7 +88,7 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
         pu.__bets__                  = [0 for i in range(public_state.param_num_normal_players)]
         pu.__chips__                 = list(public_state.param_init_chips)
         pu.__stage__                 = Stage.firstStage
-        pu.__turn__                  = (big+1)%pu.param_num_normal_players
+        pu.__turn__                  = pu.param_num_normal_players
         pu.__public_cards__          = []
 
         pu.__previous_id__           = None
@@ -155,26 +156,30 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
 
         logger     = roomai.get_logger()
         pu         = self.__public_state_history__[-1].__deepcopy__()
-        pe         = [self.__person_states_history__[i][-1].__deepcopy__() for i in range(len(self.__person_states_history__))]
+        pes        = [self.__person_states_history__[i][-1].__deepcopy__() for i in range(len(self.__person_states_history__))]
         pr         = self.__private_state_history__[-1].__deepcopy__()
 
         self.__public_state_history__.append(pu)
-        for i in range(len(pe)):
-            self.__person_states_history__[i].append(pe[i])
+        for i in range(len(pes)):
+            self.__person_states_history__[i].append(pes[i])
         self.__private_state_history__.append(pr)
 
-        if action.key not in pe[pu.turn].available_actions:
+        if action.key not in pes[pu.turn].available_actions:
             logger.critical("action=%s is invalid" % (action.key))
             raise ValueError("action=%s is invalid" % (action.key))
-        pe[pu.turn].__available_actions__ = dict()
+        pes[pu.turn].__available_actions__ = dict()
         self.__playerid_action_history__.append(roomai.games.common.ActionRecord(pu.turn,action))
 
         if isinstance(action, TexasHoldemActionChance) == True:
             self.__action_chance__(action)
 
-            pe[pu.turn].__available_actions__ = self.available_actions()
+            if len(pr.all_used_cards) == (len(pes)-1) * 2 + 5:
+                pu.__turn__ = (pu.param_dealer_id + 2)%pu.param_num_normal_players
+
+            pes[pu.turn].__available_actions__ = self.available_actions()
+
             infos = self.__gen_infos__()
-            return infos, self.__public_state_history__, self.__person_states_history__, self.__private_state_history__
+            return infos, self.__public_state_history__, self.__person_states_history__, self.__private_state_history__, self.__playerid_action_history__
 
         if action.option == TexasHoldemAction.Fold:
             self.__action_fold__(action)
@@ -239,7 +244,7 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
             ))
 
         infos = self.__gen_infos__()
-        return infos, self.__public_state_history__, self.__person_states_history__, self.__private_state_history__
+        return infos, self.__public_state_history__, self.__person_states_history__, self.__private_state_history__, self.__playerid_action_history__
 
     def available_actions(self):
         '''
@@ -504,7 +509,7 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
                 turn = public[-1].turn
                 action = players[turn].take_action()
                 # print len(infos[turn].person_state.available_actions),action.key(),turn
-                infos, public, persons, private = env.forward(action)
+                infos, public, persons, private, _= env.forward(action)
                 for i in range(len(players)):
                     players[i].receive_info(infos[i])
 

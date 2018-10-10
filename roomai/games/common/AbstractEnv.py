@@ -16,10 +16,11 @@ class AbstractEnv(object):
     '''
 
 
-    __public_state_history__            = []
-    __person_states_history__           = []
-    __private_state_history__           = []
-    __playerid_action_history__         = []
+    def __init__(self):
+        self.__public_state_history__ = []
+        self.__person_states_history__ = []
+        self.__private_state_history__ = []
+        self.__playerid_action_history__ = []
 
     def __gen_infos__(self):
         logger = roomai.get_logger()
