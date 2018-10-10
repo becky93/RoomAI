@@ -2,9 +2,8 @@
 #coding=utf8
 
 import roomai.games.common
+
 logger = roomai.get_logger()
-
-
 
 ######################################################################### Basic Concepts #####################################################
 class AbstractStatePublic(object):
