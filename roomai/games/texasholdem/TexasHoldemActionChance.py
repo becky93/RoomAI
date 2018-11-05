@@ -32,7 +32,7 @@ class TexasHoldemActionChance(roomai.games.common.AbstractActionChance):
 
     def __get_card__(self):
         return self.__card__
-    card = property(__get_card__, doc = "The card of this action. For example, the card is roomai.common.PokerCard.lookup(\"A_Heart\")")
+    card = property(__get_card__, doc = "The card of this action. For example, the card is roomai.common.BangCard.lookup(\"A_Heart\")")
 
 
     @classmethod

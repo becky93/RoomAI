@@ -47,7 +47,7 @@ class PokerCard(object):
     A Poker Card has a key (point_suit). We strongly recommend you to get a poker card by using the class function lookup with the key. \n
     Examples of the class usages: \n
     >> import roomai.games.texasholdem \n
-    >> card = roomai.games.texasholdem.PokerCard.lookup("2_Spade") \n
+    >> card = roomai.games.texasholdem.BangCard.lookup("2-Spade") \n
     >> card.point \n
     2\n
     >> card.suit\n
@@ -57,14 +57,14 @@ class PokerCard(object):
     >> card.suit_rank\n
     0\n
     >> card.key\n
-    "2_Spade"\n
+    "2-Spade"\n
     '''
 
     def __init__(self, point, suit=None):
         point1 = 0
         suit1 = 0
         if suit is None:
-            kv = point.split("_")
+            kv = point.split("-")
             point1 = point_str_to_rank[kv[0]]
             suit1 = suit_str_to_rank[kv[1]]
         else:
@@ -79,7 +79,7 @@ class PokerCard(object):
         self.__suit__ = suit_rank_to_str[suit1]
         self.__point_rank__ = point1
         self.__suit_rank__ = suit1
-        self.__key__ = "%s_%s" % (self.__point__, self.__suit__)
+        self.__key__ = "%s-%s" % (self.__point__, self.__suit__)
 
     def __get_point_str__(self):
         return self.__point__
@@ -104,10 +104,10 @@ class PokerCard(object):
     @classmethod
     def lookup(cls, key):
         '''
-        lookup a PokerCard with the specified key
+        lookup a BangCard with the specified key
 
         :param key: The specified key
-        :return: The PokerCard with the specified key
+        :return: The BangCard with the specified key
         '''
 
         logger = roomai.get_logger()
@@ -120,25 +120,25 @@ class PokerCard(object):
     @classmethod
     def point_to_rank(cls, point):
         if point not in point_str_to_rank:
-            raise ValueError("%s is invalid poker point for PokerCard")
+            raise ValueError("%s is invalid poker point for BangCard")
         return point_str_to_rank[point]
 
     @classmethod
     def suit_to_rank(cls, suit):
         if suit not in suit_str_to_rank:
-            raise ValueError("%s is invalid poker suit for PokerCard")
+            raise ValueError("%s is invalid poker suit for BangCard")
         return suit_str_to_rank[suit]
 
     @classmethod
     def rank_to_point(cls, rank):
         if rank not in point_rank_to_str:
-            raise ValueError("%d is invalid poker point rank for PokerCard")
+            raise ValueError("%d is invalid poker point rank for BangCard")
         return point_rank_to_str[rank]
 
     @classmethod
     def rank_to_suit(cls, rank):
         if rank not in suit_rank_to_str:
-            raise ValueError("%d is invalid poker suit rank for PokerCard")
+            raise ValueError("%d is invalid poker suit rank for BangCard")
         return suit_rank_to_str[rank]
 
     @classmethod
@@ -168,7 +168,7 @@ class PokerCard(object):
 AllPokerCards = dict()
 for point in point_str_to_rank:
     for suit in suit_str_to_rank:
-        AllPokerCards["%s_%s" % (point, suit)] = PokerCard("%s_%s" % (point, suit))
+        AllPokerCards["%s-%s" % (point, suit)] = PokerCard("%s-%s" % (point, suit))
 
 
 

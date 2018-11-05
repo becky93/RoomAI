@@ -10,7 +10,7 @@ class TexasHoldemStatePerson(roomai.games.common.AbstractStatePerson):
         self.__hand_cards__  =    []
 
     def __get_hand_cards__(self):   return tuple(self.__hand_cards__)
-    hand_cards = property(__get_hand_cards__, doc="The hand cards of the corresponding player. It contains two poker cards. For example, hand_cards=[roomai.coomon.PokerCard.lookup(\"A_Spade\"),roomai.coomon.PokerCard.lookup(\"A_Heart\")]")
+    hand_cards = property(__get_hand_cards__, doc="The hand cards of the corresponding player. It contains two poker cards. For example, hand_cards=[roomai.coomon.BangCard.lookup(\"A_Spade\"),roomai.coomon.BangCard.lookup(\"A_Heart\")]")
 
     def __deepcopy__(self, memodict={}, newinstance = None):
         if newinstance is None:
