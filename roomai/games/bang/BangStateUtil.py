@@ -44,3 +44,5 @@ class CardConstant:
     Bang = "Bang"
     Missed = "Missed"
     Beer   = "Beer"
+
+class

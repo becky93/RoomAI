@@ -16,7 +16,7 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
     '''
 
 
-    #@override
+    params=dict()#@override
     def init(self, params = dict()):
         '''
         Initialize the TexasHoldem game environment with the initialization params.\n
