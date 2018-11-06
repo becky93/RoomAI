@@ -10,8 +10,6 @@ try:
 except:
     os.system('pip install gym')
 import shutil
-import random
-import unittest
 import roomai
 from roomai.games.texasholdem import *
 from roomai.games.common import RandomPlayer
