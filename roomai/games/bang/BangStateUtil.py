@@ -62,6 +62,11 @@ class BangCardNames:
     Miss        = "Miss"
     StageCoach  = "StageCoach"
     Barrel      = "Barrel"
+    Mustang     = "Mustang"
+    Indian      = "Indian"
+    Winchester  = "Winchester"
+    Appaloosa   = "Appaloosa"
+
 
 class BangCardSuits:
     Club    = "Club"
@@ -137,54 +142,110 @@ class BangCard(object):
         '''
 
         logger = roomai.get_logger()
-        if key not in AllPokerCards:
+        if key not in AllPokerCardsDict:
             logger.fatal("key (%s) is not invalid poker card key"%(key))
             raise ValueError("key (%s) is not invalid poker card key"%(key))
 
-        return AllPokerCards[key]
+        return AllPokerCardsDict[key]
 
 
     def __deepcopy__(self, memodict={}):
-        return AllPokerCards[self.key]
+        return AllPokerCardsDict[self.key]
 
-
-
-AllPokerCards = dict()
-
-AllPokerCards["%s-A-%s" % (BangCardNames.Carabine, BangCardSuits.Club)] = BangCard(BangCardNames.Carabine, "A", BangCardSuits.Club, BangCardColors.Blue)
+AllPokerCardsDict = dict()
+###############################
+AllPokerCardsDict["%s-A-%s" % (BangCardNames.Carabine, BangCardSuits.Club)] = BangCard(BangCardNames.Carabine, "A", BangCardSuits.Club, BangCardColors.Blue)
 for i in range(2,8):
-    AllPokerCards["%s-%d-%s" % (BangCardNames.Duello,i, BangCardSuits.Club)] = BangCard(BangCardNames.Bang, "%d" % (i), BangCardSuits.Club, BangCardColors.Brown)
-AllPokerCards["%s-8-%s" % (BangCardNames.Duello,BangCardSuits.Club)] = BangCard(BangCardNames.Duello, "8", BangCardSuits.Club, BangCardColors.Brown)
-AllPokerCards["%s-9-%s" % (BangCardNames.Emporia,BangCardSuits.Club)] = BangCard(BangCardNames.Emporia, "9", BangCardSuits.Club, BangCardColors.Brown)
-AllPokerCards["%s-10-%s" % (BangCardNames.Volcanic,BangCardSuits.Club)] = BangCard(BangCardNames.Volcanic, "10", BangCardSuits.Club, BangCardColors.Blue)
-AllPokerCards["%s-J-%s" % (BangCardNames.Schofield,BangCardSuits.Club)] = BangCard(BangCardNames.Schofield, "J", BangCardSuits.Club, BangCardColors.Blue)
-AllPokerCards["%s-Q-%s" % (BangCardNames.Schofield,BangCardSuits.Club)] = BangCard(BangCardNames.Schofield, "Q", BangCardSuits.Club, BangCardColors.Blue)
-AllPokerCards["%s-K-%s" % (BangCardNames.Remington,BangCardSuits.Club)] = BangCard(BangCardNames.Remington, "K", BangCardSuits.Club, BangCardColors.Blue)
+    AllPokerCardsDict["%s-%d-%s" % (BangCardNames.Duello, i, BangCardSuits.Club)] = BangCard(BangCardNames.Bang, "%d" % (i), BangCardSuits.Club, BangCardColors.Brown)
+AllPokerCardsDict["%s-8-%s" % (BangCardNames.Duello, BangCardSuits.Club)] = BangCard(BangCardNames.Duello, "8", BangCardSuits.Club, BangCardColors.Brown)
+AllPokerCardsDict["%s-9-%s" % (BangCardNames.Emporia, BangCardSuits.Club)] = BangCard(BangCardNames.Emporia, "9", BangCardSuits.Club, BangCardColors.Brown)
+AllPokerCardsDict["%s-10-%s" % (BangCardNames.Volcanic, BangCardSuits.Club)] = BangCard(BangCardNames.Volcanic, "10", BangCardSuits.Club, BangCardColors.Blue)
+AllPokerCardsDict["%s-J-%s" % (BangCardNames.Schofield, BangCardSuits.Club)] = BangCard(BangCardNames.Schofield, "J", BangCardSuits.Club, BangCardColors.Blue)
+AllPokerCardsDict["%s-Q-%s" % (BangCardNames.Schofield, BangCardSuits.Club)] = BangCard(BangCardNames.Schofield, "Q", BangCardSuits.Club, BangCardColors.Blue)
+AllPokerCardsDict["%s-K-%s" % (BangCardNames.Remington, BangCardSuits.Club)] = BangCard(BangCardNames.Remington, "K", BangCardSuits.Club, BangCardColors.Blue)
 
-AllPokerCards["%s-A-%s"%(BangCardNames.Panic,BangCardSuits.Heart)]          = BangCard(BangCardNames.Panic,         "A",    BangCardSuits.Heart,    BangCardColors.Brown)
-AllPokerCards["%s-2-%s"%(BangCardNames.Dynamite,BangCardSuits.Heart)]       = BangCard(BangCardNames.Dynamite,      "2",    BangCardSuits.Heart,    BangCardColors.Blue)
-AllPokerCards["%s-3-%s"%(BangCardNames.WellsFargo,BangCardSuits.Heart)]     = BangCard(BangCardNames.WellsFargo,    "3",    BangCardSuits.Heart,    BangCardColors.Brown)
-AllPokerCards["%s-4-%s"%(BangCardNames.Prigione,BangCardSuits.Heart)]       = BangCard(BangCardNames.Prigione,      "4",    BangCardSuits.Heart,    BangCardColors.Blue)
-AllPokerCards["%s-4-%s"%(BangCardNames.Saloon,BangCardSuits.Heart)]         = BangCard(BangCardNames.Saloon,        "5",    BangCardSuits.Heart,    BangCardColors.Brown)
-for i in range(4,10):
-    AllPokerCards["%s-i-%s" % (BangCardNames.Beer,i, BangCardSuits.Heart)]  = BangCard(BangCardNames.Beer,          "%d"%(i), BangCardSuits.Heart,   BangCardColors.Brown)
-AllPokerCards["%s-10-%s"%(BangCardNames.Catling,BangCardSuits.Heart)]       = BangCard(BangCardNames.Catling,       "10",     BangCardSuits.Heart,  BangCardColors.Brown)
-AllPokerCards["%s-J-%s"%(BangCardNames.Beer,BangCardSuits.Heart)]           = BangCard(BangCardNames.Beer,          "J",      BangCardSuits.Heart,  BangCardColors.Brown)
-AllPokerCards["%s-Q-%s"%(BangCardNames.Bang,BangCardSuits.Heart)]           = BangCard(BangCardNames.Bang,          "Q",      BangCardSuits.Heart,  BangCardColors.Brown)
-AllPokerCards["%s-Q-%s"%(BangCardNames.CatBalou,BangCardSuits.Heart)]       = BangCard(BangCardNames.CatBalou,      "K",      BangCardSuits.Heart,  BangCardColors.Brown)
 
-AllPokerCards["%s-A-%s"%(BangCardNames.Bang,BangCardSuits.Spade)]          = BangCard(BangCardNames.Bang,         "A",    BangCardSuits.Spade,    BangCardColors.Brown)
+###############################
+AllPokerCardsDict["%s-A-%s" % (BangCardNames.Panic, BangCardSuits.Heart)]          = BangCard(BangCardNames.Panic, "A", BangCardSuits.Heart, BangCardColors.Brown)
+AllPokerCardsDict["%s-2-%s" % (BangCardNames.Dynamite, BangCardSuits.Heart)]       = BangCard(BangCardNames.Dynamite, "2", BangCardSuits.Heart, BangCardColors.Blue)
+AllPokerCardsDict["%s-3-%s" % (BangCardNames.WellsFargo, BangCardSuits.Heart)]     = BangCard(BangCardNames.WellsFargo, "3", BangCardSuits.Heart, BangCardColors.Brown)
+AllPokerCardsDict["%s-4-%s" % (BangCardNames.Prigione, BangCardSuits.Heart)]       = BangCard(BangCardNames.Prigione, "4", BangCardSuits.Heart, BangCardColors.Blue)
+AllPokerCardsDict["%s-5-%s" % (BangCardNames.Saloon, BangCardSuits.Heart)]         = BangCard(BangCardNames.Saloon, "5", BangCardSuits.Heart, BangCardColors.Brown)
+for i in range(6,10):
+    AllPokerCardsDict["%s-%d-%s" % (BangCardNames.Beer, i, BangCardSuits.Heart)]  = BangCard(BangCardNames.Beer, "%d" % (i), BangCardSuits.Heart, BangCardColors.Brown)
+AllPokerCardsDict["%s-10-%s" % (BangCardNames.Catling, BangCardSuits.Heart)]       = BangCard(BangCardNames.Catling, "10", BangCardSuits.Heart, BangCardColors.Brown)
+AllPokerCardsDict["%s-J-%s" % (BangCardNames.Beer, BangCardSuits.Heart)]           = BangCard(BangCardNames.Beer, "J", BangCardSuits.Heart, BangCardColors.Brown)
+AllPokerCardsDict["%s-Q-%s" % (BangCardNames.Bang, BangCardSuits.Heart)]           = BangCard(BangCardNames.Bang, "Q", BangCardSuits.Heart, BangCardColors.Brown)
+AllPokerCardsDict["%s-Q-%s" % (BangCardNames.CatBalou, BangCardSuits.Heart)]       = BangCard(BangCardNames.CatBalou, "K", BangCardSuits.Heart, BangCardColors.Brown)
+
+
+#################################
+AllPokerCardsDict["%s-A-%s" % (BangCardNames.Bang, BangCardSuits.Spade)]          = BangCard(BangCardNames.Bang, "A", BangCardSuits.Spade, BangCardColors.Brown)
 for i in range(2,9):
-    AllPokerCards["%s-i-%s" % (BangCardNames.Miss,i, BangCardSuits.Spade)]  = BangCard(BangCardNames.Miss,           "%d"%(i),  BangCardSuits.Spade,    BangCardColors.Brown)
-AllPokerCards["%s-9-%s"%(BangCardNames.StageCoach,BangCardSuits.Spade)]     = BangCard(BangCardNames.StageCoach,      "9",      BangCardSuits.Spade,    BangCardColors.Brown)
-AllPokerCards["%s-10-%s"%(BangCardNames.Prigione,BangCardSuits.Spade)]      = BangCard(BangCardNames.Prigione,        "10",     BangCardSuits.Spade,    BangCardColors.Blue)
-AllPokerCards["%s-J-%s"%(BangCardNames.Prigione,BangCardSuits.Spade)]       = BangCard(BangCardNames.Prigione,        "J",       BangCardSuits.Spade,    BangCardColors.Blue)
-AllPokerCards["%s-Q-%s"%(BangCardNames.Barrel,BangCardSuits.Spade)]       = BangCard(BangCardNames.Barrel,        "Q",           BangCardSuits.Spade,    BangCardColors.Brown)
-AllPokerCards["%s-K-%s"%(BangCardNames.Schofield,BangCardSuits.Spade)]       = BangCard(BangCardNames.Schofield,        "K",       BangCardSuits.Spade,    BangCardColors.Blue)
+    AllPokerCardsDict["%s-%d-%s" % (BangCardNames.Miss, i, BangCardSuits.Spade)]  = BangCard(BangCardNames.Miss, "%d" % (i), BangCardSuits.Spade, BangCardColors.Brown)
+AllPokerCardsDict["%s-9-%s" % (BangCardNames.StageCoach, BangCardSuits.Spade)]     = BangCard(BangCardNames.StageCoach, "9", BangCardSuits.Spade, BangCardColors.Brown)
+AllPokerCardsDict["%s-10-%s" % (BangCardNames.Prigione, BangCardSuits.Spade)]      = BangCard(BangCardNames.Prigione, "10", BangCardSuits.Spade, BangCardColors.Blue)
+AllPokerCardsDict["%s-J-%s" % (BangCardNames.Prigione, BangCardSuits.Spade)]       = BangCard(BangCardNames.Prigione, "J", BangCardSuits.Spade, BangCardColors.Blue)
+AllPokerCardsDict["%s-Q-%s" % (BangCardNames.Barrel, BangCardSuits.Spade)]       = BangCard(BangCardNames.Barrel, "Q", BangCardSuits.Spade, BangCardColors.Brown)
+AllPokerCardsDict["%s-K-%s" % (BangCardNames.Schofield, BangCardSuits.Spade)]       = BangCard(BangCardNames.Schofield, "K", BangCardSuits.Spade, BangCardColors.Blue)
 
-AllPokerCards["%s-A-%s"%(BangCardNames.Bang,BangCardSuits.Diamond)]          = BangCard(BangCardNames.Bang,             "A",    BangCardSuits.Diamond,    BangCardColors.Brown)
+#######################################
+AllPokerCardsDict["%s-A-%s" % (BangCardNames.Bang, BangCardSuits.Diamond)]          = BangCard(BangCardNames.Bang, "A", BangCardSuits.Diamond, BangCardColors.Brown)
 for i in range(2,11):
-    AllPokerCards["%s-i-%s" % (BangCardNames.Bang,i, BangCardSuits.Diamond)]  = BangCard(BangCardNames.Bang,           "%d"%(i),  BangCardSuits.Diamond,    BangCardColors.Brown)
-AllPokerCards["%s-J-%s"%(BangCardNames.Bang,BangCardSuits.Spade)]       = BangCard(BangCardNames.Bang,        "J",       BangCardSuits.Diamond,    BangCardColors.Brown)
-AllPokerCards["%s-Q-%s"%(BangCardNames.Bang,BangCardSuits.Spade)]       = BangCard(BangCardNames.Bang,        "Q",       BangCardSuits.Diamond,    BangCardColors.Brown)
-AllPokerCards["%s-K-%s"%(BangCardNames.Bang,BangCardSuits.Spade)]       = BangCard(BangCardNames.Bang,        "K",       BangCardSuits.Diamond,    BangCardColors.Brown)
+    AllPokerCardsDict["%s-%d-%s" % (BangCardNames.Bang, i, BangCardSuits.Diamond)]  = BangCard(BangCardNames.Bang, "%d" % (i), BangCardSuits.Diamond, BangCardColors.Brown)
+AllPokerCardsDict["%s-J-%s" % (BangCardNames.Bang, BangCardSuits.Diamond)]       = BangCard(BangCardNames.Bang, "J", BangCardSuits.Diamond, BangCardColors.Brown)
+AllPokerCardsDict["%s-Q-%s" % (BangCardNames.Bang, BangCardSuits.Diamond)]       = BangCard(BangCardNames.Bang, "Q", BangCardSuits.Diamond, BangCardColors.Brown)
+AllPokerCardsDict["%s-K-%s" % (BangCardNames.Bang, BangCardSuits.Diamond)]       = BangCard(BangCardNames.Bang, "K", BangCardSuits.Diamond, BangCardColors.Brown)
+
+
+
+
+##########################################
+AllPokerCardsDict["%s-8-%s" % (BangCardNames.Mustang, BangCardSuits.Heart)]   = BangCard(BangCardNames.Mustang, "8", BangCardSuits.Heart, BangCardColors.Blue)
+AllPokerCardsDict["%s-9-%s" % (BangCardNames.Mustang, BangCardSuits.Heart)]   = BangCard(BangCardNames.Mustang, "9", BangCardSuits.Heart, BangCardColors.Blue)
+AllPokerCardsDict["%s-10-%s" % (BangCardNames.Beer, BangCardSuits.Heart)]     = BangCard(BangCardNames.Beer, "10", BangCardSuits.Heart, BangCardColors.Brown)
+AllPokerCardsDict["%s-J-%s" % (BangCardNames.Panic, BangCardSuits.Heart)]     = BangCard(BangCardNames.Panic, "J", BangCardSuits.Heart, BangCardColors.Brown)
+AllPokerCardsDict["%s-Q-%s" % (BangCardNames.Panic, BangCardSuits.Heart)]     = BangCard(BangCardNames.Panic, "Q", BangCardSuits.Heart, BangCardColors.Brown)
+AllPokerCardsDict["%s-K-%s" % (BangCardNames.Bang, BangCardSuits.Heart)]      = BangCard(BangCardNames.Bang, "K", BangCardSuits.Heart, BangCardColors.Brown)
+AllPokerCardsDict["%s-A-%s" % (BangCardNames.Bang, BangCardSuits.Heart)]      = BangCard(BangCardNames.Bang, "A", BangCardSuits.Heart, BangCardColors.Brown)
+
+
+AllPokerCardsDict["%s-8-%s" % (BangCardNames.Bang, BangCardSuits.Club)]      = BangCard(BangCardNames.Bang, "8", BangCardSuits.Club, BangCardColors.Brown)
+AllPokerCardsDict["%s-9-%s" % (BangCardNames.Bang, BangCardSuits.Club)]      = BangCard(BangCardNames.Bang, "9", BangCardSuits.Club, BangCardColors.Brown)
+AllPokerCardsDict["%s-10-%s" % (BangCardNames.Miss, BangCardSuits.Club)]     = BangCard(BangCardNames.Miss, "10", BangCardSuits.Club, BangCardColors.Brown)
+AllPokerCardsDict["%s-J-%s" % (BangCardNames.Miss, BangCardSuits.Club)]      = BangCard(BangCardNames.Miss, "J", BangCardSuits.Club, BangCardColors.Brown)
+AllPokerCardsDict["%s-Q-%s" % (BangCardNames.Miss, BangCardSuits.Club)]      = BangCard(BangCardNames.Miss, "Q", BangCardSuits.Club, BangCardColors.Brown)
+AllPokerCardsDict["%s-K-%s" % (BangCardNames.Miss, BangCardSuits.Club)]      = BangCard(BangCardNames.Miss, "K", BangCardSuits.Club, BangCardColors.Brown)
+AllPokerCardsDict["%s-A-%s" % (BangCardNames.Miss, BangCardSuits.Club)]      = BangCard(BangCardNames.Miss, "A", BangCardSuits.Club, BangCardColors.Brown)
+
+
+AllPokerCardsDict["%s-8-%s" % (BangCardNames.Panic, BangCardSuits.Diamond)]           = BangCard(BangCardNames.Panic, "8", BangCardSuits.Diamond, BangCardColors.Brown)
+AllPokerCardsDict["%s-9-%s" % (BangCardNames.CatBalou, BangCardSuits.Diamond)]        = BangCard(BangCardNames.CatBalou, "9", BangCardSuits.Diamond, BangCardColors.Brown)
+AllPokerCardsDict["%s-10-%s" % (BangCardNames.CatBalou, BangCardSuits.Diamond)]       = BangCard(BangCardNames.CatBalou, "10", BangCardSuits.Diamond, BangCardColors.Brown)
+AllPokerCardsDict["%s-J-%s" % (BangCardNames.CatBalou, BangCardSuits.Diamond)]        = BangCard(BangCardNames.CatBalou, "J", BangCardSuits.Diamond, BangCardColors.Brown)
+AllPokerCardsDict["%s-Q-%s" % (BangCardNames.Duello, BangCardSuits.Diamond)]          = BangCard(BangCardNames.Duello, "Q", BangCardSuits.Diamond, BangCardColors.Brown)
+AllPokerCardsDict["%s-K-%s" % (BangCardNames.Indian, BangCardSuits.Diamond)]          = BangCard(BangCardNames.Indian, "K", BangCardSuits.Diamond, BangCardColors.Brown)
+AllPokerCardsDict["%s-A-%s" % (BangCardNames.Indian, BangCardSuits.Diamond)]          = BangCard(BangCardNames.Indian, "A", BangCardSuits.Diamond, BangCardColors.Brown)
+
+
+AllPokerCardsDict["%s-8-%s" % (BangCardNames.Winchester, BangCardSuits.Spade)]        = BangCard(BangCardNames.Winchester, "8", BangCardSuits.Spade, BangCardColors.Blue)
+AllPokerCardsDict["%s-9-%s" % (BangCardNames.StageCoach, BangCardSuits.Spade)]        = BangCard(BangCardNames.StageCoach, "9", BangCardSuits.Spade, BangCardColors.Brown)
+AllPokerCardsDict["%s-10-%s" % (BangCardNames.Volcanic, BangCardSuits.Spade)]         = BangCard(BangCardNames.Volcanic, "10", BangCardSuits.Spade, BangCardColors.Blue)
+AllPokerCardsDict["%s-J-%s" % (BangCardNames.Duello, BangCardSuits.Spade)]            = BangCard(BangCardNames.Duello, "J", BangCardSuits.Spade, BangCardColors.Brown)
+AllPokerCardsDict["%s-Q-%s" % (BangCardNames.Emporia, BangCardSuits.Spade)]           = BangCard(BangCardNames.Emporia, "Q", BangCardSuits.Spade, BangCardColors.Brown)
+AllPokerCardsDict["%s-K-%s" % (BangCardNames.Barrel, BangCardSuits.Spade)]            = BangCard(BangCardNames.Barrel, "K", BangCardSuits.Spade, BangCardColors.Blue)
+AllPokerCardsDict["%s-A-%s" % (BangCardNames.Appaloosa, BangCardSuits.Spade)]         = BangCard(BangCardNames.Appaloosa, "A", BangCardSuits.Spade, BangCardColors.Blue)
+
+
+AllPokerCards = list(AllPokerCardsDict.values()) + [AllPokerCardsDict["%s-9-%s" % (BangCardNames.StageCoach, BangCardSuits.Spade)]]
+
+
+
+if __name__ == "__main__":
+
+    print (len(AllPokerCards))
+    count = 0
+    for c in AllPokerCardsDict.values():
+        if c.color == BangCardColors.Blue:
+            count += 1
+    print ("blue", count)
