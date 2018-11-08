@@ -10,8 +10,5 @@ class AbstractStatePrivate(object):
     '''
     The Abstract class of the private state. The information in the private state is hidden from every player
     '''
-    def __deepcopy__(self, memodict={}, newinstance = None):
-        if newinstance is None:
-            return AbstractStatePrivate()
-        else:
-            return newinstance
+    def __deepcopy__(self, memodict={}):
+        return AbstractStatePrivate()
