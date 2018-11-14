@@ -2,13 +2,13 @@
 
 import roomai
 
-class RoleConstant:
+class RoleNames:
     sheriff        = "sheriff"
     deputy_sheriff = "deputy_sheriff"
     outlaw         = "outlaw"
     renegade       = "renegade"
 
-class CharactorConstant:
+class CharactorNames:
     Bart_Cassidy   = "Bart_Cassidy"
     #Bart Cassidy = Butch Cassidy – Each time he loses a life point, he immediately draws a card from the deck. (4 life points)
     Black_Jack     = "Black_Jack"
@@ -41,6 +41,37 @@ class CharactorConstant:
     #Vulture Sam = Whenever a character is eliminated from the game, Sam takes all the cards that player had in his hand and in play, and adds them to his hand. (4 life points)
     Willy_Kid      = "Willy_Kid"
     #Willy the Kid = Billy the Kid – He can play any number of "Bang!" cards. (4 life points)
+
+class CharactorCard(object):
+    def __init__(self, person, hp):
+        self.__person__ = person
+        self.__hp__   = hp
+
+    def __get_person__(self):
+        return self.__person__
+    person = property(__get_person__, doc="The person name of charactor")
+
+    def __get_hp__(self):
+        return self.__hp__
+    hp = property(__get_hp__, doc = "The init hp of this charactor")
+
+AllCharactorsDict = dict()
+AllCharactorsDict[CharactorNames.Jesse_Jones] = CharactorCard(CharactorNames.Jesse_Jones,4)
+AllCharactorsDict[CharactorNames.Vulture_Sam] = CharactorCard(CharactorNames.Vulture_Sam,4)
+AllCharactorsDict[CharactorNames.Bart_Cassidy] = CharactorCard(CharactorNames.Bart_Cassidy,4)
+AllCharactorsDict[CharactorNames.Calamity_Janet] = CharactorCard(CharactorNames.Calamity_Janet,4)
+AllCharactorsDict[CharactorNames.Black_Jack]  = CharactorCard(CharactorNames.Black_Jack,4)
+AllCharactorsDict[CharactorNames.Jourdonnais] = CharactorCard(CharactorNames.Jourdonnais,4)
+AllCharactorsDict[CharactorNames.Kit_Carlson] = CharactorCard(CharactorNames.Kit_Carlson,4)
+AllCharactorsDict[CharactorNames.Rose_Doolan] = CharactorCard(CharactorNames.Rose_Doolan,4)
+AllCharactorsDict[CharactorNames.Suzy_Lafayette] = CharactorCard(CharactorNames.Suzy_Lafayette,4)
+AllCharactorsDict[CharactorNames.Sid_Ketchum] = CharactorCard(CharactorNames.Sid_Ketchum,4)
+AllCharactorsDict[CharactorNames.EI_Gringo] = CharactorCard(CharactorNames.EI_Gringo,3)
+AllCharactorsDict[CharactorNames.Lucky_Duke] = CharactorCard(CharactorNames.Lucky_Duke,4)
+AllCharactorsDict[CharactorNames.Slab_Killer] = CharactorCard(CharactorNames.Slab_Killer,4)
+AllCharactorsDict[CharactorNames.Paul_Regret] = CharactorCard(CharactorNames.Paul_Regret, 3)
+AllCharactorsDict[CharactorNames.Pedro_Ramirez] = CharactorCard(CharactorNames.Pedro_Ramirez, 4)
+AllCharactorsDict[CharactorNames.Willy_Kid] = CharactorCard(CharactorNames.Willy_Kid,4)
 
 
 class BangCardNames:

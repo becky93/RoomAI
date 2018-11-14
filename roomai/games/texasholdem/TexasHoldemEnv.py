@@ -22,11 +22,10 @@ class TexasHoldemEnv(roomai.games.common.AbstractEnv):
         Initialize the TexasHoldem game environment with the initialization params.\n
         The initialization is a dict with some options\n
     
-        1. param_backward_enable: whether to record all history states. if you need call the backward function, please set it to True. default False\n
-        2. param_num_normal_players: how many players are in the game, default 3\n
-        3. param_dealer_id: the player id of the dealer, default random\n
-        4. param_init_chips: the initialization chips, default [1000,1000,...]\n
-        5. param_big_blind_bet: the number of chips for the big blind bet, default 10\n
+        1. param_num_normal_players: how many players are in the game, default 3\n
+        2. param_dealer_id: the player id of the dealer, default random\n
+        3. param_init_chips: the initialization chips, default [1000,1000,...]\n
+        4. param_big_blind_bet: the number of chips for the big blind bet, default 10\n
         An example of the initialization param is {"param_num_normal_players":2,"backward_enable":True}
         
         :param params: the initialization params
