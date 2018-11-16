@@ -14,3 +14,8 @@ class BangStatePublic(AbstractStatePublic):
         self.__public_person_info__  = []
         self.__sheriff_id__          = 0
         self.__discard_pile__        = []
+
+    def __get_public_person_info__(self):   return tuple(self.__public_person_info__)
+    public_person_info = property(__get_public_person_info__, doc="The person info in public")
+
+    

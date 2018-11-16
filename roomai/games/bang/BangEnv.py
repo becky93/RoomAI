@@ -36,6 +36,8 @@ class BangEnv():
             public_state.__param_start_turn__ = int(random.random() * public_state.param_num_normal_players)
 
 
+        public_state.
+
 
 
     def forward(self):
