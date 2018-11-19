@@ -4,8 +4,8 @@ from roomai.games.common import AbstractStatePublic
 
 class PublicPersonInfo(object):
     def __init__(self):
-        self.__num_hand_cards__ = 0
-        self.__charactor_card__ = None
+        self.__num_hand_cards__  = 0
+        self.__charactor_card__  = None
         self.__equipment_cards__ = []
 
 
