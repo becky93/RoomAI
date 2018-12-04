@@ -8,6 +8,21 @@ class RoleNames:
     outlaw         = "outlaw"
     renegade       = "renegade"
 
+class RoleCard(object):
+
+    def __init__(self, role):
+        self.__role__ = role
+
+    def __get_role__(self):
+        return self.__role__
+    role = property(__get_role__, doc="The role")
+
+RolesDict = dict()
+RolesDict[RoleNames.sheriff]        = RoleCard(RoleNames.sheriff)
+RolesDict[RoleNames.deputy_sheriff] = RoleCard(RoleNames.deputy_sheriff)
+RolesDict[RoleNames.outlaw]         = RoleCard(RoleNames.outlaw)
+RolesDict[RoleNames.renegade]       = RoleCard(RoleNames.renegade)
+
 class CharactorNames:
     Bart_Cassidy   = "Bart_Cassidy"
     #Bart Cassidy = Butch Cassidy – Each time he loses a life point, he immediately draws a card from the deck. (4 life points)

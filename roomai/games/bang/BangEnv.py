@@ -2,7 +2,7 @@
 import roomai
 import random
 
-<<<<<<< HEAD
+
 import roomai
 from roomai.games.common import AbstractEnv
 from roomai.games.bang   import BangStatePublic
@@ -11,11 +11,7 @@ from roomai.games.bang   import BangStatePerson
 from roomai.games.bang   import PublicPersonInfo
 
 class BangEnv(AbstractEnv):
-=======
-from roomai.games.bang import BangStatePublic
 
-class BangEnv():
->>>>>>> b86fd074cf626dd2e425ace3d5450fbc02831cd2
 
     def init(self, params = dict()):
         '''
@@ -46,11 +42,11 @@ class BangEnv():
             logger.fatal("The number of normal players must be in [2,4,5]")
             raise ValueError("The number of normal players must be in [2,4,5]")
 
-        public_state.__public_person_info__ = [PublicPersonInfo() for i in range(public_state.__param_num_normal_players__)]
+        public_state.__public_person_infos__ = [PublicPersonInfo() for i in range(public_state.__param_num_normal_players__)]
         for i in range(public_state.__param_num_normal_players__):
-            public_state.__public_person_info__[i].__num_hand_cards__ = 0
-            public_state.__public_person_info__[i].__charactor_card__ = None
-            public_state.__public_person_info__[i].__equipment_cards__ = []
+            public_state.__public_person_infos__[i].__num_hand_cards__ = 0
+            public_state.__public_person_infos__[i].__charactor_card__ = None
+            public_state.__public_person_infos__[i].__equipment_cards__ = []
 
         person_states = [BangStatePerson() for i in range(public_state.param_num_normal_players+1)]
 
@@ -77,3 +73,11 @@ class BangEnv():
 
         :return: all valid actions
         '''
+
+        ## charactor
+        if self.__public_state_history__[-1].__public_person_infos__[-1].__charactor_card__ is None:
+
+
+        ## role
+        if self.__public_state_history__[-1].__public_person_infos__[-1].__role_card__ is None:
+
