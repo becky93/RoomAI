@@ -1,18 +1,23 @@
 #!/bin/python
 
 from roomai.games.common import AbstractActionChance
+from roomai.games.bang import Card
+from roomai.games.bang import CharactorCard
+from roomai.games.bang import RoleCard
 
-class BangActionChanceRole(AbstractActionChance):
-    def __init__(self, rolecard):
-        self.__role__ = rolecard
+class BangActionChanceType:
+    role = "role"
+    charactor = "charactor"
+    card = "card"
 
-    def __get_role__(self): return self.__role__
-    role = property(__get_role__, doc="role card")
+class BangActionChance(AbstractActionChance):
+    def __init__(self, card):
 
+        if isinstance(card, Card):
 
-class BangActionChanceCharactor(AbstractActionChance):
-    def __init__(self, charactorcard):
-        self.__charactor__ = charactorcard
+        elif isinstance(card, CharactorCard):
 
-    def __get_charactor__(self):    return self.__charactor__
-    charactor = property(__get_charactor__, doc="charactor card")
+        elif isinstance(card, RoleCard):
+
+        else:
+            raise TypeError("card is not Card, CharactorCard or RoleCard")

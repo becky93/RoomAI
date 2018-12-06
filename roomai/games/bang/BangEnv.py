@@ -9,6 +9,7 @@ from roomai.games.bang   import BangStatePublic
 from roomai.games.bang   import BangStatePrivate
 from roomai.games.bang   import BangStatePerson
 from roomai.games.bang   import PublicPersonInfo
+from roomai.games.bang   import CharactorsDict
 
 class BangEnv(AbstractEnv):
 
@@ -76,6 +77,15 @@ class BangEnv(AbstractEnv):
 
         ## charactor
         if self.__public_state_history__[-1].__public_person_infos__[-1].__charactor_card__ is None:
+            available_actions = dict()
+            tmp_set = set()
+            for i in range(len(self.__public_state_history__[-1].__public_person_infos__)):
+                if self.__public_state_history__[-1].__public_person_infos__[i].__charactor_card__ is not None:
+                    tmp_set.add(self.__public_state_history__[-1].__public_person_infos__[i].__charactor_card__.key)
+
+            for key in CharactorsDict:
+                if key not in tmp_set:
+                                        
 
 
         ## role

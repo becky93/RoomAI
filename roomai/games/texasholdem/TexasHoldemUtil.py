@@ -47,7 +47,7 @@ class PokerCard(object):
     A Poker Card has a key (point_suit). We strongly recommend you to get a poker card by using the class function lookup with the key. \n
     Examples of the class usages: \n
     >> import roomai.games.texasholdem \n
-    >> card = roomai.games.texasholdem.BangCard.lookup("2-Spade") \n
+    >> card = roomai.games.texasholdem.Card.lookup("2-Spade") \n
     >> card.point \n
     2\n
     >> card.suit\n
@@ -104,10 +104,10 @@ class PokerCard(object):
     @classmethod
     def lookup(cls, key):
         '''
-        lookup a BangCard with the specified key
+        lookup a Card with the specified key
 
         :param key: The specified key
-        :return: The BangCard with the specified key
+        :return: The Card with the specified key
         '''
 
         logger = roomai.get_logger()
@@ -120,25 +120,25 @@ class PokerCard(object):
     @classmethod
     def point_to_rank(cls, point):
         if point not in point_str_to_rank:
-            raise ValueError("%s is invalid poker point for BangCard")
+            raise ValueError("%s is invalid poker point for Card")
         return point_str_to_rank[point]
 
     @classmethod
     def suit_to_rank(cls, suit):
         if suit not in suit_str_to_rank:
-            raise ValueError("%s is invalid poker suit for BangCard")
+            raise ValueError("%s is invalid poker suit for Card")
         return suit_str_to_rank[suit]
 
     @classmethod
     def rank_to_point(cls, rank):
         if rank not in point_rank_to_str:
-            raise ValueError("%d is invalid poker point rank for BangCard")
+            raise ValueError("%d is invalid poker point rank for Card")
         return point_rank_to_str[rank]
 
     @classmethod
     def rank_to_suit(cls, rank):
         if rank not in suit_rank_to_str:
-            raise ValueError("%d is invalid poker suit rank for BangCard")
+            raise ValueError("%d is invalid poker suit rank for Card")
         return suit_rank_to_str[rank]
 
     @classmethod
