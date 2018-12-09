@@ -146,8 +146,8 @@ class Worker(object):
                 turn = public[-1].turn
                 # print(turn)
                 if turn == 0:# A3C learner
-                    # for card in infos[0].person_state_history[-1].hand_cards:
-                    #     print(card.point_rank)
+                    # for normalcard in infos[0].person_state_history[-1].hand_cards:
+                    #     print(normalcard.point_rank)
                     s = np.zeros((14,8,1))
                     if(public[-1].param_dealer_id==0):
                         for card in infos[0].public_state_history[-1].public_cards:
@@ -176,15 +176,15 @@ class Worker(object):
                     # # a3c player
                     # s = np.zeros((14, 8, 1))
                     # if (public[-1].param_dealer_id == 1):
-                    #     for card in infos[1].public_state_history[-1].public_cards:
-                    #         s[card.point_rank, card.suit_rank, 0] = 1
-                    #     for card in infos[1].person_state_history[-1].hand_cards:
-                    #         s[card.point_rank, card.suit_rank, 0] = 1
+                    #     for normalcard in infos[1].public_state_history[-1].public_cards:
+                    #         s[normalcard.point_rank, normalcard.suit_rank, 0] = 1
+                    #     for normalcard in infos[1].person_state_history[-1].hand_cards:
+                    #         s[normalcard.point_rank, normalcard.suit_rank, 0] = 1
                     # else:
-                    #     for card in infos[1].public_state_history[-1].public_cards:
-                    #         s[card.point_rank, card.suit_rank + 4, 0] = 1
-                    #     for card in infos[1].person_state_history[-1].hand_cards:
-                    #         s[card.point_rank, card.suit_rank + 4, 0] = 1
+                    #     for normalcard in infos[1].public_state_history[-1].public_cards:
+                    #         s[normalcard.point_rank, normalcard.suit_rank + 4, 0] = 1
+                    #     for normalcard in infos[1].person_state_history[-1].hand_cards:
+                    #         s[normalcard.point_rank, normalcard.suit_rank + 4, 0] = 1
                     # available_action = dict()
                     # available_option = []
                     # for action in list(infos[1].person_state_history[-1].available_actions.values()):

@@ -44,19 +44,19 @@ class PokerCard(object):
     A Poker Card has a point (2,3,4,....,K,A) and a suit (Spade, Heart, Diamond, Club). \n
     Different points have different ranks, for example the point 2's rank is 0, and the point A's rank is 12. \n
     Different suits have different ranks too. \n
-    A Poker Card has a key (point_suit). We strongly recommend you to get a poker card by using the class function lookup with the key. \n
+    A Poker Card has a key (point_suit). We strongly recommend you to get a poker normalcard by using the class function lookup with the key. \n
     Examples of the class usages: \n
     >> import roomai.games.texasholdem \n
-    >> card = roomai.games.texasholdem.Card.lookup("2-Spade") \n
-    >> card.point \n
+    >> normalcard = roomai.games.texasholdem.Card.lookup("2-Spade") \n
+    >> normalcard.point \n
     2\n
-    >> card.suit\n
+    >> normalcard.suit\n
     Spade\n
-    >> card.point_rank\n
+    >> normalcard.point_rank\n
     0\n
-    >> card.suit_rank\n
+    >> normalcard.suit_rank\n
     0\n
-    >> card.key\n
+    >> normalcard.key\n
     "2-Spade"\n
     '''
 
@@ -83,23 +83,23 @@ class PokerCard(object):
 
     def __get_point_str__(self):
         return self.__point__
-    point = property(__get_point_str__, doc="The point of the poker card")
+    point = property(__get_point_str__, doc="The point of the poker normalcard")
 
     def __get_suit_str__(self):
         return self.__suit__
-    suit = property(__get_suit_str__, doc="The suit of the poker card")
+    suit = property(__get_suit_str__, doc="The suit of the poker normalcard")
 
     def __get_point_rank__(self):
         return self.__point_rank__
-    point_rank = property(__get_point_rank__, doc="The point rank of the poker card")
+    point_rank = property(__get_point_rank__, doc="The point rank of the poker normalcard")
 
     def __get_suit_rank__(self):
         return self.__suit_rank__
-    suit_rank = property(__get_suit_rank__, doc="The suit rank of the poker card")
+    suit_rank = property(__get_suit_rank__, doc="The suit rank of the poker normalcard")
 
     def __get_key__(self):
         return self.__key__
-    key = property(__get_key__, doc="The key of the poker card")
+    key = property(__get_key__, doc="The key of the poker normalcard")
 
     @classmethod
     def lookup(cls, key):
@@ -112,8 +112,8 @@ class PokerCard(object):
 
         logger = roomai.get_logger()
         if key not in AllPokerCards:
-            logger.fatal("key (%s) is not invalid poker card key"%(key))
-            raise ValueError("key (%s) is not invalid poker card key"%(key))
+            logger.fatal("key (%s) is not invalid poker normalcard key"%(key))
+            raise ValueError("key (%s) is not invalid poker normalcard key"%(key))
 
         return AllPokerCards[key]
 
@@ -145,8 +145,8 @@ class PokerCard(object):
     def compare(cls, pokercard1, pokercard2):
         '''
         Compare two poker cards with their point ranks and suit ranks.
-        The poker card with the higher point rank has the higher rank.
-        With the same point rank, the poker card with the higher suit rank has the higher rank.
+        The poker normalcard with the higher point rank has the higher rank.
+        With the same point rank, the poker normalcard with the higher suit rank has the higher rank.
 
         :param pokercard1: 
         :param pokercard2: 

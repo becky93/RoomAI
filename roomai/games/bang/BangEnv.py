@@ -5,11 +5,12 @@ import random
 
 import roomai
 from roomai.games.common import AbstractEnv
+from roomai.games.bang   import BangActionChance
 from roomai.games.bang   import BangStatePublic
 from roomai.games.bang   import BangStatePrivate
 from roomai.games.bang   import BangStatePerson
 from roomai.games.bang   import PublicPersonInfo
-from roomai.games.bang   import CharactorsDict
+from roomai.games.bang   import CharactorCardsDict
 
 class BangEnv(AbstractEnv):
 
@@ -17,14 +18,9 @@ class BangEnv(AbstractEnv):
     def init(self, params = dict()):
         '''
         Initialize the TexasHoldem game environment with the initialization params.\n
-        The initialization is a dict with some options\n
+        The initialization is a dict with only an option: \n
+        param_num_normal_players: how many players are in the game, the option must be in {2, 4, 5}, default 5. An example of the initialization param is {"param_num_normal_players":2} \n
         
-        1. param_num_normal_players: how many players are in the game, the option must be in {2, 4, 5}, default 5\n
-        2. param_start_turn: The param_start_turn is the id of a normal player, who is the first to take an action \n
-
-        
-        An example of the initialization param is {"param_num_normal_players":2}
-
         :param params: the initialization params
         :return: infos, public_state, person_states, private_state
         '''
@@ -74,8 +70,8 @@ class BangEnv(AbstractEnv):
 
         :return: all valid actions
         '''
-
-        ## charactor
+        logger = roomai.get_logger()
+        ## charactorcard
         if self.__public_state_history__[-1].__public_person_infos__[-1].__charactor_card__ is None:
             available_actions = dict()
             tmp_set = set()
@@ -83,11 +79,25 @@ class BangEnv(AbstractEnv):
                 if self.__public_state_history__[-1].__public_person_infos__[i].__charactor_card__ is not None:
                     tmp_set.add(self.__public_state_history__[-1].__public_person_infos__[i].__charactor_card__.key)
 
-            for key in CharactorsDict:
+            for key in CharactorCardsDict:
                 if key not in tmp_set:
-                                        
+                    available_actions[key] = BangActionChance.lookup(key)
+            return available_actions
 
-
-        ## role
+        ## rolecard
         if self.__public_state_history__[-1].__public_person_infos__[-1].__role_card__ is None:
+            available_actions = dict()
+            tmp_set = set()
+            if self.__public_state_history__[-1].__param_num_normal_players__ == 2:
+                return available_actions
 
+            elif self.__public_state_history__[-1].__param_num_normal_players__ == 4:
+                return available_actions
+
+            elif self.__public_state_history__[-1].__param_num_normal_players__ == 5:
+                return available_actions
+
+            else:
+                logger.fatal("param_num_normal_players not in [2,4,5]")
+                raise ValueError("param_num_normal_players not in [2,4,5]")
+            

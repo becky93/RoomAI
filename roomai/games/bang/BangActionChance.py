@@ -1,23 +1,61 @@
 #!/bin/python
 
 from roomai.games.common import AbstractActionChance
-from roomai.games.bang import Card
+from roomai.games.bang import NormalCard
 from roomai.games.bang import CharactorCard
 from roomai.games.bang import RoleCard
+from roomai.games.bang import NormalCardsDict
+from roomai.games.bang import CharactorCardsDict
+from roomai.games.bang import RoleCardsDict
+
+import roomai
 
 class BangActionChanceType:
-    role = "role"
-    charactor = "charactor"
-    card = "card"
+    rolecard = "rolecard"
+    charactorcard = "charactorcard"
+    normalcard = "normalcard"
+
 
 class BangActionChance(AbstractActionChance):
     def __init__(self, card):
-
-        if isinstance(card, Card):
-
+        logger = roomai.get_logger()
+        if isinstance(card, NormalCard):
+            self.__type__ = BangActionChanceType.normalcard
+            self.__card__ = card
+            self.__key__  = card.key
         elif isinstance(card, CharactorCard):
-
+            self.__type__ = BangActionChanceType.charactorcard
+            self.__card__ = card
+            self.__key__  = card.key
         elif isinstance(card, RoleCard):
-
+            self.__type__ = BangActionChanceType.rolecard
+            self.__card__ = card
+            self.__key__  = card.key
         else:
-            raise TypeError("card is not Card, CharactorCard or RoleCard")
+            logger.fatal("In the constructor BangActionChance(card), the parameter card must be NormalCard, CharactorCard or RoleCard")
+            raise TypeError("In the constructor BangActionChance(card), the parameter card must be NormalCard, CharactorCard or RoleCard")
+
+    def __get_type__(self): return self.__type__
+    type = property(__get_type__, doc = "the type of BangActionChance, e.g., type=%s, type=%s or type=%s"%(BangActionChanceType.rolecard, BangActionChanceType.normalcard, BangActionChanceType.charactorcard))
+
+    def __get_card__(self): return  self.__card__
+    card = property(__get_card__, doc = "the card of BangActionChance")
+
+    def __get_key__(self):  return self.__card__.key
+    key = property(__get_key__, doc = "the key of the BangActionChance. In fact, the key is the key of the card in this BangActionChance")
+
+    @classmethod
+    def lookup(self, key):
+        logger = roomai.get_logger()
+        if key is None or not isinstance(key,str):
+            logger.fatal("In the constructor BangActionChance.lookup(key), the key must be a str")
+            raise TypeError("In the constructor BangActionChance.lookup(key), the key must be a str")
+        if key not in AllBangActionChanceDict:
+            logger.fatal("In the constructor BangActionChance.lookup(key), the key must be the key of CharactorCard, RoleCard or NormalCard")
+            raise ValueError("In the constructor BangActionChance.lookup(key), the key must be the key of CharactorCard, RoleCard or NormalCard")
+        return AllBangActionChanceDict[key]
+
+    def __deepcopy__(self, memodict={}):
+        return AllBangActionChanceDict[self.__key__]
+
+AllBangActionChanceDict = dict()

@@ -16,7 +16,7 @@ class BangActionCard(AbstractAction):
         raise NotImplementedError
 
     def __get_card__(self): return self.__card__
-    card = property(__get_card__, doc="the card used in this action")
+    card = property(__get_card__, doc="the normalcard used in this action")
 
     def __get_source__(self): return self.__source__
     source = property(__get_source__, doc="the id of the player, who issues this action")
@@ -41,7 +41,7 @@ class BangActionSkill(AbstractAction):
 
     def __get_skill__(self): return self.__skill__
 
-    skill = property(__get_skill__, doc="the card used in this action")
+    skill = property(__get_skill__, doc="the normalcard used in this action")
 
     def __get_source__(self): return self.__source__
 
