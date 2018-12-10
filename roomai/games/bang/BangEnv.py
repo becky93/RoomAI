@@ -100,4 +100,11 @@ class BangEnv(AbstractEnv):
             else:
                 logger.fatal("param_num_normal_players not in [2,4,5]")
                 raise ValueError("param_num_normal_players not in [2,4,5]")
-            
+
+from roomai.models.texasholdem import sifaplayer
+
+sifaplayer = SifaPlayer("xxxx")
+
+players = [Random(),Random(), sifaplayer()]
+env = text
+env.complete(players)
