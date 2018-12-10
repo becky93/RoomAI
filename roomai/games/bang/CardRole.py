@@ -18,14 +18,14 @@ class RoleCard(object):
             logger.fatal("In the constructor RoleCard(rolecard), the rolecard must be one of [%s,%s,%s,%s]"%(RoleCardNames.sheriff, RoleCardNames.deputy_sheriff, RoleCardNames.outlaw, RoleCardNames.renegade))
             raise TypeError("In the constructor RoleCard(rolecard), the rolecard must be one of [%s,%s,%s,%s]"%(RoleCardNames.sheriff, RoleCardNames.deputy_sheriff, RoleCardNames.outlaw, RoleCardNames.renegade))
 
-        self.__role__ = role
+        self.__name1__ = role
 
-    def __get_role__(self):
-        return self.__role__
-    role = property(__get_role__, doc="The rolecard")
+    def __get_name__(self):
+        return self.__name1__
+    name = property(__get_name__, doc="The name of the role card")
 
     def __get_key__(self):  return self.__role__
-    key = property(__get_key__, doc = "The key of rolecard normalcard is the rolecard")
+    key = property(__get_key__, doc = "The key of role card")
 
     @classmethod
     def lookup(cls, key):

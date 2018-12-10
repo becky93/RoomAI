@@ -10,7 +10,7 @@ from roomai.games.bang   import BangStatePublic
 from roomai.games.bang   import BangStatePrivate
 from roomai.games.bang   import BangStatePerson
 from roomai.games.bang   import PublicPersonInfo
-from roomai.games.bang   import CharactorCardsDict
+from roomai.games.bang   import CharacterCardsDict
 
 class BangEnv(AbstractEnv):
 
@@ -42,7 +42,7 @@ class BangEnv(AbstractEnv):
         public_state.__public_person_infos__ = [PublicPersonInfo() for i in range(public_state.__param_num_normal_players__)]
         for i in range(public_state.__param_num_normal_players__):
             public_state.__public_person_infos__[i].__num_hand_cards__ = 0
-            public_state.__public_person_infos__[i].__charactor_card__ = None
+            public_state.__public_person_infos__[i].__Character_card__ = None
             public_state.__public_person_infos__[i].__equipment_cards__ = []
 
         person_states = [BangStatePerson() for i in range(public_state.param_num_normal_players+1)]
@@ -71,15 +71,15 @@ class BangEnv(AbstractEnv):
         :return: all valid actions
         '''
         logger = roomai.get_logger()
-        ## charactorcard
-        if self.__public_state_history__[-1].__public_person_infos__[-1].__charactor_card__ is None:
+        ## Charactercard
+        if self.__public_state_history__[-1].__public_person_infos__[-1].__Character_card__ is None:
             available_actions = dict()
             tmp_set = set()
             for i in range(len(self.__public_state_history__[-1].__public_person_infos__)):
-                if self.__public_state_history__[-1].__public_person_infos__[i].__charactor_card__ is not None:
-                    tmp_set.add(self.__public_state_history__[-1].__public_person_infos__[i].__charactor_card__.key)
+                if self.__public_state_history__[-1].__public_person_infos__[i].__Character_card__ is not None:
+                    tmp_set.add(self.__public_state_history__[-1].__public_person_infos__[i].__Character_card__.key)
 
-            for key in CharactorCardsDict:
+            for key in CharacterCardsDict:
                 if key not in tmp_set:
                     available_actions[key] = BangActionChance.lookup(key)
             return available_actions
@@ -102,3 +102,5 @@ class BangEnv(AbstractEnv):
                 raise ValueError("param_num_normal_players not in [2,4,5]")
 
 
+
+        ##
