@@ -26,7 +26,7 @@ class AbstractStatePublic(object):
 
     def __get_param_num_normal_players__(self):
         return self.__param_num_normal_players__
-        param_num_normal_players = property(__get_turn__, doc="The number of normal players in the game.")
+    param_num_normal_players = property(__get_param_num_normal_players__, doc="The number of normal players in the game.")
 
     def __get_is_terminal__(self):   return  self.__is_terminal__
     is_terminal = property(__get_is_terminal__,doc = "is_terminal = True means the game is over. At this time, scores is not None, scores = [float0,float1,...] for player0, player1,... For example, scores = [-1,2,-1].\n"
