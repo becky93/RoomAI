@@ -12,13 +12,11 @@ class AbstractStatePublic(object):
     The attributes with param prefix is the parameters set by the init function of enviroment.
     '''
     def __init__(self):
-        self.__turn__               = None
-
+        self.__turn__                        = None
         ## parameters
         self.__param_num_normal_players__    = 2
-
-        self.__is_terminal__        = False
-        self.__scores__             = None
+        self.__is_terminal__                 = False
+        self.__scores__                      = None
 
 
     def __get_turn__(self): return self.__turn__

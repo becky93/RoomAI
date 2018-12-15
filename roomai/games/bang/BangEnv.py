@@ -10,7 +10,8 @@ from roomai.games.bang   import BangStatePublic
 from roomai.games.bang   import BangStatePrivate
 from roomai.games.bang   import BangStatePerson
 from roomai.games.bang   import PublicPersonInfo
-from roomai.games.bang   import CharacterCardsDict
+from roomai.games.bang   import AllCharacterCardsDict
+from roomai.games.bang   import PlayingCardNames
 
 class BangEnv(AbstractEnv):
 
@@ -71,7 +72,7 @@ class BangEnv(AbstractEnv):
         :return: all valid actions
         '''
         logger = roomai.get_logger()
-        ## Charactercard
+        ## charactercard
         if self.__public_state_history__[-1].__public_person_infos__[-1].__Character_card__ is None:
             available_actions = dict()
             tmp_set = set()
@@ -79,7 +80,7 @@ class BangEnv(AbstractEnv):
                 if self.__public_state_history__[-1].__public_person_infos__[i].__Character_card__ is not None:
                     tmp_set.add(self.__public_state_history__[-1].__public_person_infos__[i].__Character_card__.key)
 
-            for key in CharacterCardsDict:
+            for key in AllCharacterCardsDict:
                 if key not in tmp_set:
                     available_actions[key] = BangActionChance.lookup(key)
             return available_actions
@@ -104,3 +105,51 @@ class BangEnv(AbstractEnv):
 
 
         ##
+        available_actions = dict()
+        turn = self.__public_state_history__[-1].__turn__
+        person_state = self.__person_states_history__[turn][-1]
+        for card in person_state.hand_cards:
+            if card.name == PlayingCardNames.Duello:
+                available_actions[card.key] = Bang
+            elif card.name == PlayingCardNames.Carabine:
+                pass
+            elif card.name == PlayingCardNames.Bang:
+                pass
+            elif card.name == PlayingCardNames.Emporia:
+                pass
+            elif card.name == PlayingCardNames.Volcanic:
+                pass
+            elif card.name == PlayingCardNames.Schofield:
+                pass
+            elif card.name == PlayingCardNames.Remington:
+                pass
+            elif card.name == PlayingCardNames.Panic:
+                pass
+            elif card.name == PlayingCardNames.Dynamite:
+                pass
+            elif card.name == PlayingCardNames.WellsFargo:
+                pass
+            elif card.name == PlayingCardNames.Prigione:
+                pass
+            elif card.name == PlayingCardNames.Saloon:
+                pass
+            elif card.name == PlayingCardNames.Beer:
+                pass
+            elif card.name == PlayingCardNames.Catling:
+                pass
+            elif card.name == PlayingCardNames.CatBalou:
+                pass
+            elif card.name == PlayingCardNames.Miss:
+                pass
+            elif card.name == PlayingCardNames.StageCoach:
+                pass
+            elif card.name == PlayingCardNames.Barrel:
+                pass
+            elif card.name == PlayingCardNames.Mustang:
+                pass
+            elif card.name == PlayingCardNames.Indian:
+                pass
+            elif card.name == PlayingCardNames.Winchester:
+                pass
+            elif card.name == PlayingCardNames.Appaloosa:
+                pass

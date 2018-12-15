@@ -13,7 +13,7 @@ class PublicPersonInfo(object):
     num_hand_cards = property(__get_num_hand_cards__,doc="The number of hand cards")
 
     def __get_Character_card__(self):   return self.__Character_card__
-    Character_card = property(__get_Character_card__, doc="The Charactercard normalcard")
+    Character_card = property(__get_Character_card__, doc="The charactercard normalcard")
 
     def __get_equipment_cards__(self):  return tuple(self.__equipment_cards__)
     get_equipment_cards = property(__get_equipment_cards__, doc="The equipment cards")

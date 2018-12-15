@@ -12,9 +12,8 @@ class KuhnPokerPublicState(roomai.games.common.AbstractPublicState):
     def __get_first__(self):    return self.__first__
     first = property(__get_first__, doc="players[first] is first to take an action")
 
-    def __deepcopy__(self, memodict={}, newinstance = None):
-        if newinstance is None:
-            newinstance = KuhnPokerPublicState()
+    def __deepcopy__(self, memodict={}):
+        newinstance = KuhnPokerPublicState()
         newinstance = super(KuhnPokerPublicState, self).__deepcopy__(newinstance=newinstance)
         newinstance.__first__ = self.first
         return newinstance

@@ -48,7 +48,6 @@ class KuhnPokerEnv(roomai.games.common.AbstractEnv):
             self.__person_states_history__[i][0].__id__ = i
             self.__person_states_history__[i][0].__hand_cards__ = []
 
-
         public_state.__turn__             = 2
         public_state.__first__            = self.public_state.__param_start_turn__
         public_state.__epoch__            = 0
@@ -62,13 +61,11 @@ class KuhnPokerEnv(roomai.games.common.AbstractEnv):
         person_states[2].__id__           = 2
         person_states[2].__number__       = -1
 
-        self.person_states[self.public_state.turn].__available_actions__ = roomai.kuhnpoker.AllKuhnChanceActions
+        person_states[self.public_state.turn].__available_actions__ = roomai.kuhnpoker.AllKuhnChanceActions
 
-        self.__gen_state_history_list__()
+
         infos = self.__gen_infos__()
-
-        
-        return  infos, self.__public_state_history__, self.__person_states_history__, self.__private_state_history__
+        return  infos, self.__public_state_history__, self.__person_states_history__, self.__private_state_history__, self.__playerid_action_history__
 
     #@override
     def forward(self, action):
@@ -87,9 +84,6 @@ class KuhnPokerEnv(roomai.games.common.AbstractEnv):
         self.__private_state_history__.append(private_state)
         for i in range(public_state.param_num_normal_players + 1):
             self.__person_states_history__[i].append(person_states[i])
-            self.__person_states_history__[i][0].__id__ = i
-            self.__person_states_history__[i][0].__hand_cards__ = []
-
         self.__playerid_action_history__.append(public_state.turn, action)
 
         ####### forward with the chance action ##########
@@ -100,52 +94,48 @@ class KuhnPokerEnv(roomai.games.common.AbstractEnv):
             public_state.__turn__ = public_state.__param_start_turn__
             person_states[public_state.turn].__available_actions__ = self.available_actions()
 
-            self.__gen_state_history_list__()
             return self.__gen_infos__(), self.__public_state_history__, self.__person_states_history__, self.__private_state_history__, self.__playerid_action_history__
 
 
         self.person_states[self.public_state.turn].__available_actions__ = dict()
-        self.public_state.__action_history__.append((self.public_state.turn,action))
         #self.public_state.__epoch__                                     += 1
         self.public_state.__turn__                                       = (self.public_state.turn+1)%2
 
 
-        if len(self.public_state.action_history) == 1: #1 chance
+        if len(self.__playerid_action_history__) == 1: #1 chance
             pass
-        elif len(self.public_state.action_history) == 1+1: #1 normal + 1 chance
-            self.public_state.__is_terminal__ = False
-            self.public_state.__scores__      = []
-            self.person_states[self.public_state.turn].__available_actions__ = roomai.kuhnpoker.AllKuhnActions
+        elif len(self.__playerid_action_history__) == 1+1: #1 normal + 1 chance
+            public_state.__is_terminal__ = False
+            public_state.__scores__      = []
+            person_states[public_state.turn].__available_actions__ = roomai.kuhnpoker.AllKuhnActions
 
-            self.__gen_state_history_list__()
             infos = self.__gen_infos__()
-            return infos, self.public_state, self.person_states, self.private_state
+            return infos, self.__public_state_history__, self.__person_states_history__, self.__private_state_history__, self.__playerid_action_history__
 
-        elif len(self.public_state.action_history) == 2+1: # 2 normal + 1 chance
+        elif len(self.__playerid_action_history__) == 2+1: # 2 normal + 1 chance
             scores = self.__evalute_two_round__()
             if scores is not None:
-                self.public_state.__is_terminal__ = True
-                self.public_state.__scores__      = scores
+                public_state.__is_terminal__ = True
+                public_state.__scores__      = scores
 
-                self.__gen_state_history_list__()
+
                 infos = self.__gen_infos__()
-                return infos,self.public_state, self.person_states, self.private_state
+                return infos,self.__public_state_history__, self.__person_states_history__, self.__private_state_history__,self.__person_states_history__
             else:
-                self.public_state.__is_terminal__ = False
-                self.public_state.__scores__      = []
-                self.person_states[self.public_state.turn].__available_actions__ = roomai.kuhnpoker.AllKuhnActions
+                public_state.__is_terminal__ = False
+                public_state.__scores__      = []
+                person_states[public_state.turn].__available_actions__ = roomai.kuhnpoker.AllKuhnActions
 
-                self.__gen_state_history_list__()
+
                 infos   = self.__gen_infos__()
-                return infos,self.public_state, self.person_states, self.private_state
+                return infos,self.__public_state_history__, self.__person_states_history__, self.__private_state_history__, self.__playerid_action_history__
 
-        elif len(self.public_state.action_history) == 3 + 1: # 3 normal action + 1 chance
-            self.public_state.__is_terminal__ = True
-            self.public_state.__scores__     = self.__evalute_three_round__()
+        elif len(self.__playerid_action_history__) == 3 + 1: # 3 normal action + 1 chance
+            public_state.__is_terminal__ = True
+            public_state.__scores__     = self.__evalute_three_round__()
 
-            self.__gen_state_history_list__()
             infos = self.__gen_infos__()
-            return infos,self.public_state, self.person_states, self.private_state
+            return infos, self.__public_state_history__, self.__person_states_history__, self.__private_state_history__, self.__playerid_action_history__
 
         else:
             raise Exception("KuhnPoker has 4 items in action_history (3 normal actions + 1 chance action)")
@@ -237,8 +227,7 @@ class KuhnPokerEnv(roomai.games.common.AbstractEnv):
             scores[1-win] = -2
         return scores;
        
-    def __deepcopy__(self, memodict={}, newinstance = None):
-        if newinstance is None:
-            newinstance = KuhnPokerEnv()
+    def __deepcopy__(self, memodict={}):
+        newinstance = KuhnPokerEnv()
         newinstance = super(KuhnPokerEnv, self).__deepcopy__(newinstance=newinstance)
         return newinstance

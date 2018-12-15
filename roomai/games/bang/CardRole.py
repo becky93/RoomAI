@@ -30,16 +30,16 @@ class RoleCard(object):
     @classmethod
     def lookup(cls, key):
         logger = roomai.get_logger()
-        if key not in RoleCardsDict:
+        if key not in AllRoleCardsDict:
             logger.fatal("%s is not valid rolecard key"%(key))
             raise TypeError("%s is not valid rolecard key"%(key))
-        return RoleCardsDict[key]
+        return AllRoleCardsDict[key]
 
     def __deepcopy__(self, memodict={}):
-        return RoleCardsDict[self.key]
+        return AllRoleCardsDict[self.key]
 
-RoleCardsDict = dict()
-RoleCardsDict[RoleCardNames.sheriff]        = RoleCard(RoleCardNames.sheriff)
-RoleCardsDict[RoleCardNames.deputy_sheriff] = RoleCard(RoleCardNames.deputy_sheriff)
-RoleCardsDict[RoleCardNames.outlaw]         = RoleCard(RoleCardNames.outlaw)
-RoleCardsDict[RoleCardNames.renegade]       = RoleCard(RoleCardNames.renegade)
+AllRoleCardsDict = dict()
+AllRoleCardsDict[RoleCardNames.sheriff]        = RoleCard(RoleCardNames.sheriff)
+AllRoleCardsDict[RoleCardNames.deputy_sheriff] = RoleCard(RoleCardNames.deputy_sheriff)
+AllRoleCardsDict[RoleCardNames.outlaw]         = RoleCard(RoleCardNames.outlaw)
+AllRoleCardsDict[RoleCardNames.renegade]       = RoleCard(RoleCardNames.renegade)

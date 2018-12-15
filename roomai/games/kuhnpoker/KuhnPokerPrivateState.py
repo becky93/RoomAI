@@ -5,7 +5,6 @@ class KuhnPokerPrivateState(roomai.games.common.AbstractPrivateState):
     '''
     The private state class of KuhnPoker
     '''
-
-    def __deepcopy__(self, memodict={}, newinstance = None):
+    def __deepcopy__(self, memodict={}):
         return AKuhnPokerPrivateState
 AKuhnPokerPrivateState = KuhnPokerPrivateState()
