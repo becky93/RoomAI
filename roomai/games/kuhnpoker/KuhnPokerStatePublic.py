@@ -1,12 +1,12 @@
 #!/bin/python
 import roomai.games.common
 
-class KuhnPokerPublicState(roomai.games.common.AbstractStatePublic):
+class KuhnPokerStatePublic(roomai.games.common.AbstractStatePublic):
     '''
     The public state class of the KuhnPoker game
     '''
     def __init__(self):
-        super(KuhnPokerPublicState,self).__init__()
+        super(KuhnPokerStatePublic, self).__init__()
         self.__param_start_turn__           = 0
 
 
@@ -15,8 +15,8 @@ class KuhnPokerPublicState(roomai.games.common.AbstractStatePublic):
 
 
     def __deepcopy__(self, memodict={}):
-        newinstance = KuhnPokerPublicState()
-        newinstance = super(KuhnPokerPublicState, self).__deepcopy__(newinstance=newinstance)
+        newinstance = KuhnPokerStatePublic()
+        newinstance = super(KuhnPokerStatePublic, self).__deepcopy__(newinstance=newinstance)
         newinstance.__param_start_turn__ = self.__param_start_turn__
         return newinstance
 

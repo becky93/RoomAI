@@ -26,9 +26,9 @@ class KuhnPokerEnv(roomai.games.common.AbstractEnv):
         '''
 
 
-        private_state = roomai.games.kuhnpoker.KuhnPokerPrivateState()
-        public_state  = roomai.games.kuhnpoker.KuhnPokerPublicState()
-        person_states = [roomai.games.kuhnpoker.KuhnPokerPersonState() for i in range(3)]
+        private_state = roomai.games.kuhnpoker.KuhnPokerStatePrivate()
+        public_state  = roomai.games.kuhnpoker.KuhnPokerStatePublic()
+        person_states = [roomai.games.kuhnpoker.KuhnPokerStatePerson() for i in range(3)]
 
         if "param_start_turn" in params:
             public_state.__param_start_turn__ = params["start_turn"]
