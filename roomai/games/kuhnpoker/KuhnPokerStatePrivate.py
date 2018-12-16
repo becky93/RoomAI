@@ -1,7 +1,7 @@
 #!/bin/python
 import roomai.games.common
 
-class KuhnPokerPrivateState(roomai.games.common.AbstractPrivateState):
+class KuhnPokerPrivateState(roomai.games.common.AbstractStatePrivate):
     '''
     The private state class of KuhnPoker
     '''

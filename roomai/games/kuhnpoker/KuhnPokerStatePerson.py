@@ -1,6 +1,6 @@
 import roomai.games.common
 
-class KuhnPokerPersonState(roomai.games.common.AbstractPersonState):
+class KuhnPokerPersonState(roomai.games.common.AbstractStatePerson):
     '''
     The person state of KuhnPoker
     '''
