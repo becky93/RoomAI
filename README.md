@@ -6,7 +6,7 @@
 
 
 
-RoomAI is a toolkit for developing AI-bots of Texas Holdem and Killers of Three Kingdoms (KTK).
+RoomAI is a toolkit for developing AI-bots of KuhnPoker, Texas Holdem and Bang!.
 
 
 
