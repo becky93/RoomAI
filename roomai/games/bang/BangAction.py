@@ -9,11 +9,11 @@ import roomai
 
 
 
-class Bart_Cassidy_SkillAction(AbstractAction):
+class Bart_Cassidy_BangAction(AbstractAction):
     '''
     Bart Cassidy = Butch Cassidy – Each time he loses a life point, he immediately draws a normal card from the deck. \n\n
-    The key of Bart_Cassidy_SkillAction is CharacterCardNames.Bart_Cassidy \n
-    The character of Bart_Cassidy_SkillAction is CharacterCardNames.Bart_Cassidy \n
+    The key of Bart_Cassidy_BangAction is CharacterCardNames.Bart_Cassidy \n
+    The character of Bart_Cassidy_BangAction is CharacterCardNames.Bart_Cassidy \n
     '''
     def __init__(self):
         self.__key__ = CharacterCardNames.Bart_Cassidy
@@ -28,8 +28,8 @@ class Bart_Cassidy_SkillAction(AbstractAction):
 class Black_Jack_SkillActon(AbstractAction):
     '''
     Black Jack = Tom Ketchum (known as Black Jack) – During phase 1 of his turn, he must show the second normal card he draws: if it's a Heart or Diamond, he draws one additional normal card that turn (without revealing it).\n\n
-    The key of Black_Jack_SkillAction is CharacterCardNames.Black_Jack-secondcard.key \n
-    The character of Black_Jack_SkillAction is CharacterCardNames.Black_Jack \n
+    The key of Black_Jack_BangAction is CharacterCardNames.Black_Jack-secondcard.key \n
+    The character of Black_Jack_BangAction is CharacterCardNames.Black_Jack \n
     '''
     def __init__(self, second_card):
         self.__key__ = CharacterCardNames.Black_Jack + "-" + second_card.key
@@ -45,11 +45,11 @@ class Black_Jack_SkillActon(AbstractAction):
     def __deepcopy__(self, memodict={}):
         return AllBangActionsDict[self.key]
 
-class Calamity_Janet_SkillAction(AbstractAction):
+class Calamity_Janet_BangAction(AbstractAction):
     '''
     Calamity Janet = Calamity Jane – She can use "Bang!" cards as "Missed!" cards and vice versa. She is still subject to "Bang!" limitations: If she plays a Missed! normal card as a "Bang!", she cannot play another "Bang!" normal card that turn (unless she has a Volcanic in play). (4 life points)\n\n
-    The key of Black_Jack_SkillAction is CharacterCardNames.Calamity_Janet \n
-    The character of Black_Jack_SkillAction is CharacterCardNames.Calamity_Janet \n
+    The key of Black_Jack_BangAction is CharacterCardNames.Calamity_Janet \n
+    The character of Black_Jack_BangAction is CharacterCardNames.Calamity_Janet \n
     '''
     def __init__(self):
         self.__key__ = CharacterCardNames.Calamity_Janet
@@ -61,7 +61,7 @@ class Calamity_Janet_SkillAction(AbstractAction):
     def __deepcopy__(self, memodict={}):
         return AllBangActionsDict[self.key]
 
-class EI_Gringo_SkillAction(AbstractAction):
+class EI_Gringo_BangAction(AbstractAction):
     '''
     El Gringo = gringo (slang Spanish word) – Each time he loses a life point due to a normal card played by another player, he draws a random normal card from the hands of that player (one normal card for each life). If the player has no more cards, he does not draw. (3 life points)
     '''
@@ -75,7 +75,7 @@ class EI_Gringo_SkillAction(AbstractAction):
     def __deepcopy__(self, memodict={}):
         return AllBangActionsDict[self.key]
 
-class Jesse_Jones_SkillAction(AbstractAction):
+class Jesse_Jones_BangAction(AbstractAction):
     '''
     Jesse Jones = Jesse James – During phase 1 of his turn, he may choose to draw the first normal card from the deck, or randomly from the hand of any other player. Then he draws the second normal card from the deck. 
     '''
@@ -89,7 +89,7 @@ class Jesse_Jones_SkillAction(AbstractAction):
     def __deepcopy__(self, memodict={}):
         return AllBangActionsDict[self.key]
 
-class Jourdonnais_SkillAction(AbstractAction):
+class Jourdonnais_BangAction(AbstractAction):
     '''
     Jourdonnais = "Frenchy" Jourdonnais, the riverboat captain in The Big Sky novel and movie (Fictional person) – He is considered to have Barrel in play at all times; he can "draw!" when he is the target of a BANG!, and on a Heart he is missed. 
     '''
@@ -104,7 +104,7 @@ class Jourdonnais_SkillAction(AbstractAction):
         return AllBangActionsDict[self.key]
 
 
-class Kit_Carlson_SkillAction(AbstractAction):
+class Kit_Carlson_BangAction(AbstractAction):
     '''
     Kit Carlson = Kit Carson – During the phase 1 of his turn, he looks at the top three cards of the deck: he chooses 2 to draw, and puts the other one back on the top of the deck, face down. 
     '''
@@ -125,13 +125,13 @@ class Kit_Carlson_SkillAction(AbstractAction):
     sorted_choosecards = property(__get_sorted_topcards__, doc="the choosen 2 cards")
 
     def __get_character_(self): return self.__character__
-    character = property(__get_character_, doc="which character this skill action belongs to. Now it is Kit_Carlson_SkillAction")
+    character = property(__get_character_, doc="which character this skill action belongs to. Now it is Kit_Carlson_BangAction")
 
     def __deepcopy__(self, memodict={}):
         return AllBangActionsDict[self.key]
 
 
-class Lucky_Duke_SkillAction(AbstractAction):
+class Lucky_Duke_BangAction(AbstractAction):
     '''
     Lucky Duke = Lucky Luke (Fictional person) – Each time he is required to "draw!", he flips the top two cards from the deck, and chooses the result he prefers. Discard both cards afterward. 
     '''
@@ -157,7 +157,7 @@ class Lucky_Duke_SkillAction(AbstractAction):
     def __deepcopy__(self, memodict={}):
         return AllBangActionsDict[self.key]
 
-class Paul_Regret_SkillAction(AbstractAction):
+class Paul_Regret_BangAction(AbstractAction):
     '''
     Paul Regret = Paul Regret – The Comancheros (film) – He is considered to have a Mustang in play at all times; all other players must add 1 to the distance to him. If he has another real Mustang in play, he can count both of them, increasing all distance to him by a total of 2.
     '''
@@ -200,7 +200,7 @@ class Rose_Doolan(AbstractAction):
     def __deepcopy__(self, memodict={}):
         return AllBangActionsDict[self.key]
 
-class Sid_Ketchum_SkillAction(AbstractAction):
+class Sid_Ketchum_BangAction(AbstractAction):
     '''
     Sid Ketchum = Tom Ketchum – At any time, he may discard 2 cards from his hand to regain one life point. If he is willing and able, he can use this ability more than once at a time. 
     '''
@@ -223,7 +223,7 @@ class Sid_Ketchum_SkillAction(AbstractAction):
         return AllBangActionsDict[self.key]
 
 
-class Slab_Killer_SkillAction(AbstractAction):
+class Slab_Killer_BangAction(AbstractAction):
     '''
     Slab the Killer = Angel Eyes, the Bad in the film The Good, the Bad and the Ugly (Fictional person) – Players trying to cancel his BANG! cards need to play 2 Missed!. The Barrel effect, if successfully used, only counts as one Missed! 
     '''
@@ -237,7 +237,7 @@ class Slab_Killer_SkillAction(AbstractAction):
     def __deepcopy__(self, memodict={}):
         return AllBangActionsDict[self.key]
 
-class Suzy_Lafayette_SkillAction(AbstractAction):
+class Suzy_Lafayette_BangAction(AbstractAction):
     '''
     Suzy Lafayette = As soon as she has no cards in her hand, she instantly draws a normal card from the draw pile. 
     '''
@@ -252,7 +252,7 @@ class Suzy_Lafayette_SkillAction(AbstractAction):
         return AllBangActionsDict[self.key]
 
 
-class Vulture_Sam_SkillAction(AbstractAction):
+class Vulture_Sam_BangAction(AbstractAction):
     '''
     Vulture Sam = Whenever a character is eliminated from the game, Sam takes all the cards that player had in his hand and in play, and adds them to his hand
     '''
@@ -267,7 +267,7 @@ class Vulture_Sam_SkillAction(AbstractAction):
         return AllBangActionsDict[self.key]
 
 
-class Willy_Kid_SkillAction(AbstractAction):
+class Willy_Kid_BangAction(AbstractAction):
     '''
     Vulture Sam = Whenever a character is eliminated from the game, Sam takes all the cards that player had in his hand and in play, and adds them to his hand
     '''
